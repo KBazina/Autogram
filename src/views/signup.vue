@@ -82,26 +82,15 @@ export default {
   name: "singup",
   data() {
     return {
-      // v$: useVuelidate(),
       ime_prezime: "",
       email: "",
       password: "",
       passwordRepeat: "",
     };
   },
-  validations() {
-    return {
-      ime_prezime: { required },
-      email: { required },
-      password: { required },
-      passwordRepeat: { required },
-    };
-  },
 
   methods: {
     signup(e) {
-      this.v$.$validate();
-      if (!this.v$.$error) {
         createUserWithEmailAndPassword(auth, this.email, this.password)
           .then(function () {
             console.log("suces");
@@ -109,10 +98,7 @@ export default {
           .catch((error) => {
             alert(error.message);
           });
-      } else{
-        alert("nemere")
-      }
-    },
+      } 
   },
 };
 </script>
