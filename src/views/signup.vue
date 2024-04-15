@@ -39,7 +39,7 @@
       id="inputPassword5"
       class="form-control"
       aria-describedby="passwordHelpBlock"
-      placeholder="*******"
+      placeholder="*"
     />
     <div id="passwordHelpBlock" class="form-text">
       Must be 8-20 characters long.
@@ -52,11 +52,15 @@
         v-model="passwordRepeat"
         class="form-control"
         id="exampleInputPassword2"
-        placeholder="*******"
+        placeholder="*"
       />
     </div>
 
-    <button type="button" @click="signup" class="btn btn-outline-warning my-3">
+    <div class="text-danger" v-for="error of v$.$errors" :key="error.$uid">
+      {{ error.$message }}
+    </div>
+
+    <button type="submit" @click="signup" class="btn btn-outline-warning my-3">
       Sign up
     </button>
     <div>
@@ -69,18 +73,27 @@
     </div>
   </div>
 </template>
-  
-  <script>
+
+<script>
 // @ is an alias to /src
 import { getAuth, createUserWithEmailAndPassword } from "@/firebase";
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  email,
+  minLength,
+  maxLength,
+  sameAs,
+} from "@vuelidate/validators";
 
+const moreWords =(value)=>value.trim().split(" ").length>=2
 const auth = getAuth();
-
-console.log();
-
 export default {
   name: "singup",
-  data() {
+  setup() {
+    return { v$: useVuelidate() };
+  },
+  data() { 
     return {
       ime_prezime: "",
       email: "",
@@ -88,9 +101,27 @@ export default {
       passwordRepeat: "",
     };
   },
+  validations() {
+    return {
+      ime_prezime: {
+        moreWords,
+        required,
+        minLength: minLength(2),
+        maxLength: maxLength(40),
+      },
+      email: { required, email },
+      password: { required, minLength: minLength(8), maxLength: maxLength(20) },
+      passwordRepeat: { required, sameAsPassword: sameAs(this.password) },
+    };
+  },
 
   methods: {
-    signup(e) {
+    async signup(e) {
+      const isFormCorrect = await this.v$.$validate();
+      if (!isFormCorrect) {
+        console.log("nesto je krivo")
+      }
+      else {
         createUserWithEmailAndPassword(auth, this.email, this.password)
           .then(function () {
             console.log("suces");
@@ -98,15 +129,17 @@ export default {
           .catch((error) => {
             alert(error.message);
           });
-      } 
+      }
+    },
   },
 };
 </script>
-  <style scoped>
+<style scoped>
 .cars {
   font-size: 7vw;
   margin-right: 20px;
 }
+
 .LifeIs {
   font-size: 3vw;
   margin-right: 30px;
