@@ -14,13 +14,17 @@
             <div class="p-2">Mateo Udovitjitj</div>
             <div class="p-2">165cm</div>
             <div class="p-2">Ja sam upo na FOI</div>
+            <div class="p-2">IMAM SIFILIS</div>
             <div class="p-2">Volim mamu i valamar</div>
             <div class="p-2">Mateo Udovitjitj</div>
             <div class="p-2">165cm</div>
+            <div class="p-2">IMAM SIFILIS</div>
+            <div class="p-2">IMAM SIFILIS</div>
             <div class="p-2">Ja sam upo na FOI</div>
             <div class="p-2">Volim mamu i valamar</div>   
             <div class="p-2">Mateo Udovitjitj</div>
             <div class="p-2">165cm</div>
+            <div class="p-2">IMAM SIFILIS</div>
             <div class="p-2">Ja sam upo na FOI</div>
             <div class="p-2">Volim mamu i valamar</div>
           </div>
@@ -136,7 +140,6 @@ export default {
         );
 
         this.news = res.data.articles;
-        console.log(this.news);
       } catch (error) {
         console.error(error);
       }

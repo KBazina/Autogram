@@ -24,6 +24,14 @@ import HomeView from '../views/HomeView.vue'
     component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
   },
   {
+    path: '/profileDetails',
+    name: 'profileDetails',
+    component: () => import(/* webpackChunkName: "about" */ '../views/profileDetails.vue'),
+    meta: {
+      needsUser: true,
+    },
+  },
+  {
     path: '/profile',
     name: 'profile',
     meta: {
