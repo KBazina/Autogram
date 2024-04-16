@@ -47,7 +47,7 @@
       id="inputPassword5"
       class="form-control"
       aria-describedby="passwordHelpBlock"
-      placeholder=""
+      placeholder="********"
       @input = "InputUpdate('password')"
     />
         <div class="text-danger" v-if="showPasswordDiv">
@@ -61,7 +61,7 @@
         v-model="passwordRepeat"
         class="form-control"
         id="exampleInputPassword2"
-        placeholder=""
+        placeholder="********"
         @input = "InputUpdate('passwordRepeat')"
       />
     </div>
