@@ -14,7 +14,11 @@
         name="ime_prezime"
         aria-label="First name"
         class="form-control"
+        @input = "InputUpdate('ime_prezime')"
       />
+    </div>
+    <div class="text-danger" v-if="showImePrezimeDiv">
+      Morate upisati Ime i prezime te mora sadrzavati manje od 40 znakova
     </div>
     <div class="my-3">
       <label for="exampleFormControlInput1" class="form-label"
@@ -28,7 +32,11 @@
         class="form-control"
         id="exampleFormControlInput1"
         placeholder="name@example.com"
+        @input = "InputUpdate('email')"
       />
+    </div>
+        <div class="text-danger" v-if="showEmailDiv">
+      Unesite valjan Email
     </div>
     <label for="inputPassword5" class="form-label">Password</label>
     <input
@@ -39,10 +47,11 @@
       id="inputPassword5"
       class="form-control"
       aria-describedby="passwordHelpBlock"
-      placeholder="*"
+      placeholder=""
+      @input = "InputUpdate('password')"
     />
-    <div id="passwordHelpBlock" class="form-text">
-      Must be 8-20 characters long.
+        <div class="text-danger" v-if="showPasswordDiv">
+      Lozinka mora sadržavati između 8 i 20 znakova.
     </div>
     <div class="form-group my-3">
       <label for="exampleInputPassword2">Repeat Password</label>
@@ -52,15 +61,20 @@
         v-model="passwordRepeat"
         class="form-control"
         id="exampleInputPassword2"
-        placeholder="*"
+        placeholder=""
+        @input = "InputUpdate('passwordRepeat')"
       />
     </div>
-
-    <div class="text-danger" v-for="error of v$.$errors" :key="error.$uid">
-      {{ error.$message }}
+            <div class="text-danger" v-if="showPasswordRepeatDiv">
+      Lozinke se ne podudaraju
     </div>
 
-    <button :disabled="btnClicked" type="submit" @click="signup" class="btn btn-outline-warning my-3">
+    <button
+      :disabled="btnClicked"
+      type="submit"
+      @click="signup"
+      class="btn btn-outline-warning my-3"
+    >
       Sign up
     </button>
     <div>
@@ -86,20 +100,24 @@ import {
   sameAs,
 } from "@vuelidate/validators";
 
-const moreWords =(value)=>value.trim().split(" ").length>=2
+const moreWords = (value) => value.trim().split(" ").length >= 2;
 const auth = getAuth();
 export default {
   name: "singup",
   setup() {
     return { v$: useVuelidate() };
   },
-  data() { 
+  data() {
     return {
-      btnClicked:false,
+      btnClicked: false,
       ime_prezime: "",
       email: "",
       password: "",
       passwordRepeat: "",
+      showImePrezimeDiv: false,
+      showEmailDiv: false,
+      showPasswordDiv: false,
+      showPasswordRepeatDiv: false,
     };
   },
   validations() {
@@ -117,16 +135,28 @@ export default {
   },
 
   methods: {
+    async InputUpdate(inputName){
+      if (inputName === 'ime_prezime') {
+        this.showImePrezimeDiv = this.v$.ime_prezime.$error;
+      } else if (inputName === 'email') {
+        this.showEmailDiv = this.v$.email.$error;
+      } else if (inputName === 'password') {
+        this.showPasswordDiv = this.v$.password.$error;
+      } else if (inputName === 'passwordRepeat') {
+        this.showPasswordRepeatDiv = this.v$.passwordRepeat.$error;
+      }
+    },
     async signup(e) {
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) {
-        console.log("nesto je krivo")
-      }
-      else {
-        this.btnClicked=true
+        this.showImePrezimeDiv = this.v$.ime_prezime.$error;
+        this.showEmailDiv = this.v$.email.$error;
+        this.showPasswordDiv = this.v$.password.$error;
+        this.showPasswordRepeatDiv = this.v$.passwordRepeat.$error;
+      } else {
+        this.btnClicked = true;
         createUserWithEmailAndPassword(auth, this.email, this.password)
           .then(function () {
-            console.log("suces");
           })
           .catch((error) => {
             alert(error.message);
