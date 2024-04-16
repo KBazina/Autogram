@@ -39,7 +39,7 @@
       id="inputPassword5"
       class="form-control"
       aria-describedby="passwordHelpBlock"
-      placeholder="*******"
+      placeholder="*"
     />
     <div id="passwordHelpBlock" class="form-text">
       Must be 8-20 characters long.
@@ -52,7 +52,7 @@
         v-model="passwordRepeat"
         class="form-control"
         id="exampleInputPassword2"
-        placeholder="*******"
+        placeholder="*"
       />
     </div>
 
@@ -131,7 +131,6 @@ export default {
           .catch((error) => {
             alert(error.message);
           });
-
       }
     },
   },
