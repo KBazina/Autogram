@@ -1,85 +1,100 @@
 <template>
   <div class="overlay"></div>
-  <div class="container-fluid mt-5">
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8 detailer">
-        <div class="container shadow-lg p-3 mb-5 bgColor2 rounded">
-          <div class="row">
-            <div
-              class="col shadow-sm p-3 mx-3 my-3 bgColor1 rounded align-self-end"
-            >
-              <div class="profile_bg container-fluid p-3">
-                <div class="">
-                  <div class="okvir mb-5">
-                    <img
-                      :src="imageSrc"
-                      alt=""
-                      class="rounded-circle border-4 border border-light bg-light-subtle"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="input-group">
-                <input
-                  type="file"
-                  class="form-control"
-                  id="inputGroupFile04"
-                  aria-describedby="inputGroupFileAddon04"
-                  aria-label="Upload"
-                  @change="onFileChange"
+  <div class="pozadina"></div>
+  <div class="detailer position-absolute top-50 start-50 translate-middle">
+    <div class="container p-3 bgColor2 rounded rowOpacity">
+      <div class="row">
+        <div
+          class="col shadow-sm p-3 mx-3 my-3 bgColor1 rounded align-self-end firstCol"
+        >
+          <div class="profile_bg container-fluid p-3">
+            <div class="">
+              <div class="okvir mb-5">
+                <img
+                  :src="imageSrc"
+                  alt=""
+                  class="rounded-circle border-4 border border-light bg-light-subtle"
                 />
               </div>
-            </div>
-            <div class="col my-5">
-              <h1>"Dobar dan kolege"</h1>
-              <h5 class="mb-5">
-                Voljeli bi znati nešto više o vama, pa bih vas zamolili da
-                ispunite sljedeće podatke..
-              </h5>
-              <!-- -------------- -->
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Ime i prezime"
-                  aria-label="ime_prezime"
-                />
-                <span class="input-group-text">@</span>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Usesname"
-                  aria-label="Usesrname"
-                />
-              </div>
-
-              <div class="input-group">
-                <span class="input-group-text">My description</span>
-                <textarea
-                  placeholder="Tell us more about yourself.."
-                  class="form-control"
-                  aria-label="With textarea"
-                ></textarea>
-              </div>
-
-              <!-- ___________--- -->
             </div>
           </div>
+          <div class="input-group">
+            <input
+              type="file"
+              class="form-control"
+              id="inputGroupFile04"
+              aria-describedby="inputGroupFileAddon04"
+              aria-label="Upload"
+              @change="onFileChange"
+            />
+          </div>
+        </div>
+        <div class="col secondCol mt-5">
+          <h1>"Dobar dan kolege"</h1>
+          <h5 class="mb-5">
+            Voljeli bi znati nešto više o vama, pa bih vas zamolili da ispunite
+            sljedeće podatke..
+          </h5>
+
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ime i prezime"
+              aria-label="ime_prezime"
+            />
+            <span class="input-group-text">@</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Username"
+              aria-label="Username"
+            />
+          </div>
+          <VueDatePicker class="dp__theme_dark" v-model="date" placeholder="Enter your birthday" text-input />
+
+          <div class="input-group mt-3">
+            <span class="input-group-text">My description</span>
+            <textarea
+              placeholder="Tell us more about yourself.."
+              class="form-control"
+              aria-label="With textarea"
+            ></textarea>
+          </div>
+          <button
+            type="button"
+            @click="datee()"
+            class="btn btn-outline-warning mt-3 me-3"
+          >
+            Dalje
+          </button>
+          <span class="warningSpan">
+            Sljedeći podaci neće se koristiti za unaprijeđivanje vašeg iskustva,
+            nego će biti zlouporabljeni!
+          </span>
         </div>
       </div>
-      <div class="col-2"></div>
     </div>
   </div>
 </template>
 <script>
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+import { ref } from "vue";
+
+const date = ref();
 export default {
   data() {
     return {
       imageSrc: "",
+      date: null,
     };
   },
   methods: {
+    datee() {
+        const birthday = JSON.stringify(this.date)
+      console.log(birthday);
+    },
     onFileChange(event) {
       const file = event.target.files[0];
       if (file) {
@@ -87,6 +102,7 @@ export default {
       }
     },
   },
+  components: { VueDatePicker },
 };
 </script>
 <style>
@@ -101,15 +117,70 @@ export default {
   top: 0px;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
   z-index: 9000;
 }
+
 .detailer {
-  z-index: 9001;
+  width: 1200px;    
+  z-index: 9002;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.288);
+}
+.rowOpacity {
+  background-color: rgba(36, 37, 38, 0);
+}
+.firstCol {
+  background-color: rgb(52, 52, 52);
 }
 .okvir {
   position: relative;
   width: 250px;
   height: 250px;
+}
+.warningSpan {
+  font-size: 10px;
+  color: #737373;
+}
+
+.pozadina {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url(@/assets/cars.jpg);
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.dp__theme_dark {
+  --dp-background-color: #212121;
+  --dp-text-color: #fff;
+  --dp-hover-color: #484848;
+  --dp-hover-text-color: #fff;
+  --dp-hover-icon-color: #959595;
+  --dp-primary-color: #005cb2;
+  --dp-primary-disabled-color: #61a8ea;
+  --dp-primary-text-color: #fff;
+  --dp-secondary-color: #a9a9a9;
+  --dp-border-color: #2d2d2d;
+  --dp-menu-border-color: #2d2d2d;
+  --dp-border-color-hover: #aaaeb7;
+  --dp-disabled-color: #737373;
+  --dp-disabled-color-text: #d0d0d0;
+  --dp-scroll-bar-background: #212121;
+  --dp-scroll-bar-color: #484848;
+  --dp-success-color: #00701a;
+  --dp-success-color-disabled: #428f59;
+  --dp-icon-color: #959595;
+  --dp-danger-color: #e53935;
+  --dp-marker-color: #e53935;
+  --dp-tooltip-color: #3e3e3e;
+  --dp-highlight-color: rgb(0 92 178 / 20%);
+  --dp-range-between-dates-background-color: var(--dp-hover-color, #484848);
+  --dp-range-between-dates-text-color: var(--dp-hover-text-color, #fff);
+  --dp-range-between-border-color: var(--dp-hover-color, #fff);
 }
 </style>
