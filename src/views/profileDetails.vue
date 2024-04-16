@@ -42,6 +42,7 @@
               class="form-control"
               placeholder="Ime i prezime"
               aria-label="ime_prezime"
+              v-model="ime_prezime"
             />
             <span class="input-group-text">@</span>
             <input
@@ -49,9 +50,15 @@
               class="form-control"
               placeholder="Username"
               aria-label="Username"
+              v-model="username"
             />
           </div>
-          <VueDatePicker class="dp__theme_dark" v-model="date" placeholder="Enter your birthday" text-input />
+          <VueDatePicker
+            class="dp__theme_dark"
+            v-model="date"
+            placeholder="Enter your birthday"
+            text-input
+          />
 
           <div class="input-group mt-3">
             <span class="input-group-text">My description</span>
@@ -59,11 +66,12 @@
               placeholder="Tell us more about yourself.."
               class="form-control"
               aria-label="With textarea"
+              v-model="bio"
             ></textarea>
           </div>
           <button
             type="button"
-            @click="datee()"
+            @click="detailProfile()"
             class="btn btn-outline-warning mt-3 me-3"
           >
             Dalje
@@ -80,20 +88,65 @@
 <script>
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import { ref } from "vue";
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  email,
+  minLength,
+  maxLength,
+  sameAs,
+} from "@vuelidate/validators";
+const oneWord = (value) => value.trim().split(" ").length == 1;
+const moreWords = (value) => value.trim().split(" ").length >= 2;
 
-const date = ref();
 export default {
+  name: "profileDetails",
+  setup() {
+    return { v$: useVuelidate() };
+  },
   data() {
     return {
       imageSrc: "",
       date: null,
+      ime_prezime: "",
+      username: "",
+      bio: "",
+    };
+  },
+  validations() {
+    return {
+      imageSrc: { required },
+      date: { required },
+      ime_prezime: {
+        moreWords,
+        required,
+        minLength: minLength(2),
+        maxLength: maxLength(40),
+      },
+      username: {
+        maxLength: maxLength(30),
+        required,
+        oneWord,
+      },
     };
   },
   methods: {
-    datee() {
-        const birthday = JSON.stringify(this.date)
-      console.log(birthday);
+    async detailProfile(e) {
+        console.log(this.imageSrc)
+      const isFormCorrect = await this.v$.$validate();
+      if (!isFormCorrect) {
+        console.log("nesto je krivo");
+      } else {
+        const newUser = await addDoc(collection(db, "posts"), {
+          imageSrc: this.imageSrc,
+          date:JSON.stringify(this.date),
+          ime_prezime: this.ime_prezime,
+          username: this.username,
+          bio: this.bio,
+        }).catch((e) => {
+          console.error(e);
+        });
+      }
     },
     onFileChange(event) {
       const file = event.target.files[0];
@@ -122,7 +175,7 @@ export default {
 }
 
 .detailer {
-  width: 1200px;    
+  width: 1200px;
   z-index: 9002;
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.288);
 }
