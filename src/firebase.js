@@ -5,8 +5,17 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut 
+  signOut,
 } from "firebase/auth";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+} from "firebase/firestore";
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCOnwlqucsLf5Tpnk8p3GfY6r1TiJDarHA",
@@ -21,11 +30,21 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
 export {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut 
+  signOut,
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  db,
+  doc,
+  setDoc,
+  collection,
+  addDoc,
 };

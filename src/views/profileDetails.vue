@@ -3,7 +3,7 @@
   <div class="pozadina"></div>
   <div class="detailer position-absolute top-50 start-50 translate-middle">
     <div class="container p-3 bgColor2 rounded rowOpacity">
-      <div class="row">
+      <form class="row" @submit.prevent="detailProfile">
         <div
           class="col shadow-sm p-3 mx-3 my-3 bgColor1 rounded align-self-end firstCol"
         >
@@ -21,11 +21,13 @@
           <div class="input-group">
             <input
               type="file"
+              ref="file"
               class="form-control"
               id="inputGroupFile04"
               aria-describedby="inputGroupFileAddon04"
+              accept="image/*"
               aria-label="Upload"
-              @change="onFileChange"
+              @change="onFileChange($event)"
             />
           </div>
         </div>
@@ -58,6 +60,7 @@
             v-model="date"
             placeholder="Enter your birthday"
             text-input
+            :enable-time-picker="false"
           />
 
           <div class="input-group mt-3">
@@ -69,11 +72,7 @@
               v-model="bio"
             ></textarea>
           </div>
-          <button
-            type="button"
-            @click="detailProfile()"
-            class="btn btn-outline-warning mt-3 me-3"
-          >
+          <button type="submit" class="btn btn-outline-warning mt-3 me-3">
             Dalje
           </button>
           <span class="warningSpan">
@@ -81,7 +80,7 @@
             nego će biti zlouporabljeni!
           </span>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -89,6 +88,17 @@
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useVuelidate } from "@vuelidate/core";
+import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  db,
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from "@/firebase";
 import {
   required,
   email,
@@ -98,7 +108,7 @@ import {
 } from "@vuelidate/validators";
 const oneWord = (value) => value.trim().split(" ").length == 1;
 const moreWords = (value) => value.trim().split(" ").length >= 2;
-
+const storage = getStorage();
 export default {
   name: "profileDetails",
   setup() {
@@ -106,6 +116,7 @@ export default {
   },
   data() {
     return {
+      imageFile: "",
       imageSrc: "",
       date: null,
       ime_prezime: "",
@@ -132,26 +143,40 @@ export default {
   },
   methods: {
     async detailProfile(e) {
-        console.log(this.imageSrc)
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) {
         console.log("nesto je krivo");
       } else {
-        const newUser = await addDoc(collection(db, "posts"), {
-          imageSrc: this.imageSrc,
-          date:JSON.stringify(this.date),
-          ime_prezime: this.ime_prezime,
-          username: this.username,
-          bio: this.bio,
-        }).catch((e) => {
-          console.error(e);
-        });
+        const file = this.imageFile;
+        const date = this.date;
+        date.setHours(0, 0, 0);
+        console.log("date:", date);
+        const storageRef = ref(storage, "profile_pictures/" + Date.now() + file.name);
+        uploadBytes(storageRef, file)
+          .then((snapshot) => {
+            return getDownloadURL(ref(storageRef));
+          })
+          .then((url) => {
+            this.imageSrc = url;
+            console.log(url);
+          })
+          .then(() => {
+            const newUser = addDoc(collection(db, "users"), {
+              imageSrc: this.imageSrc,
+              date: date,
+              ime_prezime: this.ime_prezime,
+              username: this.username,
+              bio: this.bio,
+            });
+          });
       }
     },
     onFileChange(event) {
       const file = event.target.files[0];
       if (file) {
         this.imageSrc = URL.createObjectURL(file);
+        this.imageFile = file;
+        console.log(this.imageFile);
       }
     },
   },
