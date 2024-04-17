@@ -1,5 +1,5 @@
 <template>
-  <nav class="navImp navbar navbar-expand-lg sticky-top" >
+  <nav class="navImp navbar navbar-expand-lg sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
         <img src="@/assets/logo.png" alt="" width="60" height="" />
@@ -56,7 +56,7 @@
             aria-hidden="true"
           >
             <div class="modal-dialog">
-              <div class=" modal-content ">
+              <div class="modal-content">
                 <div class="modal-header">
                   <h1 class="modal-title fs-5" id="staticBackdropLabel">
                     AUTOGRAM
@@ -93,14 +93,25 @@
         </div>
       </div>
     </div>
-    <hr>
+    <hr />
   </nav>
   <router-view />
 </template>
 
 <script>
 import router from "./router";
-import { onAuthStateChanged, getAuth, signOut } from "@/firebase";
+import store from "@/store";
+import {
+  onAuthStateChanged,
+  getAuth,
+  signOut,
+  query,
+  doc,
+  getDocs,
+  collection,
+  db,
+  where,
+} from "@/firebase";
 const auth = getAuth();
 const currentRoute = router.currentRoute;
 
@@ -108,12 +119,20 @@ export default {
   name: "app",
   data() {
     return {
+      store,
+      done: false,
       UserActive: null,
     };
   },
   async created() {
     onAuthStateChanged(auth, (user) => {
+      this.checkDone().then(() => {
+        if (!this.done && user) {
+          this.$router.push({ name: "profileDetails" });
+        }
+      });
       if (user) {
+        store.userMail = user.email;
         this.UserActive = user;
         if (!currentRoute.value.meta.needsUser) {
           this.$router.push({ name: "home" });
@@ -127,10 +146,22 @@ export default {
     });
   },
   methods: {
+    async checkDone() {
+      const q = query(
+        collection(db, "users"),
+        where("email", "==", store.userMail),
+        where("done", "==", true)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        this.done = true;
+      });
+    },
     signOut() {
+      store.userActiveState = false;
+      store.userMail = null;
       signOut(auth)
-        .then(() => {
-        })
+        .then(() => {})
         .catch((error) => {
           console.error(error);
         });
@@ -144,10 +175,9 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color:white;
-  background-color:#18191a;
+  color: white;
+  background-color: #18191a;
 }
-
 
 @media screen and (max-width: 62em) {
   .modHide {
@@ -157,9 +187,9 @@ export default {
 
 .navImp {
   color: rgb(203, 198, 198);
-  background-color:#242526 !important;
+  background-color: #242526 !important;
 }
-.fade{
+.fade {
   z-index: 100 !important;
 }
 </style>

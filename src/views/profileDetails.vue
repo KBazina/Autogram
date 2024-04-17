@@ -45,6 +45,7 @@
               placeholder="Ime i prezime"
               aria-label="ime_prezime"
               v-model="ime_prezime"
+              value="{{store.ime_prezime_default}}"
             />
             <span class="input-group-text">@</span>
             <input
@@ -72,7 +73,11 @@
               v-model="bio"
             ></textarea>
           </div>
-          <button type="submit" class="btn btn-outline-warning mt-3 me-3">
+          <button
+            :disabled="btnClicked"
+            type="submit"
+            class="btn btn-outline-warning mt-3 me-3"
+          >
             Dalje
           </button>
           <span class="warningSpan">
@@ -85,6 +90,7 @@
   </div>
 </template>
 <script>
+import store from "@/store";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useVuelidate } from "@vuelidate/core";
@@ -98,6 +104,13 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
+  query,
+  orderBy,
+  limit,
+  where,
+  getDocs,
+  getAuth,
+  onAuthStateChanged,
 } from "@/firebase";
 import {
   required,
@@ -106,6 +119,8 @@ import {
   maxLength,
   sameAs,
 } from "@vuelidate/validators";
+const auth = getAuth();
+
 const oneWord = (value) => value.trim().split(" ").length == 1;
 const moreWords = (value) => value.trim().split(" ").length >= 2;
 const storage = getStorage();
@@ -116,6 +131,8 @@ export default {
   },
   data() {
     return {
+      btnClicked: false,
+      store,
       imageFile: "",
       imageSrc: "",
       date: null,
@@ -126,6 +143,7 @@ export default {
   },
   validations() {
     return {
+      done: false,
       imageSrc: { required },
       date: { required },
       ime_prezime: {
@@ -141,17 +159,42 @@ export default {
       },
     };
   },
+  async created() {
+    onAuthStateChanged(auth, (user) => {
+      this.checkDone().then(() => {
+        if (this.done) {
+          this.$router.push({ name: "home" });
+        }
+      });
+    });
+  },
+
   methods: {
+    async checkDone() {
+      const q = query(
+        collection(db, "users"),
+        where("email", "==", store.userMail),
+        where("done", "==", true)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        this.done = true;
+      });
+    },
     async detailProfile(e) {
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) {
         console.log("nesto je krivo");
       } else {
+        this.btnClicked = true;
         const file = this.imageFile;
         const date = this.date;
         date.setHours(0, 0, 0);
         console.log("date:", date);
-        const storageRef = ref(storage, "profile_pictures/" + Date.now() + file.name);
+        const storageRef = ref(
+          storage,
+          "profile_pictures/" + Date.now() + file.name
+        );
         uploadBytes(storageRef, file)
           .then((snapshot) => {
             return getDownloadURL(ref(storageRef));
@@ -161,13 +204,19 @@ export default {
             console.log(url);
           })
           .then(() => {
-            const newUser = addDoc(collection(db, "users"), {
+            const userRef = doc(db, "users", "ID" + store.userMail);
+            setDoc(userRef, {
               imageSrc: this.imageSrc,
               date: date,
               ime_prezime: this.ime_prezime,
               username: this.username,
               bio: this.bio,
+              email: store.userMail,
+              done: true,
             });
+          })
+          .then(() => {
+            this.$router.push({ name: "home" });
           });
       }
     },

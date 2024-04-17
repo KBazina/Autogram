@@ -14,7 +14,7 @@
         name="ime_prezime"
         aria-label="First name"
         class="form-control"
-        @input = "InputUpdate('ime_prezime')"
+        @input="InputUpdate('ime_prezime')"
       />
     </div>
     <div class="text-danger" v-if="showImePrezimeDiv">
@@ -32,12 +32,10 @@
         class="form-control"
         id="exampleFormControlInput1"
         placeholder="name@example.com"
-        @input = "InputUpdate('email')"
+        @input="InputUpdate('email')"
       />
     </div>
-        <div class="text-danger" v-if="showEmailDiv">
-      Unesite valjan Email
-    </div>
+    <div class="text-danger" v-if="showEmailDiv">Unesite valjan Email</div>
     <label for="inputPassword5" class="form-label">Password</label>
     <input
       required
@@ -48,9 +46,9 @@
       class="form-control"
       aria-describedby="passwordHelpBlock"
       placeholder="********"
-      @input = "InputUpdate('password')"
+      @input="InputUpdate('password')"
     />
-        <div class="text-danger" v-if="showPasswordDiv">
+    <div class="text-danger" v-if="showPasswordDiv">
       Lozinka mora sadržavati između 8 i 20 znakova.
     </div>
     <div class="form-group my-3">
@@ -62,10 +60,10 @@
         class="form-control"
         id="exampleInputPassword2"
         placeholder="********"
-        @input = "InputUpdate('passwordRepeat')"
+        @input="InputUpdate('passwordRepeat')"
       />
     </div>
-            <div class="text-danger" v-if="showPasswordRepeatDiv">
+    <div class="text-danger" v-if="showPasswordRepeatDiv">
       Lozinke se ne podudaraju
     </div>
 
@@ -90,6 +88,7 @@
 
 <script>
 // @ is an alias to /src
+import store from "@/store";
 import { getAuth, createUserWithEmailAndPassword } from "@/firebase";
 import { useVuelidate } from "@vuelidate/core";
 import {
@@ -99,6 +98,7 @@ import {
   maxLength,
   sameAs,
 } from "@vuelidate/validators";
+import { collection, addDoc, db,setDoc, doc } from "@/firebase";
 
 const moreWords = (value) => value.trim().split(" ").length >= 2;
 const auth = getAuth();
@@ -109,6 +109,7 @@ export default {
   },
   data() {
     return {
+      store,
       btnClicked: false,
       ime_prezime: "",
       email: "",
@@ -135,14 +136,14 @@ export default {
   },
 
   methods: {
-    async InputUpdate(inputName){
-      if (inputName === 'ime_prezime') {
+    async InputUpdate(inputName) {
+      if (inputName === "ime_prezime") {
         this.showImePrezimeDiv = this.v$.ime_prezime.$error;
-      } else if (inputName === 'email') {
+      } else if (inputName === "email") {
         this.showEmailDiv = this.v$.email.$error;
-      } else if (inputName === 'password') {
+      } else if (inputName === "password") {
         this.showPasswordDiv = this.v$.password.$error;
-      } else if (inputName === 'passwordRepeat') {
+      } else if (inputName === "passwordRepeat") {
         this.showPasswordRepeatDiv = this.v$.passwordRepeat.$error;
       }
     },
@@ -155,8 +156,15 @@ export default {
         this.showPasswordRepeatDiv = this.v$.passwordRepeat.$error;
       } else {
         this.btnClicked = true;
+        store.ime_prezime_default = this.ime_prezime;
+        store.userActiveState = true;
         createUserWithEmailAndPassword(auth, this.email, this.password)
           .then(function () {
+            const usersRef = doc(db, "users","ID"+ store.userMail);
+            setDoc(usersRef, {
+              email: store.userMail,
+              done:false,
+            });
           })
           .catch((error) => {
             alert(error.message);

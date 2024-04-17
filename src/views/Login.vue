@@ -44,12 +44,14 @@
 <script>
 // @ is an alias to /src
 import { signInWithEmailAndPassword, getAuth } from "@/firebase";
+import store from "@/store"
 const auth = getAuth();
 
 export default {
   name: "login",
   data() {
     return {
+      store,
       email: "",
       password: "",
     };
@@ -57,6 +59,7 @@ export default {
 
   methods: {
     login() {
+      store.userMail=this.email
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           const user = userCredential.user;
