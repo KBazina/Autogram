@@ -99,8 +99,8 @@
 </template>
 
 <script>
-import router from "./router";
 import store from "@/store";
+import router from "./router";
 import {
   onAuthStateChanged,
   getAuth,
@@ -126,23 +126,24 @@ export default {
   },
   async created() {
     onAuthStateChanged(auth, (user) => {
-      this.checkDone().then(() => {
-        if (!this.done && user) {
-          this.$router.push({ name: "profileDetails" });
-        }
-      });
       if (user) {
         store.userMail = user.email;
         this.UserActive = user;
         if (!currentRoute.value.meta.needsUser) {
-          this.$router.push({ name: "home" });
+          this.$router.replace({ name: "home" });
         }
       } else {
         this.UserActive = null;
         if (currentRoute.value.meta.needsUser) {
-          this.$router.push({ name: "login" });
+          this.$router.replace({ name: "login" });
         }
       }
+      console.log("nesto radim sada")
+      this.checkDone().then(() => {
+        if (!this.done && user) {
+          this.$router.replace({ name: "profileDetails" });
+        }
+      });
     });
   },
   methods: {
@@ -154,6 +155,7 @@ export default {
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
+        console.log(doc, "storemail: ", store.userMail)
         this.done = true;
       });
     },

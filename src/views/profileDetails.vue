@@ -45,7 +45,6 @@
               placeholder="Ime i prezime"
               aria-label="ime_prezime"
               v-model="ime_prezime"
-              value="{{store.ime_prezime_default}}"
             />
             <span class="input-group-text">@</span>
             <input
@@ -163,7 +162,7 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.checkDone().then(() => {
         if (this.done) {
-          this.$router.push({ name: "home" });
+          this.$router.replace({ name: "home" });
         }
       });
     });
@@ -171,6 +170,9 @@ export default {
 
   methods: {
     async checkDone() {
+      this.ime_prezime=store.ime_prezime_default
+      console.log("ime prezime:",store.ime_prezime_default,"email: ",store.userMail)
+      console.log(store.ime_prezime_default)
       const q = query(
         collection(db, "users"),
         where("email", "==", store.userMail),
@@ -216,7 +218,7 @@ export default {
             });
           })
           .then(() => {
-            this.$router.push({ name: "home" });
+            this.$router.replace({ name: "home" });
           });
       }
     },
