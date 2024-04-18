@@ -29,6 +29,14 @@
               aria-label="Upload"
               @change="onFileChange($event)"
             />
+            <button
+              class="btn btn-outline-light"
+              type="button"
+              id="button-addon2"
+              @click="signOut"
+            >
+              Odustani
+            </button>
           </div>
         </div>
         <div class="col secondCol mt-5">
@@ -110,6 +118,7 @@ import {
   getDocs,
   getAuth,
   onAuthStateChanged,
+  signOut
 } from "@/firebase";
 import {
   required,
@@ -170,9 +179,14 @@ export default {
 
   methods: {
     async checkDone() {
-      this.ime_prezime=store.ime_prezime_default
-      console.log("ime prezime:",store.ime_prezime_default,"email: ",store.userMail)
-      console.log(store.ime_prezime_default)
+      this.ime_prezime = store.ime_prezime_default;
+      console.log(
+        "ime prezime:",
+        store.ime_prezime_default,
+        "email: ",
+        store.userMail
+      );
+      console.log(store.ime_prezime_default);
       const q = query(
         collection(db, "users"),
         where("email", "==", store.userMail),
@@ -229,6 +243,15 @@ export default {
         this.imageFile = file;
         console.log(this.imageFile);
       }
+    },
+    signOut() {
+      store.userActiveState = false;
+      store.userMail = null;
+      signOut(auth)
+        .then(() => {})
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
   components: { VueDatePicker },
