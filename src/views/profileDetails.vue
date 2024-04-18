@@ -98,7 +98,7 @@
 </template>
 <script>
 import store from "@/store";
-import VueDatePicker from "@vuepic/vue-datepicker";
+// import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useVuelidate } from "@vuelidate/core";
 import {
@@ -254,7 +254,7 @@ export default {
         });
     },
   },
-  components: { VueDatePicker },
+  // components: { VueDatePicker },
 };
 </script>
 <style>
