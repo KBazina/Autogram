@@ -1,11 +1,11 @@
 <template>
   <div class="newsDiv ">
     <div class="card my-3 m-auto">
-      <img :src="info.urlToImage" class="card-img-top" alt="..." />
+      <img :src="infoNew.urlToImage" class="card-img-top" alt="..." />
       <div class="card-body">
-        <h5 class="card-title">{{ info.title }}</h5>
+        <h5 class="card-title">{{ infoNew.title }}</h5>
         <p class="card-text">
-          <a :href="info.url"  >
+          <a :href="infoNew.url"  >
             Read more
           </a>
         </p>
@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  props: ["info"],
+  props: ["infoNew"],
   name: "newsCard",
   data() {
     return {};

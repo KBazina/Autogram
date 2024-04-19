@@ -1,5 +1,5 @@
 <template>
-  <nav class="navImp navbar navbar-expand-lg sticky-top">
+  <nav class="navImp navbar navbar-expand-lg topSticky">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
         <img src="@/assets/logo.png" alt="" width="60" height="" />
@@ -34,7 +34,7 @@
             placeholder="Search"
             aria-label="Search"
           />
-          <button class="btn btn-outline-success" type="submit">Search</button>
+          <button class="btn btn-outline-success" type="button">Search</button>
         </form>
         <div v-if="!UserActive" class="modHide">
           What is autogram?
@@ -46,7 +46,12 @@
           >
             More information!
           </button>
-          <div
+        </div>
+      </div>
+    </div>
+    <hr />
+  </nav>
+  <div
             class="modal fade"
             id="staticBackdrop"
             data-bs-backdrop="static"
@@ -90,11 +95,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-    <hr />
-  </nav>
   <router-view />
 </template>
 
@@ -191,7 +191,8 @@ export default {
   color: rgb(203, 198, 198);
   background-color: #242526 !important;
 }
-.fade {
-  z-index: 100 !important;
+
+.topSticky {
+ position: sticky;
 }
 </style>
