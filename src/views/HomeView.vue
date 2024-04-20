@@ -81,13 +81,23 @@
                   aria-label="Close"
                 ></button>
               </div>
-              <div class="modal-body">
+              <div class="modal-body p-0">
                 <p
                   ref="paragraph"
                   class="m-0 p-1"
                   contenteditable="true"
                   @input="handleInput"
                 ></p>
+                <!-- ------- -->
+                <div class="image_wrapper">
+                  <ul class="imageList p-0">
+                    <li class="liIMG" v-for="(image, index) in images" :key="index">
+                      <img :src="image" alt="Slika" />
+                      <button class="btn-close btnDelete" @click="deleteImage(index)"></button>
+                    </li>
+                  </ul>
+                </div>
+                <!-- ------ -->
               </div>
               <hr class="my-0" />
               <textarea
@@ -107,7 +117,7 @@
                   </label>
                   <input
                     type="file"
-                    ref="file"
+                    ref="fileInputer"
                     id="fileInput"
                     @change="onFileChange($event)"
                     style="display: none"
@@ -135,7 +145,7 @@
 
 <script>
 import axios from "axios";
-import  store  from "@/store";
+import store from "@/store";
 import newsCard from "@/components/newsCard.vue";
 import { Icon } from "@iconify/vue";
 import {
@@ -152,7 +162,9 @@ const storage = getStorage();
 export default {
   data() {
     return {
-      postText:"",
+      images: [],
+      currentIndex: 0,
+      postText: "",
       store,
       imageFile: null,
       imageSrc: "",
@@ -164,12 +176,15 @@ export default {
     this.getNews();
   },
   methods: {
+    deleteImage(index){
+this.images.splice(index, 1);
+    },
     handleInput(event) {
       if (event.shiftKey && event.key === "Enter") {
         event.preventDefault();
         this.$refs.paragraph.insertAdjacentHTML("beforeend", "<br>");
       }
-      this.postText=this.$refs.paragraph.innerHTML
+      this.postText = this.$refs.paragraph.innerHTML;
     },
     handleTextArea() {
       if (this.$refs.textarea.value.length > 60) {
@@ -198,20 +213,21 @@ export default {
             "posts",
             "post" + Date.now()
           );
-          setDoc(postRef,{
-            image:this.imageSrc,
-            hashtags:this.hashtags.split("#"),
-            postText:this.postText
-          })
+          setDoc(postRef, {
+            image: this.imageSrc,
+            hashtags: this.hashtags.split("#"),
+            postText: this.postText,
+          });
         });
     },
     onFileChange(event) {
       const file = event.target.files[0];
       if (file) {
         this.imageSrc = URL.createObjectURL(file);
+        this.images.push(this.imageSrc );
         this.imageFile = file;
-        console.log(this.imageFile);
       }
+      this.$refs.fileInputer.value = "";
     },
     async getNews() {
       try {
@@ -238,6 +254,33 @@ export default {
 </script>
 
 <style>
+.btnDelete {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 100; 
+}
+ul{
+  list-style: none;
+}
+.liIMG {
+  background-color: #5e6266;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.liIMG img {
+  max-height: 500px;
+  max-width: 500px;
+  width: auto;
+  object-fit: contain;
+  background-color: #5e6266;
+}
 .modal-content {
   background-color: rgb(36, 37, 38) !important;
 }
