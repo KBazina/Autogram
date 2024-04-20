@@ -89,12 +89,37 @@
                   @input="handleInput"
                 ></p>
               </div>
+              <hr class="my-0" />
+              <textarea
+                v-model="hashtags"
+                class="visina2"
+                ref="textarea"
+                placeholder="#BaciHEŠTEG"
+                id="floatingTextarea"
+                @input="handleTextArea"
+                @keydown.space.prevent
+              ></textarea>
               <div class="modal-footer p-1">
-                <div class="btn btn-dark PostBG me-2">
-                  <Icon icon="mdi:tooltip-image" width="30" class="me-2" />
-                  Dodaj fotografiju
+                <div class="btn btn-dark PostBG me-2 p-0">
+                  <label for="fileInput" class="input-label p-1">
+                    <Icon icon="mdi:tooltip-image" width="30" class="me-2" />
+                    Dodaj fotografiju
+                  </label>
+                  <input
+                    type="file"
+                    ref="file"
+                    id="fileInput"
+                    @change="onFileChange($event)"
+                    style="display: none"
+                  />
                 </div>
-                <button type="button" class="btn btn-light mx-2">Objavi</button>
+                <button
+                  type="button"
+                  @click="addPost"
+                  class="btn btn-light mx-2"
+                >
+                  Objavi
+                </button>
               </div>
             </div>
           </div>
@@ -110,12 +135,28 @@
 
 <script>
 import axios from "axios";
+import  store  from "@/store";
 import newsCard from "@/components/newsCard.vue";
 import { Icon } from "@iconify/vue";
-
+import {
+  doc,
+  where,
+  setDoc,
+  ref,
+  getStorage,
+  uploadBytes,
+  getDownloadURL,
+  db,
+} from "@/firebase";
+const storage = getStorage();
 export default {
   data() {
     return {
+      postText:"",
+      store,
+      imageFile: null,
+      imageSrc: "",
+      hashtags: "",
       news: [],
     };
   },
@@ -127,6 +168,49 @@ export default {
       if (event.shiftKey && event.key === "Enter") {
         event.preventDefault();
         this.$refs.paragraph.insertAdjacentHTML("beforeend", "<br>");
+      }
+      this.postText=this.$refs.paragraph.innerText
+    },
+    handleTextArea() {
+      if (this.$refs.textarea.value.length > 60) {
+        this.$refs.textarea.value = this.$refs.textarea.value.substring(0, 60);
+      }
+    },
+    addPost() {
+      const file = this.imageFile;
+      const storageRef = ref(
+        storage,
+        "postsPictures/" + Date.now() + file.name
+      );
+      uploadBytes(storageRef, file)
+        .then((snapshot) => {
+          return getDownloadURL(ref(storageRef));
+        })
+        .then((url) => {
+          this.imageSrc = url;
+          console.log(url);
+        })
+        .then(() => {
+          const postRef = doc(
+            db,
+            "users",
+            "ID" + store.userMail,
+            "posts",
+            "post" + Date.now()
+          );
+          setDoc(postRef,{
+            image:this.imageSrc,
+            hashtags:this.hashtags.split("#"),
+            postText:this.postText
+          })
+        });
+    },
+    onFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.imageSrc = URL.createObjectURL(file);
+        this.imageFile = file;
+        console.log(this.imageFile);
       }
     },
     async getNews() {
@@ -154,6 +238,24 @@ export default {
 </script>
 
 <style>
+.modal-content {
+  background-color: rgb(36, 37, 38) !important;
+}
+.input-label {
+  cursor: pointer;
+}
+.visina2 {
+  color: rgb(87, 87, 220);
+  resize: none;
+  overflow-y: hidden;
+  height: 30px;
+  outline: none;
+  background-color: #18191a;
+  border: none;
+}
+.visina2:focus {
+  border: none;
+}
 p:focus {
   border: none;
 }
