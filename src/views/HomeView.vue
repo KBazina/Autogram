@@ -169,7 +169,7 @@ export default {
         event.preventDefault();
         this.$refs.paragraph.insertAdjacentHTML("beforeend", "<br>");
       }
-      this.postText=this.$refs.paragraph.innerText
+      this.postText=this.$refs.paragraph.innerHTML
     },
     handleTextArea() {
       if (this.$refs.textarea.value.length > 60) {
