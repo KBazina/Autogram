@@ -91,9 +91,16 @@
                 <!-- ------- -->
                 <div class="image_wrapper">
                   <ul class="imageList p-0">
-                    <li class="liIMG" v-for="(image, index) in images" :key="index">
+                    <li
+                      class="liIMG"
+                      v-for="(image, index) in images"
+                      :key="index"
+                    >
                       <img :src="image" alt="Slika" />
-                      <button class="btn-close btnDelete" @click="deleteImage(index)"></button>
+                      <button
+                        class="btn-close btnDelete"
+                        @click="deleteImage(index)"
+                      ></button>
                     </li>
                   </ul>
                 </div>
@@ -124,6 +131,7 @@
                   />
                 </div>
                 <button
+                  :disabled="btnClicked"
                   type="button"
                   @click="addPost"
                   class="btn btn-light mx-2"
@@ -162,7 +170,10 @@ const storage = getStorage();
 export default {
   data() {
     return {
+      btnClicked: false,
+      newFireURL_Images: [],
       images: [],
+      fileImages: [],
       currentIndex: 0,
       postText: "",
       store,
@@ -176,8 +187,9 @@ export default {
     this.getNews();
   },
   methods: {
-    deleteImage(index){
-this.images.splice(index, 1);
+    deleteImage(index) {
+      this.images.splice(index, 1);
+      this.fileImages.splice(index, 1);
     },
     handleInput(event) {
       if (event.shiftKey && event.key === "Enter") {
@@ -192,20 +204,28 @@ this.images.splice(index, 1);
       }
     },
     addPost() {
-      const file = this.imageFile;
-      const storageRef = ref(
-        storage,
-        "postsPictures/" + Date.now() + file.name
-      );
-      uploadBytes(storageRef, file)
-        .then((snapshot) => {
-          return getDownloadURL(ref(storageRef));
-        })
-        .then((url) => {
-          this.imageSrc = url;
-          console.log(url);
-        })
-        .then(() => {
+      if (this.postText == "" && this.images.length==0) {
+        alert("Nisi dodao nikakav sadržaj postu!");
+      } else {
+        this.btnClicked = true;
+        const fileImages = this.fileImages;
+        fileImages.forEach((file) => {
+          const storageRef = ref(
+            storage,
+            "postsPictures/" + Date.now() + file.name
+          );
+          uploadBytes(storageRef, file)
+            .then((snapshot) => {
+              return getDownloadURL(ref(storageRef));
+            })
+            .then((url) => {
+              this.newFireURL_Images.push(url);
+              this.imageSrc = url;
+              console.log(url);
+            });
+        });
+
+        setTimeout(() => {
           const postRef = doc(
             db,
             "users",
@@ -214,17 +234,30 @@ this.images.splice(index, 1);
             "post" + Date.now()
           );
           setDoc(postRef, {
-            image: this.imageSrc,
+            images: this.newFireURL_Images,
             hashtags: this.hashtags.split("#"),
             postText: this.postText,
           });
-        });
+          this.newFireURL_Images = [];
+          this.$refs.paragraph.innerHTML = "";
+          this.$refs.textarea.value = "";
+          this.hashtags = this.$refs.textarea.value;
+          this.postText = this.$refs.paragraph.innerHTML;
+          this.images = [];
+          this.btnClicked = false;
+          this.fileImages = [];
+          this.imageSrc = "";
+          this.imageFile = null;
+        }, 2000);
+        alert("Dodali ste novi post!")
+      }
     },
     onFileChange(event) {
       const file = event.target.files[0];
       if (file) {
         this.imageSrc = URL.createObjectURL(file);
-        this.images.push(this.imageSrc );
+        this.images.push(this.imageSrc);
+        this.fileImages.push(file);
         this.imageFile = file;
       }
       this.$refs.fileInputer.value = "";
@@ -258,9 +291,9 @@ this.images.splice(index, 1);
   position: absolute;
   top: 5px;
   right: 5px;
-  z-index: 100; 
+  z-index: 100;
 }
-ul{
+ul {
   list-style: none;
 }
 .liIMG {
