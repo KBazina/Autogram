@@ -31,11 +31,7 @@
     </div>
   </div>
 
- <postCard 
- v-for="card in this.cards"
-        :key="card.posted_at"
-        :info="card"
- />
+  <postCard v-for="card in this.cards" :key="card.posted_at" :info="card" />
 </template>
 
 <script>
@@ -79,13 +75,15 @@ export default {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         this.cards.push({
-          hashtags:data.hashtags,
+          hashtags: data.hashtags,
           time: data.posted_at,
           postText: data.postText,
           images: data.images[0],
+          profileImage: this.ProfileImageSrc,
+          username: this.username,
         });
       });
-      console.log("karte su ovo: ",this.cards)
+      console.log("karte su ovo: ", this.cards);
     },
 
     async getProfileInfo() {
@@ -111,10 +109,9 @@ export default {
       this.getPosts();
     });
   },
-components:{
-  postCard
-}
-
+  components: {
+    postCard,
+  },
 };
 </script>
 
@@ -152,7 +149,6 @@ hr {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  
 }
 </style>
 

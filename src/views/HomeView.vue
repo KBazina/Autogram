@@ -52,6 +52,7 @@
             class="btn btn-dark PostBG"
             data-bs-toggle="modal"
             data-bs-target="#staticBackdrop2"
+            @click="$refs.fileInputer.click()"
           >
             <Icon icon="mdi:tooltip-image" width="30" class="me-2" /> Dodaj
             fotografiju
@@ -89,10 +90,10 @@
                   @input="handleInput"
                 ></p>
                 <!-- ------- -->
-                <div class="image_wrapper">
-                  <ul class="imageList p-0">
+                <div class="image_wrapper p-0">
+                  <ul class="imageList p-0 mb-0">
                     <li
-                      class="liIMG"
+                      class="liIMG mt-2"
                       v-for="(image, index) in images"
                       :key="index"
                     >
@@ -124,7 +125,7 @@
                     Dodaj fotografiju
                   </label>
                   <input
-                  :disabled="btnClicked"
+                    :disabled="btnClicked"
                     type="file"
                     ref="fileInputer"
                     id="fileInput"
@@ -237,7 +238,9 @@ export default {
           );
           setDoc(postRef, {
             images: this.newFireURL_Images,
-            hashtags: this.hashtags.split("#").filter(element => element !== ""),
+            hashtags: this.hashtags
+              .split("#")
+              .filter((element) => element !== ""),
             postText: this.postText,
             posted_at: Date.now(),
           });
@@ -297,6 +300,16 @@ export default {
 }
 ul {
   list-style: none;
+}
+
+.imageList{
+font-size: 0;
+}
+.imageList button{
+  font-size: 20px;
+}
+.imageList:first-child{
+  margin-top:0;
 }
 .liIMG {
   background-color: #5e6266;
