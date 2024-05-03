@@ -2,25 +2,40 @@
   <div class="card position-relative my-4">
     <div class="card-header">
       <div class="okvir2">
-          <img 
-            :src="info.profileImage"
-            class="rounded-circle sredina"
-            alt="..."
-          />
+        <img
+          :src="info.profileImage"
+          class="rounded-circle sredina"
+          alt="..."
+        />
 
         <span class="curive ms-2">{{ info.username }}</span>
         <span class="desno me-2"> {{ postedFromNow }}</span>
       </div>
     </div>
-    <div v-if="info.images" class="image-wrapper">
-      <img :src="info.images" class="card-img-top" alt="..." />
+    <div v-if="info.images.length>0" class="image-wrapper carousel-inner">
+      <button 
+      @click="counterUP"
+      class="carousel-control-prev" type="button">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      </button>
+      <img :src="info.images[counter]" class="card-img-top" alt="..." />
+      <button
+        @click="counterDown"
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleFade"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      </button>
     </div>
 
     <div class="card-body">
-      <p class="card-text" v-html="info.postText">
-      </p>
+      <p class="card-text" v-html="info.postText"></p>
       <p v-if="info.hashtags != ''" class="mb-1 hashtags">
-       <span v-for="(tag,index) in info.hashtags" :key="index"> #{{tag}}</span>
+        <span v-for="(tag, index) in info.hashtags" :key="index">
+          #{{ tag }}</span
+        >
       </p>
       <hr class="mt-0" />
       Like @ <span class="desno me-2"> Komentiraj</span>
@@ -31,11 +46,28 @@
 <script>
 import moment from "moment";
 export default {
+  data() {
+    return {
+      counter: 0,
+    };
+  },
   props: ["info"],
   name: "PostCard",
   computed: {
     postedFromNow() {
       return moment(this.info.time).fromNow();
+    },
+  },
+  methods: {
+    counterUP() {
+      if (this.counter == this.info.images.length - 1) {
+        this.counter = 0;
+      } else this.counter += 1;
+    },
+    counterDown() {
+      if (this.counter == 0) {
+        this.counter = this.info.images.length - 1;
+      } else this.counter -= 1;
     },
   },
 };

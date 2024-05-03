@@ -136,6 +136,7 @@
                 <button
                   :disabled="btnClicked"
                   type="button"
+                  data-bs-dismiss="modal"
                   @click="addPost"
                   class="btn btn-light mx-2"
                 >
@@ -204,7 +205,7 @@ export default {
   mounted() {
     this.getPosts();
     onAuthStateChanged(auth, (user) => {
-      console.log("SADA SAM SE CUITAO I TREBAM POZVAT § FUNCIJKE§§§§§§§3")
+      console.log("SADA SAM SE CUITAO I TREBAM POZVAT § FUNCIJKE§§§§§§§3");
       this.getNews();
       this.getProfileInfo();
     });
@@ -242,9 +243,9 @@ export default {
               return getDownloadURL(ref(storageRef));
             })
             .then((url) => {
-              this.newFireURL_Images.push(url);
+              this.newFireURL_Images.unshift(url);
               this.imageSrc = url;
-              console.log(url);
+              console.log(url, "A VOO JE IMAGETANIZ: ", this.newFireURL_Images);
             });
         });
 
@@ -256,6 +257,7 @@ export default {
             "posts",
             "post" + Date.now()
           );
+          console.log("OOVOOO SU IMAGES. ", this.newFireURL_Images);
           setDoc(postRef, {
             images: this.newFireURL_Images,
             hashtags: this.hashtags
@@ -276,6 +278,9 @@ export default {
           this.fileImages = [];
           this.imageSrc = "";
           this.imageFile = null;
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000);
         }, 2000);
       }
     },
@@ -289,7 +294,7 @@ export default {
           hashtags: data.hashtags,
           time: data.posted_at,
           postText: data.postText,
-          images: data.images[0],
+          images: data.images,
           profileImage: data.ownerImage,
           username: data.username,
         });
@@ -301,8 +306,8 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.imageSrc = URL.createObjectURL(file);
-        this.images.push(this.imageSrc);
-        this.fileImages.push(file);
+        this.images.unshift(this.imageSrc);
+        this.fileImages.unshift(file);
         this.imageFile = file;
       }
       this.$refs.fileInputer.value = "";

@@ -78,7 +78,7 @@ export default {
           hashtags: data.hashtags,
           time: data.posted_at,
           postText: data.postText,
-          images: data.images[0],
+          images: data.images,
           profileImage: this.ProfileImageSrc,
           username: this.username,
         });
