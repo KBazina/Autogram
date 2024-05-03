@@ -35,7 +35,7 @@
         <div class="container PostBG pt-3 pb-1 rounded-4">
           <div class="okvir2">
             <img
-              src="@/assets/mateo.png"
+              :src="ProfileImageSrc"
               class="rounded-circle sredina me-5 ms-2"
               alt="..."
             />
@@ -145,6 +145,7 @@
             </div>
           </div>
         </div>
+          <postCard v-for="card in this.cards" :key="card.posted_at" :info="card" />
       </div>
       <div class="visina d-none d-lg-block col-3 overflow-y-scroll">
         <newsCard v-for="article in news" :key="article" :infoNew="article">
@@ -156,23 +157,33 @@
 
 <script>
 import axios from "axios";
+import postCard from "@/components/postCard.vue";
 import store from "@/store";
 import newsCard from "@/components/newsCard.vue";
 import { Icon } from "@iconify/vue";
 import {
+  getAuth,
+  onAuthStateChanged,
   doc,
   where,
   setDoc,
+  orderBy,
+  collection,
   ref,
   getStorage,
   uploadBytes,
   getDownloadURL,
   db,
+  collectionGroup,
+  query,
+  getDocs,
 } from "@/firebase";
 const storage = getStorage();
+const auth = getAuth();
 export default {
   data() {
     return {
+      ProfileImageSrc: "",
       btnClicked: false,
       newFireURL_Images: [],
       images: [],
@@ -187,7 +198,11 @@ export default {
     };
   },
   mounted() {
-    this.getNews();
+    onAuthStateChanged(auth, (user) => {
+      this.getNews();
+      this.getProfileInfo();
+      this.getPosts();
+    });
   },
   methods: {
     deleteImage(index) {
@@ -243,6 +258,8 @@ export default {
               .filter((element) => element !== ""),
             postText: this.postText,
             posted_at: Date.now(),
+            ownerImage: this.ProfileImageSrc,
+            ownerUsername: this.username,
           });
           this.newFireURL_Images = [];
           this.$refs.paragraph.innerHTML = "";
@@ -257,6 +274,25 @@ export default {
         }, 2000);
       }
     },
+    async getPosts() {
+      const q = query(
+        collectionGroup(db, `posts`)
+      );
+      const querySnapshot = await getDocs(q);
+      this.cards = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.cards.push({
+          hashtags: data.hashtags,
+          time: data.posted_at,
+          postText: data.postText,
+          images: data.images[0],
+          profileImage: data.ownerImage,
+          username: data.username,
+        });
+      });
+      console.log("karte su ovo: ", this.cards);
+    },
     onFileChange(event) {
       const file = event.target.files[0];
       if (file) {
@@ -266,6 +302,19 @@ export default {
         this.imageFile = file;
       }
       this.$refs.fileInputer.value = "";
+    },
+
+    async getProfileInfo() {
+      const q = query(
+        collection(db, "users"),
+        where("email", "==", store.userMail)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.ProfileImageSrc = data.imageSrc;
+        this.username = data.username;
+      });
     },
     async getNews() {
       try {
@@ -286,6 +335,7 @@ export default {
   },
   components: {
     newsCard,
+    postCard,
     Icon,
   },
 };
@@ -302,14 +352,14 @@ ul {
   list-style: none;
 }
 
-.imageList{
-font-size: 0;
+.imageList {
+  font-size: 0;
 }
-.imageList button{
+.imageList button {
   font-size: 20px;
 }
-.imageList:first-child{
-  margin-top:0;
+.imageList:first-child {
+  margin-top: 0;
 }
 .liIMG {
   background-color: #5e6266;
@@ -368,6 +418,7 @@ p {
 .okvir2 img {
   width: 40px;
   height: auto;
+  max-height: 40px;
   object-fit: cover;
 }
 .visina {

@@ -27,7 +27,7 @@
             <div class="p-2 bio">* {{ this.bio }}</div>
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   </div>
 

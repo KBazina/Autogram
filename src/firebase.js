@@ -18,6 +18,7 @@ import {
   limit,
   where,
   getDocs,
+  collectionGroup,
 } from "firebase/firestore";
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -57,4 +58,5 @@ export {
   limit,
   where,
   getDocs,
+  collectionGroup
 };

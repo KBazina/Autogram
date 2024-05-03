@@ -2,7 +2,7 @@
   <div class="card position-relative my-4">
     <div class="card-header">
       <div class="okvir2">
-          <img
+          <img 
             :src="info.profileImage"
             class="rounded-circle sredina"
             alt="..."
