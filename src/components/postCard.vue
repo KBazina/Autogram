@@ -1,54 +1,82 @@
 <template>
   <div class="card position-relative my-4">
-    <div class="position-absolute top-0 start-50 translate-middle">
+    <div class="card-header">
       <div class="okvir2">
         <img
           src="@/assets/mateo.png"
           class="rounded-circle sredina"
           alt="..."
         />
+
+        <span class="curive ms-2">Karlo_VK</span>
+        <span class="desno me-2"> {{ postedFromNow }}</span>
       </div>
     </div>
-    <div class="card-header">
-      KARLO BAZINA <span class="desno me-2"> 2 days ago</span>
+    <div v-if="info.images" class="image-wrapper">
+      <img :src="info.images" class="card-img-top " alt="..." />
     </div>
-    <img src="@/assets/circle.jpg" class="card-img-top" alt="..." />
+
     <div class="card-body">
       <p class="card-text">
-        Cura me naterala da kupim rozi auto. <br />
-        Obiteljski!
+        {{ info.postText }}
       </p>
-      <hr />
+      <p v-if='info.hashtags!=""' class="mb-1 hashtags">{{ info.hashtags }}</p>
+      <hr class="mt-0" />
       Like @ <span class="desno me-2"> Komentiraj</span>
     </div>
   </div>
 </template>
 
 <script>
+import moment from "moment";
 export default {
-  props: ["infoPost"],
-  name: "postCard",
-  data() {
-    return {};
+  props: ["info"],
+  name: "PostCard",
+  computed: {
+    postedFromNow() {
+      return moment(this.info.time).fromNow();
+    },
   },
 };
 </script>
-
 <style>
+.image-wrapper{
+  background-color: #5e6266;
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  overflow: hidden;
+  text-align: center;
+}
+.image-wrapper img{
+  max-height: 500px;
+  max-width: 500px;
+  width: auto;
+  object-fit: contain;
+  background-color: #5e6266;
+}
+.desno {
+  float: right;
+}
 .okvir2 {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 35px;
 }
 .okvir2 img {
-  width: 100%;
-  height: 100%;
+  width: 35px;
+  height: auto;
   object-fit: cover;
 }
 .card {
   background-color: #242526 !important;
+  width: 500px;
+  margin: auto;
 }
-.desno {
-  float: right;
+.curive {
+  font-family: cursive;
+}
+.hashtags {
+  color: green;
 }
 </style>

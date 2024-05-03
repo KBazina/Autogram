@@ -115,6 +115,7 @@
                 id="floatingTextarea"
                 @input="handleTextArea"
                 @keydown.space.prevent
+                spellcheck="false"
               ></textarea>
               <div class="modal-footer p-1">
                 <div class="btn btn-dark PostBG me-2 p-0">
@@ -123,6 +124,7 @@
                     Dodaj fotografiju
                   </label>
                   <input
+                  :disabled="btnClicked"
                     type="file"
                     ref="fileInputer"
                     id="fileInput"
@@ -204,7 +206,7 @@ export default {
       }
     },
     addPost() {
-      if (this.postText == "" && this.images.length==0) {
+      if (this.postText == "" && this.images.length == 0) {
         alert("Nisi dodao nikakav sadržaj postu!");
       } else {
         this.btnClicked = true;
@@ -235,8 +237,9 @@ export default {
           );
           setDoc(postRef, {
             images: this.newFireURL_Images,
-            hashtags: this.hashtags.split("#"),
+            hashtags: this.hashtags.split("#").filter(element => element !== ""),
             postText: this.postText,
+            posted_at: Date.now(),
           });
           this.newFireURL_Images = [];
           this.$refs.paragraph.innerHTML = "";
@@ -249,7 +252,6 @@ export default {
           this.imageSrc = "";
           this.imageFile = null;
         }, 2000);
-        alert("Dodali ste novi post!")
       }
     },
     onFileChange(event) {
@@ -321,7 +323,7 @@ ul {
   cursor: pointer;
 }
 .visina2 {
-  color: rgb(87, 87, 220);
+  color: green;
   resize: none;
   overflow-y: hidden;
   height: 30px;

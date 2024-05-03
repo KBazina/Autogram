@@ -26,6 +26,7 @@
       id="inputPassword5"
       class="form-control mb-4"
       aria-describedby="passwordHelpBlock"
+      @keydown.enter="login()"
     />
     <button type="button" @click="login()" class="btn btn-outline-warning mb-3">
       Login

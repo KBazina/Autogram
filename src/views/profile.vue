@@ -8,7 +8,7 @@
     <div class="pola position-relative">
       <div class="okvir position-absolute top-100 start-50 translate-middle">
         <img
-          src="@/assets/circle.jpg"
+          :src="this.ProfileImageSrc"
           alt=""
           class="rounded-circle border-4 border border-light"
         />
@@ -17,27 +17,116 @@
   </div>
 
   <div class="container-fluid mt-4">
-    <div class="row " >
-      <div class=" col-3 ">
-          <div class="vstack gap-2 ms-3 mt-2">
-            <div class="  p-2 fs-1">Mateo Udovitjitj</div>
-            <hr>
-            <div class="p-2 fs-5">Promijeni sliku profila</div>
-            <div class="p-2  fs-5">Dodaj auto</div>
-            <div class="p-2  fs-5">Uredi auto</div>
-            <div class="p-2  fs-5">Utrke</div>
-            <div class="p-2 fs-5">Osvojeni trofeji</div>
-            <div class="p-2  fs-5">Moji pratitelji</div>
+    <div class="row">
+      <div class="col-3">
+        <div class="vstack gap-2 ms-3 mt-2">
+          <div class="p-2 fs-1">@{{ this.username }}</div>
+          <hr />
+          <div class="p-2 fs-5">
+            {{ this.ime_prezime }}
+            <div class="p-2 bio">* {{ this.bio }}</div>
           </div>
-
+        </div>
       </div>
     </div>
-    </div>
+  </div>
+
+ <postCard 
+ v-for="card in this.cards"
+        :key="card.posted_at"
+        :info="card"
+ />
 </template>
 
+<script>
+import postCard from "@/components/postCard.vue";
+import store from "@/store";
+import {
+  doc,
+  collection,
+  db,
+  getStorage,
+  ref,
+  query,
+  orderBy,
+  where,
+  getDocs,
+  getAuth,
+  onAuthStateChanged,
+} from "@/firebase";
+const auth = getAuth();
+
+export default {
+  name: "profile",
+  data() {
+    return {
+      cards: [],
+      ProfileImageSrc: "",
+      bio: "",
+      ime_prezime: "",
+      username: "",
+    };
+  },
+
+  methods: {
+    async getPosts() {
+      const q = query(
+        collection(db, `users/ID${store.userMail}/posts`),
+        orderBy("posted_at", "desc")
+      );
+      const querySnapshot = await getDocs(q);
+      this.cards = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.cards.push({
+          hashtags:data.hashtags,
+          time: data.posted_at,
+          postText: data.postText,
+          images: data.images[0],
+        });
+      });
+      console.log("karte su ovo: ",this.cards)
+    },
+
+    async getProfileInfo() {
+      const q = query(
+        collection(db, "users"),
+        where("email", "==", store.userMail)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        console.log(data);
+        this.ime_prezime = data.ime_prezime;
+        this.ProfileImageSrc = data.imageSrc;
+        this.bio = data.bio;
+        this.username = data.username;
+      });
+    },
+  },
+
+  async created() {
+    onAuthStateChanged(auth, (user) => {
+      this.getProfileInfo();
+      this.getPosts();
+    });
+  },
+components:{
+  postCard
+}
+
+};
+</script>
+
 <style>
-hr{
-  border:1px solid white;
+.bio {
+  margin-top: 0;
+  margin-left: 20px;
+  font-size: 15px !important;
+  font-family: cursive;
+}
+hr {
+  border: 1px solid white;
 }
 .pola {
   width: 60vw;
@@ -59,12 +148,12 @@ hr{
 }
 
 .okvir img {
+  background-color: aliceblue;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  
 }
-
-
 </style>
 
 <script></script>
