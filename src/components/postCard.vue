@@ -12,10 +12,8 @@
         <span class="desno me-2"> {{ postedFromNow }}</span>
       </div>
     </div>
-    <div v-if="info.images.length>0" class="image-wrapper carousel-inner">
-      <button 
-      @click="counterUP"
-      class="carousel-control-prev" type="button">
+    <div v-if="info.images.length > 0" class="image-wrapper carousel-inner">
+      <button @click="counterUP" class="carousel-control-prev" type="button">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       </button>
       <img :src="info.images[counter]" class="card-img-top" alt="..." />
@@ -38,13 +36,15 @@
         >
       </p>
       <hr class="mt-0" />
-      Like @ <span class="desno me-2"> Komentiraj</span>
+      <Icon icon="mdi:cards-heart-outline" width="30" class="me-2" />Like
+      <span class="desno me-2"> Komentiraj</span>
     </div>
   </div>
 </template>
 
 <script>
 import moment from "moment";
+import { Icon } from "@iconify/vue";
 export default {
   data() {
     return {
@@ -69,6 +69,9 @@ export default {
         this.counter = this.info.images.length - 1;
       } else this.counter -= 1;
     },
+  },
+  components: {
+    Icon,
   },
 };
 </script>
