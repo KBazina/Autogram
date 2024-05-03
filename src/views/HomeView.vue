@@ -296,7 +296,7 @@ export default {
           postText: data.postText,
           images: data.images,
           profileImage: data.ownerImage,
-          username: data.username,
+          username: data.ownerUsername,
         });
       });
       this.cards = this.cards.sort((a, b) => b.time - a.time);
