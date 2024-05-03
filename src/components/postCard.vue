@@ -17,11 +17,10 @@
     </div>
 
     <div class="card-body">
-      <p class="card-text">
-        {{ info.postText }}
+      <p class="card-text" v-html="info.postText">
       </p>
       <p v-if="info.hashtags != ''" class="mb-1 hashtags">
-        {{ info.hashtags }}
+       <span v-for="(tag,index) in info.hashtags" :key="index"> #{{tag}}</span>
       </p>
       <hr class="mt-0" />
       Like @ <span class="desno me-2"> Komentiraj</span>

@@ -145,7 +145,11 @@
             </div>
           </div>
         </div>
-          <postCard v-for="card in this.cards" :key="card.posted_at" :info="card" />
+        <postCard
+          v-for="card in this.cards"
+          :key="card.posted_at"
+          :info="card"
+        />
       </div>
       <div class="visina d-none d-lg-block col-3 overflow-y-scroll">
         <newsCard v-for="article in news" :key="article" :infoNew="article">
@@ -198,10 +202,11 @@ export default {
     };
   },
   mounted() {
+    this.getPosts();
     onAuthStateChanged(auth, (user) => {
+      console.log("SADA SAM SE CUITAO I TREBAM POZVAT § FUNCIJKE§§§§§§§3")
       this.getNews();
       this.getProfileInfo();
-      this.getPosts();
     });
   },
   methods: {
@@ -275,9 +280,7 @@ export default {
       }
     },
     async getPosts() {
-      const q = query(
-        collectionGroup(db, `posts`)
-      );
+      const q = query(collectionGroup(db, `posts`));
       const querySnapshot = await getDocs(q);
       this.cards = [];
       querySnapshot.forEach((doc) => {
@@ -291,6 +294,7 @@ export default {
           username: data.username,
         });
       });
+      this.cards = this.cards.sort((a, b) => b.time - a.time);
       console.log("karte su ovo: ", this.cards);
     },
     onFileChange(event) {
