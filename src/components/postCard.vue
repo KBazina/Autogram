@@ -13,11 +13,17 @@
       </div>
     </div>
     <div v-if="info.images.length > 0" class="image-wrapper carousel-inner">
-      <button @click="counterUP" class="carousel-control-prev" type="button">
+      <button
+        v-if="info.images.length > 1"
+        @click="counterUP"
+        class="carousel-control-prev"
+        type="button"
+      >
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       </button>
       <img :src="info.images[counter]" class="card-img-top" alt="..." />
       <button
+        v-if="info.images.length > 1"
         @click="counterDown"
         class="carousel-control-next"
         type="button"
@@ -37,7 +43,10 @@
       </p>
       <hr class="mt-0" />
       <Icon icon="mdi:cards-heart-outline" width="30" class="me-2" />Like
-      <span class="desno me-2"> Komentiraj</span>
+      <span class="desno me-2">
+        <Icon icon="mdi:comment-outline" width="30" class="me-2" />
+        Komentiraj</span
+      >
     </div>
   </div>
 </template>

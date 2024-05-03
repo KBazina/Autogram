@@ -1,5 +1,5 @@
 <template>
-  <nav class="navImp navbar navbar-expand-lg topSticky">
+  <nav class="navImp navbar navbar-expand-lg sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
         <img src="@/assets/logo.png" alt="" width="60" height="" />
@@ -192,7 +192,4 @@ export default {
   background-color: #242526 !important;
 }
 
-.topSticky {
- position: sticky;
-}
 </style>
