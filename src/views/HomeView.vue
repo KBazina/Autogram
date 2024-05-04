@@ -267,6 +267,7 @@ export default {
           ownerUsername: this.username,
           likes: 0,
           lovers: [],
+          postOwner:this.store.userMail
         });
 
         this.newFireURL_Images = [];
@@ -302,6 +303,7 @@ export default {
           likes: data.likes,
           lovers:data.lovers,
           id: doc.id,
+          postOwner:data.postOwner
         });
       });
       this.cards = this.cards.sort((a, b) => b.time - a.time);

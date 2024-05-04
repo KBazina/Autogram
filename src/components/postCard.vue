@@ -113,7 +113,7 @@ export default {
         const postRef = doc(
           db,
           "users",
-          "ID" + store.userMail,
+          "ID" + this.info.postOwner,
           "posts",
           this.info.id
         );
@@ -140,7 +140,7 @@ export default {
         const postRef = doc(
           db,
           "users",
-          "ID" + store.userMail,
+          "ID" + this.info.postOwner,
           "posts",
           this.info.id
         );
