@@ -14,11 +14,15 @@ import {
   collection,
   addDoc,
   query,
+  child,
+  onValue,
   orderBy,
   limit,
   updateDoc,
+  get,
   where,
   getDocs,
+  getDoc,
   collectionGroup,
 } from "firebase/firestore";
 
@@ -41,9 +45,13 @@ const db = getFirestore(app);
 
 export {
   getAuth,
+  get,
+  getDoc,
   updateDoc,
   createUserWithEmailAndPassword,
+  onValue,
   signInWithEmailAndPassword,
+  child,
   onAuthStateChanged,
   signOut,
   getStorage,
@@ -60,5 +68,5 @@ export {
   limit,
   where,
   getDocs,
-  collectionGroup
+  collectionGroup,
 };

@@ -56,13 +56,35 @@
         width="30"
         class="pointer"
       />
-      <span class="pointer ms-2">
-        {{ likes }}
+      <span @click="showLikes()" class="pointer ms-2">
+        {{ likes }} <span v-if="info.likes == 1">Like</span>
+        <span v-if="info.likes != 1"> Likes </span>
       </span>
       <span class="desno me-2">
         <Icon icon="mdi:comment-outline" width="30" class="me-2" />
         Komentiraj</span
       >
+      <div
+        v-if="arrayLovers.length > 0 && showLikesBool"
+        class="lovers mt-2 rounded-bottom rounded-top"
+      >
+        <ul class="p-1 mb-0">
+          <li v-for="lover in arrayLovers" :key="lover.id" class="mt-1 ms-1">
+            <div class="okvir2">
+              <img
+                :src="lover.image"
+                class="rounded-circle sredina"
+                alt="..."
+              />
+
+              <span class="curive ms-2">{{ lover.username }}</span>
+              <span
+              v-if="lover.id != myMailID"
+               class="desno me-2">Zaprati profil</span>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -75,7 +97,9 @@ import {
   db,
   setDoc,
   where,
+  onValue,
   query,
+  getDoc,
   ref,
   doc,
   updateDoc,
@@ -87,7 +111,10 @@ import { Icon } from "@iconify/vue";
 export default {
   data() {
     return {
+      arrayLovers: [],
       likeBool: false,
+      myMailID:"ID"+store.userMail,
+      showLikesBool: false,
       counter: 0,
       likes: this.info.likes,
     };
@@ -101,10 +128,26 @@ export default {
   },
   mounted() {
     this.ckeckIFlikes();
+    this.postLovers();
   },
   methods: {
+    showLikes() {
+      this.showLikesBool = !this.showLikesBool;
+    },
+
     async ckeckIFlikes() {
       if (this.info.lovers.includes(store.userMail)) this.likeBool = true;
+    },
+    async postLovers() {
+      this.info.lovers.forEach(async (lover) => {
+        const docRef = doc(db, "users", "ID" + lover);
+        const docSnap = await getDoc(docRef);
+        this.arrayLovers.push({
+          id: docSnap.id,
+          image: docSnap.data().imageSrc,
+          username: docSnap.data().username,
+        });
+      });
     },
     async likesPost() {
       try {
@@ -123,6 +166,8 @@ export default {
         });
         this.info.likes += 1;
         this.likes = this.info.likes;
+        this.arrayLovers = [];
+        this.postLovers();
       } catch (error) {
         console.error(error);
         this.likeBool = false;
@@ -150,6 +195,8 @@ export default {
         });
         this.info.likes -= 1;
         this.likes = this.info.likes;
+        this.arrayLovers = [];
+        this.postLovers();
       } catch (error) {
         console.error(error);
         this.likeBool = true;
@@ -175,6 +222,12 @@ export default {
 <style lang="scss" scoped>
 .pointer {
   cursor: pointer;
+}
+.lovers {
+  background-color: #484a4c;
+  height: auto;
+  max-height: 150px;
+  overflow-y: scroll !important;
 }
 .image-wrapper {
   background-color: #5e6266;
