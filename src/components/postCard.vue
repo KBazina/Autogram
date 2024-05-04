@@ -95,7 +95,7 @@ export default {
 }
 .image-wrapper img {
   max-height: 500px;
-  max-width: 500px;
+  max-width: 550px;
   width: auto;
   object-fit: contain;
   background-color: #5e6266;
@@ -117,7 +117,7 @@ export default {
 }
 .card {
   background-color: #242526 !important;
-  width: 500px;
+  width: 550px;
   margin: auto;
 }
 .curive {
