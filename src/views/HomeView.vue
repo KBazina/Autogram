@@ -227,64 +227,64 @@ export default {
         this.$refs.textarea.value = this.$refs.textarea.value.substring(0, 60);
       }
     },
-    addPost() {
+    async addPost() {
       if (this.postText == "" && this.images.length == 0) {
         alert("Nisi dodao nikakav sadržaj postu!");
-      } else {
-        this.btnClicked = true;
-        const fileImages = this.fileImages;
-        fileImages.forEach((file) => {
+        return;
+      }
+
+      this.btnClicked = true;
+      const fileImages = this.fileImages;
+
+      try {
+        for (let index = 0; index < fileImages.length; index++) {
+          const file = fileImages[index];
           const storageRef = ref(
             storage,
-            "postsPictures/" + Date.now() + file.name
+            "postsPictures/" + Date.now() + file.name + index
           );
-          uploadBytes(storageRef, file)
-            .then((snapshot) => {
-              return getDownloadURL(ref(storageRef));
-            })
-            .then((url) => {
-              this.newFireURL_Images.unshift(url);
-              this.imageSrc = url;
-              console.log(url, "A VOO JE IMAGETANIZ: ", this.newFireURL_Images);
-            });
-        });
+          const snapshot = await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(ref(storageRef));
+          this.newFireURL_Images.unshift(url);
+          this.imageSrc = url;
+        }
 
-        setTimeout(() => {
-          const postRef = doc(
-            db,
-            "users",
-            "ID" + store.userMail,
-            "posts",
-            "post" + Date.now()
-          );
-          console.log("OOVOOO SU IMAGES. ", this.newFireURL_Images);
-          setDoc(postRef, {
-            images: this.newFireURL_Images,
-            hashtags: this.hashtags
-              .split("#")
-              .filter((element) => element !== ""),
-            postText: this.postText,
-            posted_at: Date.now(),
-            ownerImage: this.ProfileImageSrc,
-            ownerUsername: this.username,
-          });
-          this.newFireURL_Images = [];
-          this.$refs.paragraph.innerHTML = "";
-          this.$refs.textarea.value = "";
-          this.hashtags = this.$refs.textarea.value;
-          this.postText = this.$refs.paragraph.innerHTML;
-          this.images = [];
-          this.btnClicked = false;
-          this.fileImages = [];
-          this.imageSrc = "";
-          this.imageFile = null;
-        setTimeout(() => {
-          window.location.reload()
-        }, 1000);
-        }, 2000);
+        const postRef = doc(
+          db,
+          "users",
+          "ID" + store.userMail,
+          "posts",
+          "post" + Date.now()
+        );
+        await setDoc(postRef, {
+          images: this.newFireURL_Images,
+          hashtags: this.hashtags
+            .split("#")
+            .filter((element) => element !== ""),
+          postText: this.postText,
+          posted_at: Date.now(),
+          ownerImage: this.ProfileImageSrc,
+          ownerUsername: this.username,
+        });
+        
+        this.newFireURL_Images = [];
+        this.$refs.paragraph.innerHTML = "";
+        this.$refs.textarea.value = "";
+        this.hashtags = this.$refs.textarea.value;
+        this.postText = this.$refs.paragraph.innerHTML;
+        this.images = [];
+        this.btnClicked = false;
+        this.fileImages = [];
+        this.imageSrc = "";
+        this.imageFile = null;
+        window.location.reload()
+      } catch (error) {
+        console.error("Error uploading images: ", error);
+        this.btnClicked = false;
       }
     },
-    async getPosts() {
+
+    async getPosts() { 
       const q = query(collectionGroup(db, `posts`));
       const querySnapshot = await getDocs(q);
       this.cards = [];

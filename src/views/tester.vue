@@ -16,7 +16,7 @@
       <button class="carousel-control-prev" type="button">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       </button>
-      <img src="@/assets/circle.jpg" class="card-img-top" alt="..." />
+      <img src="@/assets/cars.jpg" class="card-img-top" alt="..." />
       <button
         class="carousel-control-next"
         type="button"
