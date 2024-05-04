@@ -124,6 +124,10 @@ export default {
   font-family: cursive;
 }
 .hashtags {
-  color: green;
+  color: #bc653c;
+
+}
+.card-text{
+  font-weight: bold;
 }
 </style>
