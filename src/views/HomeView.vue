@@ -2,32 +2,38 @@
   <div class="container-fluid mt-4">
     <div class="row">
       <div class="d-none d-md-block col-3 border-end">
-        <div class="position-fixed top-20 start-200">
-          <div class="okvir ms-5 mb-4">
-            <img
-              src="@/assets/mateo.png"
-              class="rounded-circle sredina"
-              alt="..."
-            />
+        <div class="position-fixed  top-20 start-200">
+          <div class="vstack gap-2 my-3">
+            <div class="p-2">
+               <Icon icon="emojione:man-medium-skin-tone" width="30" class="me-2" />
+              My Profile
+            </div>
+            <div class="p-2">
+               <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
+               Friends
+            </div>
+            <div class="p-2">
+               <Icon icon="emojione:racing-car" width="30" class="me-2" />
+               Cars
+            </div>
+            <div class="p-2">
+               <Icon icon="emojione:trophy" width="30" class="me-2" />
+               Trophies
+            </div>
+            <div class="p-2">
+               <Icon icon="emojione:flag-for-chequered-flag" width="30" class="me-2" />
+               Races
+            </div>
+            <div class="p-2">
+               <Icon icon="ic:twotone-sell" width="30" class="me-2" />
+               Shop
+            </div>
+             <div class="p-2">
+               <Icon icon="emojione:spiral-calendar" width="30" class="me-2" />
+               Events
+            </div>
           </div>
-          <div class="vstack gap-2">
-            <div class="p-2">Mateo Udovitjitj</div>
-            <div class="p-2">165cm</div>
-            <div class="p-2">Ja sam upo na FOI</div>
-            <div class="p-2">IMAM SIFILIS</div>
-            <div class="p-2">Volim mamu i valamar</div>
-            <div class="p-2">Mateo Udovitjitj</div>
-            <div class="p-2">165cm</div>
-            <div class="p-2">IMAM SIFILIS</div>
-            <div class="p-2">IMAM SIFILIS</div>
-            <div class="p-2">Ja sam upo na FOI</div>
-            <div class="p-2">Volim mamu i valamar</div>
-            <div class="p-2">Mateo Udovitjitj</div>
-            <div class="p-2">165cm</div>
-            <div class="p-2">IMAM SIFILIS</div>
-            <div class="p-2">Ja sam upo na FOI</div>
-            <div class="p-2">Volim mamu i valamar</div>
-          </div>
+        <hr class="crta1 mt-4"/> 
         </div>
       </div>
       <div class="srednji col-sm-12 col-md-9 col-lg-6 col-12">
@@ -459,7 +465,9 @@ p {
   right: 10px;
   height: 85vh;
 }
-
+.crta1{
+  width: 20vw;
+}
 .okvir {
   margin: auto;
   position: relative;
