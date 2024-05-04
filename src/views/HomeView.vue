@@ -147,7 +147,7 @@
           </div>
         </div>
         <postCard
-          v-for="card in this.cards"
+          v-for="card in filteredPosts"
           :key="card.posted_at"
           :info="card"
         />
@@ -188,6 +188,7 @@ const auth = getAuth();
 export default {
   data() {
     return {
+      cards: [],
       ProfileImageSrc: "",
       btnClicked: false,
       newFireURL_Images: [],
@@ -205,9 +206,9 @@ export default {
   mounted() {
     this.getPosts();
     onAuthStateChanged(auth, (user) => {
-      console.log("SADA SAM SE CUITAO I TREBAM POZVAT § FUNCIJKE§§§§§§§3");
       this.getNews();
       this.getProfileInfo();
+      console.log("OVO TRAZI: ", this.store.searchTags);
     });
   },
   methods: {
@@ -267,7 +268,7 @@ export default {
           ownerUsername: this.username,
           likes: 0,
           lovers: [],
-          postOwner:this.store.userMail
+          postOwner: this.store.userMail,
         });
 
         this.newFireURL_Images = [];
@@ -301,9 +302,9 @@ export default {
           profileImage: data.ownerImage,
           username: data.ownerUsername,
           likes: data.likes,
-          lovers:data.lovers,
+          lovers: data.lovers,
           id: doc.id,
-          postOwner:data.postOwner
+          postOwner: data.postOwner,
         });
       });
       this.cards = this.cards.sort((a, b) => b.time - a.time);
@@ -347,6 +348,22 @@ export default {
   computed: {
     FilteredNews() {
       return this.news;
+    },
+    filteredPosts() {
+      let searchTags = this.store.searchTags
+        .trim()
+        .toLowerCase()
+        .split(" ")
+        .filter((element) => element !== "");
+      let filteredPosts = this.cards.filter((obj) => {
+        let lowerCaseHashtags = obj.hashtags.map((hashtag) =>
+          hashtag.toLowerCase()
+        );
+        return searchTags.every((searchTag) =>
+          lowerCaseHashtags.includes(searchTag)
+        );
+      });
+      return filteredPosts;
     },
   },
   components: {

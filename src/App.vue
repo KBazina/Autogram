@@ -29,6 +29,7 @@
         </ul>
         <form v-if="UserActive" class="d-flex" role="search">
           <input
+          v-model="store.searchTags"
             class="form-control me-2"
             type="search"
             placeholder="Search"
