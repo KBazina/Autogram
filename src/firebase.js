@@ -16,6 +16,7 @@ import {
   query,
   orderBy,
   limit,
+  updateDoc,
   where,
   getDocs,
   collectionGroup,
@@ -40,6 +41,7 @@ const db = getFirestore(app);
 
 export {
   getAuth,
+  updateDoc,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,

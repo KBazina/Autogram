@@ -42,7 +42,23 @@
         >
       </p>
       <hr class="mt-0" />
-      <Icon icon="mdi:cards-heart-outline" width="30" class="me-2" />Like
+      <Icon
+        v-if="!likeBool"
+        @click="likesPost()"
+        icon="mdi:cards-heart-outline"
+        width="30"
+        class="pointer"
+      />
+      <Icon
+        v-if="likeBool"
+        @click="dislikesPost()"
+        icon="mdi:cards-heart"
+        width="30"
+        class="pointer"
+      />
+      <span class="pointer ms-2">
+        {{ likes }}
+      </span>
       <span class="desno me-2">
         <Icon icon="mdi:comment-outline" width="30" class="me-2" />
         Komentiraj</span
@@ -53,11 +69,27 @@
 
 <script>
 import moment from "moment";
+import store from "@/store";
+import {
+  collection,
+  db,
+  setDoc,
+  where,
+  query,
+  ref,
+  doc,
+  updateDoc,
+  auth,
+  getAuth,
+  onAuthStateChanged,
+} from "@/firebase";
 import { Icon } from "@iconify/vue";
 export default {
   data() {
     return {
+      likeBool: false,
       counter: 0,
+      likes: this.info.likes,
     };
   },
   props: ["info"],
@@ -67,7 +99,63 @@ export default {
       return moment(this.info.time).fromNow();
     },
   },
+  mounted() {
+    this.ckeckIFlikes();
+  },
   methods: {
+    async ckeckIFlikes() {
+      if (this.info.lovers.includes(store.userMail)) this.likeBool = true;
+    },
+    async likesPost() {
+      try {
+        this.likeBool = true;
+        this.info.lovers.push(store.userMail);
+        const postRef = doc(
+          db,
+          "users",
+          "ID" + store.userMail,
+          "posts",
+          this.info.id
+        );
+        await updateDoc(postRef, {
+          likes: this.info.likes + 1,
+          lovers: this.info.lovers,
+        });
+        this.info.likes += 1;
+        this.likes = this.info.likes;
+      } catch (error) {
+        console.error(error);
+        this.likeBool = false;
+        this.info.lovers = this.info.lovers.filter(
+          (element) => element !== store.userMail
+        );
+      }
+    },
+    async dislikesPost() {
+      try {
+        this.info.lovers = this.info.lovers.filter(
+          (element) => element !== store.userMail
+        );
+        this.likeBool = false;
+        const postRef = doc(
+          db,
+          "users",
+          "ID" + store.userMail,
+          "posts",
+          this.info.id
+        );
+        await updateDoc(postRef, {
+          likes: this.info.likes - 1,
+          lovers: this.info.lovers,
+        });
+        this.info.likes -= 1;
+        this.likes = this.info.likes;
+      } catch (error) {
+        console.error(error);
+        this.likeBool = true;
+        this.info.lovers.push(store.userMail);
+      }
+    },
     counterUP() {
       if (this.counter == this.info.images.length - 1) {
         this.counter = 0;
@@ -84,7 +172,10 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="scss" scoped>
+.pointer {
+  cursor: pointer;
+}
 .image-wrapper {
   background-color: #5e6266;
   width: 100%;
@@ -125,9 +216,8 @@ export default {
 }
 .hashtags {
   color: #bc653c;
-
 }
-.card-text{
+.card-text {
   font-weight: bold;
 }
 </style>

@@ -265,8 +265,10 @@ export default {
           posted_at: Date.now(),
           ownerImage: this.ProfileImageSrc,
           ownerUsername: this.username,
+          likes: 0,
+          lovers: [],
         });
-        
+
         this.newFireURL_Images = [];
         this.$refs.paragraph.innerHTML = "";
         this.$refs.textarea.value = "";
@@ -277,14 +279,14 @@ export default {
         this.fileImages = [];
         this.imageSrc = "";
         this.imageFile = null;
-        window.location.reload()
+        window.location.reload();
       } catch (error) {
         console.error("Error uploading images: ", error);
         this.btnClicked = false;
       }
     },
 
-    async getPosts() { 
+    async getPosts() {
       const q = query(collectionGroup(db, `posts`));
       const querySnapshot = await getDocs(q);
       this.cards = [];
@@ -297,6 +299,9 @@ export default {
           images: data.images,
           profileImage: data.ownerImage,
           username: data.ownerUsername,
+          likes: data.likes,
+          lovers:data.lovers,
+          id: doc.id,
         });
       });
       this.cards = this.cards.sort((a, b) => b.time - a.time);
