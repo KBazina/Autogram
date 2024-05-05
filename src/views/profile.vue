@@ -58,7 +58,7 @@
           {{ this.ime_prezime }}
           <div class="p-2 bio">* {{ this.bio }}</div>
         </div>
-        <div class="p-2" @click="onThePage(`home`)">
+        <div class="p-2">
           <Icon icon="emojione:man-medium-skin-tone" width="30" class="me-2" />
           Edit profile
         </div>
@@ -75,7 +75,11 @@
   </div>
 
   <div class="postContainer">
-    <postCard v-for="card in this.cards" :key="card.posted_at" :info="card" />
+    <postCard
+      v-for="card in filteredPosts"
+      :key="card.posted_at"
+      :info="card"
+    />
   </div>
 </template>
 
@@ -102,6 +106,7 @@ export default {
   name: "profile",
   data() {
     return {
+      store,
       cards: [],
       ProfileImageSrc: "",
       bio: "",
@@ -187,6 +192,24 @@ export default {
   async destroyed() {
     window.removeEventListener("scroll", this.handleScroll);
   },
+  computed: {
+    filteredPosts() {
+      let searchTags = this.store.searchTags
+        .trim()
+        .toLowerCase()
+        .split(" ")
+        .filter((element) => element !== "");
+      let filteredPosts = this.cards.filter((obj) => {
+        let lowerCaseHashtags = obj.hashtags.map((hashtag) =>
+          hashtag.toLowerCase()
+        );
+        return searchTags.every((searchTag) =>
+          lowerCaseHashtags.includes(searchTag)
+        );
+      });
+      return filteredPosts;
+    },
+  },
   components: {
     postCard,
     Icon,
@@ -195,7 +218,7 @@ export default {
 </script>
 
 <style scoped>
-.postContainer{
+.postContainer {
   margin-top: 150px;
 }
 .showImage {
@@ -280,12 +303,12 @@ export default {
   background-color: #2a2b2c;
 }
 .fixedProfileEditor {
-  width: 25vw;
+  width: 20vw;
   position: fixed;
   top: 35vh;
 }
 .ProfileEditor {
-  width: 25vw;
+  width: 20vw;
   position: fixed;
   top: 13vh;
 }

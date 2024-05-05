@@ -27,16 +27,17 @@
             <a class="nav-link" @click="signOut" href="/login">Log out</a>
           </li>
         </ul>
-        <form v-if="UserActive" class="d-flex" role="search">
+        <div v-if="UserActive" class="d-flex" role="search">
           <input
+          @change="searchConsole"
           v-model="store.searchTags"
             class="form-control me-2"
-            type="search"
+            type="text"
             placeholder="Search"
             aria-label="Search"
           />
           <button class="btn btn-outline-success" type="button">Search</button>
-        </form>
+        </div>
         <div v-if="!UserActive" class="modHide">
           What is autogram?
           <button
@@ -148,6 +149,9 @@ export default {
     });
   },
   methods: {
+    searchConsole(){
+      console.log(store.searchTags)
+    },
     async checkDone() {
       const q = query(
         collection(db, "users"),

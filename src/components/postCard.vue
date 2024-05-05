@@ -93,19 +93,11 @@
 import moment from "moment";
 import store from "@/store";
 import {
-  collection,
   db,
-  setDoc,
-  where,
-  onValue,
-  query,
   getDoc,
   ref,
   doc,
   updateDoc,
-  auth,
-  getAuth,
-  onAuthStateChanged,
 } from "@/firebase";
 import { Icon } from "@iconify/vue";
 export default {

@@ -252,7 +252,6 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.getNews();
       this.getProfileInfo();
-      console.log("OVO TRAZI: ", this.store.searchTags);
     });
   },
   methods: {
