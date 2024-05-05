@@ -4,7 +4,9 @@
       <div class="d-none d-md-block col-3 border-end">
         <div class="position-fixed top-20 start-200">
           <div class="vstack gap-2 my-1">
-            <div class="p-2">
+            <div class="p-2"
+            @click="onThePage(`profile`)"
+            >
               <Icon
                 icon="emojione:man-medium-skin-tone"
                 width="30"
@@ -42,24 +44,32 @@
             </div>
           </div>
           <hr class="crta1 mt-4 mb-1" />
-          <div class="p-2">
+          <div class="category p-2">
             <Icon icon="emojione:alarm-clock" width="30" class="me-2" />
             Vremenske kategorije
           </div>
-          <div class="p-2">
+          <div class="category p-2">
             <Icon icon="noto:tractor" width="30" class="me-2" />
             Dizel
           </div>
-          <div class="p-2">
-            <Icon icon="mingcute:four-wheel-drive-line" width="30" class="me-2" />
+          <div class="category p-2">
+            <Icon
+              icon="mingcute:four-wheel-drive-line"
+              width="30"
+              class="me-2"
+            />
             AWD
           </div>
-          <div class="p-2">
+          <div class="category p-2">
             <Icon icon="mdi:car-traction-control" width="30" class="me-2" />
             RWD
           </div>
-          <div class="p-2">
-            <Icon icon="material-symbols:energy-savings-leaf-outline" width="30" class="me-2" />
+          <div class="category p-2">
+            <Icon
+              icon="material-symbols:energy-savings-leaf-outline"
+              width="30"
+              class="me-2"
+            />
             FWD
           </div>
         </div>
@@ -246,6 +256,9 @@ export default {
     });
   },
   methods: {
+    onThePage(location){
+this.$router.push(`/${location}`)
+    },
     deleteImage(index) {
       this.images.splice(index, 1);
       this.fileImages.splice(index, 1);
@@ -408,7 +421,15 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.vstack div:hover {
+  cursor: pointer;
+  background-color: #2a2b2c;
+}
+.category:hover {
+  cursor: pointer;
+  background-color: #2a2b2c;
+}
 .btnDelete {
   position: absolute;
   top: 5px;

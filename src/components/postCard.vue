@@ -80,7 +80,7 @@
               <span class="curive ms-2">{{ lover.username }}</span>
               <span
               v-if="lover.id != myMailID"
-               class="desno me-2">Zaprati profil</span>
+               class="desno me-2">Pogledaj profil</span>
             </div>
           </li>
         </ul>

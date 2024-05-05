@@ -16,27 +16,73 @@
     </div>
   </div>
 
-  <div class="container-fluid mt-4">
-    <div class="row">
-      <div class="col-3">
-        <div class="vstack gap-2 ms-3 mt-2">
-          <div class="p-2 fs-1">@{{ this.username }}</div>
-          <hr />
-          <div class="p-2 fs-5">
-            {{ this.ime_prezime }}
-            <div class="p-2 bio">* {{ this.bio }}</div>
-          </div>
+  <div class="ProfileEditor">
+    <div class="vstack gap-2 ms-3 mt-2">
+      <div
+        v-show="showHomepage"
+        class="p-2 showHomePage"
+        @click="onThePage(``)"
+        :class="{ show: showHomepage }"
+      >
+        <Icon
+          icon="material-symbols:garage-door-rounded"
+          width="30"
+          class="me-2"
+        />
+        Homepage
+      </div>
+      <div
+        v-show="showGallery"
+        class="p-2 showGallery"
+        :class="{ show: showGallery }"
+      >
+        <Icon icon="emojione:framed-picture" width="30" class="me-2" />
+        Gallery
+      </div>
+      <div
+        class="p-2 showImage"
+        v-show="showAddImage"
+        :class="{ show: showAddImage }"
+      >
+        <Icon
+          icon="material-symbols:add-a-photo-outline"
+          width="30"
+          class="me-2"
+        />
+        Add image
+      </div>
+      <div class="fixedProfileEditor">
+        <div class="p-2 fs-1">@{{ this.username }}</div>
+        <hr />
+        <div class="p-2 fs-5">
+          {{ this.ime_prezime }}
+          <div class="p-2 bio">* {{ this.bio }}</div>
         </div>
-      </div> 
+        <div class="p-2" @click="onThePage(`home`)">
+          <Icon icon="emojione:man-medium-skin-tone" width="30" class="me-2" />
+          Edit profile
+        </div>
+        <div class="p-2">
+          <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
+          Friends
+        </div>
+        <div class="p-2">
+          <Icon icon="emojione:racing-car" width="30" class="me-2" />
+          Cars
+        </div>
+      </div>
     </div>
   </div>
 
-  <postCard v-for="card in this.cards" :key="card.posted_at" :info="card" />
+  <div class="postContainer">
+    <postCard v-for="card in this.cards" :key="card.posted_at" :info="card" />
+  </div>
 </template>
 
 <script>
 import postCard from "@/components/postCard.vue";
 import store from "@/store";
+import { Icon } from "@iconify/vue";
 import {
   doc,
   collection,
@@ -61,10 +107,34 @@ export default {
       bio: "",
       ime_prezime: "",
       username: "",
+      showAddImage: false,
+      showGallery: false,
+      showHomepage: false,
     };
   },
 
   methods: {
+    handleScroll() {
+      const scrollPosition = window.scrollY;
+      if (scrollPosition > 60) {
+        this.showAddImage = true;
+      } else {
+        this.showAddImage = false;
+      }
+      if (scrollPosition > 120) {
+        this.showGallery = true;
+      } else {
+        this.showGallery = false;
+      }
+      if (scrollPosition > 180) {
+        this.showHomepage = true;
+      } else {
+        this.showHomepage = false;
+      }
+    },
+    onThePage(location) {
+      this.$router.push(`/${location}`);
+    },
     async getPosts() {
       const q = query(
         collection(db, `users/ID${store.userMail}/posts`),
@@ -79,8 +149,12 @@ export default {
           time: data.posted_at,
           postText: data.postText,
           images: data.images,
-          profileImage: this.ProfileImageSrc,
-          username: this.username,
+          profileImage: data.ownerImage,
+          username: data.ownerUsername,
+          likes: data.likes,
+          lovers: data.lovers,
+          id: doc.id,
+          postOwner: data.postOwner,
         });
       });
       console.log("karte su ovo: ", this.cards);
@@ -104,18 +178,117 @@ export default {
   },
 
   async created() {
+    window.addEventListener("scroll", this.handleScroll);
     onAuthStateChanged(auth, (user) => {
       this.getProfileInfo();
       this.getPosts();
     });
   },
+  async destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
   components: {
     postCard,
+    Icon,
   },
 };
 </script>
 
-<style>
+<style scoped>
+.postContainer{
+  margin-top: 150px;
+}
+.showImage {
+  width: 20vw;
+  position: fixed;
+  top: 27vh;
+}
+.showGallery {
+  width: 20vw;
+  position: fixed;
+  top: 20vh;
+}
+.showHomePage {
+  width: 20vw;
+  position: fixed;
+  top: 13vh;
+}
+.showImage,
+.showGallery,
+.showHomePage {
+  opacity: 0;
+  transition: opacity 0.5s, transform 0.5s;
+  transform: translateX(-100%);
+}
+.showImage.show,
+.showGallery.show,
+.showHomePage.show {
+  opacity: 1;
+  transform: translateX(0%);
+}
+.showImage.show {
+  animation: slideInImage 0.5s forwards;
+}
+
+.showGallery.show {
+  animation: slideInGallery 0.5s forwards;
+}
+
+.showHomePage.show {
+  animation: slideInHomepage 0.5s forwards;
+}
+
+@keyframes slideInImage {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInGallery {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInHomepage {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+.vstack div {
+  overflow: hidden;
+}
+.showImage:hover,
+.showGallery:hover,
+.showHomePage:hover {
+  cursor: pointer;
+  background-color: #2a2b2c;
+}
+.fixedProfileEditor {
+  width: 25vw;
+  position: fixed;
+  top: 35vh;
+}
+.ProfileEditor {
+  width: 25vw;
+  position: fixed;
+  top: 13vh;
+}
 .bio {
   margin-top: 0;
   margin-left: 20px;
