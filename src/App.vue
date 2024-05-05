@@ -29,17 +29,16 @@
         </ul>
         <div v-if="UserActive" class="d-flex" role="search">
           <input
-          @change="searchConsole"
-          v-model="store.searchTags"
+            @change="searchConsole"
+            v-model="store.searchTags"
             class="form-control me-2"
             type="text"
             placeholder="Search"
             aria-label="Search"
           />
-          <button class="btn btn-outline-success" type="button">Search</button>
         </div>
-        <div v-if="!UserActive" class="modHide">
-          What is autogram?
+        <div class="modHide">
+          <span v-if="!UserActive">What is autogram? </span>
           <button
             type="button"
             class="btn btn-outline-success mx-2"
@@ -54,49 +53,46 @@
     <hr />
   </nav>
   <div
-            class="modal fade"
-            id="staticBackdrop"
-            data-bs-backdrop="static"
-            data-bs-keyboard="false"
-            tabindex="-1"
-            aria-labelledby="staticBackdropLabel"
-            aria-hidden="true"
+    class="modal fade"
+    id="staticBackdrop"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">AUTOGRAM</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          Autogram je strastveno mjesto za ljubitelje automobila koji žele
+          dijeliti svoje iskustvo, znanje i strast prema vozilima s
+          istomišljenicima diljem svijeta. Naša platforma omogućuje kreiranje
+          osobnih profila, gdje korisnici mogu istaknuti svoje automobilske
+          preferencije, iskustva i dostignuća. Uz mogućnost dijeljenja objava,
+          fotografija i sudjelovanja u utrkama, Autogram je idealno mjesto za
+          povezivanje s autoentuzijastima i istraživanje svijeta automobilizma.
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
           >
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                    AUTOGRAM
-                  </h1>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <div class="modal-body">
-                  Autogram je strastveno mjesto za ljubitelje automobila koji
-                  žele dijeliti svoje iskustvo, znanje i strast prema vozilima s
-                  istomišljenicima diljem svijeta. Naša platforma omogućuje
-                  kreiranje osobnih profila, gdje korisnici mogu istaknuti svoje
-                  automobilske preferencije, iskustva i dostignuća. Uz mogućnost
-                  dijeljenja objava, fotografija i sudjelovanja u utrkama,
-                  Autogram je idealno mjesto za povezivanje s autoentuzijastima
-                  i istraživanje svijeta automobilizma.
-                </div>
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <router-view />
 </template>
 
@@ -140,7 +136,7 @@ export default {
           this.$router.replace({ name: "login" });
         }
       }
-      console.log("nesto radim sada")
+      console.log("nesto radim sada");
       this.checkDone().then(() => {
         if (!this.done && user) {
           this.$router.replace({ name: "profileDetails" });
@@ -149,8 +145,8 @@ export default {
     });
   },
   methods: {
-    searchConsole(){
-      console.log(store.searchTags)
+    searchConsole() {
+      console.log(store.searchTags);
     },
     async checkDone() {
       const q = query(
@@ -160,7 +156,7 @@ export default {
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        console.log(doc, "storemail: ", store.userMail)
+        console.log(doc, "storemail: ", store.userMail);
         this.done = true;
       });
     },
@@ -196,5 +192,4 @@ export default {
   color: rgb(203, 198, 198);
   background-color: #242526 !important;
 }
-
 </style>
