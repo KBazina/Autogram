@@ -1,12 +1,10 @@
 <template>
-  <div class="container-fluid mt-4">
+  <div  class="container-fluid mt-4">
     <div class="row">
       <div class="d-none d-md-block col-3 border-end">
         <div class="position-fixed top-20 start-200">
           <div class="vstack gap-2 my-1">
-            <div class="p-2"
-            @click="onThePage(`profile`)"
-            >
+            <div  class="p-2" @click="onThePage(`profile`)">
               <Icon
                 icon="emojione:man-medium-skin-tone"
                 width="30"
@@ -14,19 +12,19 @@
               />
               My Profile
             </div>
-            <div class="p-2">
+            <div  class="p-2">
               <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
               Friends
             </div>
-            <div class="p-2">
+            <div  class="p-2">
               <Icon icon="emojione:racing-car" width="30" class="me-2" />
               Cars
             </div>
-            <div class="p-2">
+            <div  class="p-2">
               <Icon icon="emojione:trophy" width="30" class="me-2" />
               Trophies
             </div>
-            <div class="p-2">
+            <div  class="p-2">
               <Icon
                 icon="emojione:flag-for-chequered-flag"
                 width="30"
@@ -34,7 +32,7 @@
               />
               Races
             </div>
-            <div class="p-2">
+            <div  class="p-2">
               <Icon icon="ic:twotone-sell" width="30" class="me-2" />
               Shop
             </div>
@@ -44,15 +42,15 @@
             </div>
           </div>
           <hr class="crta1 mt-4 mb-1" />
-          <div class="category p-2">
+          <div  class="category p-2">
             <Icon icon="emojione:alarm-clock" width="30" class="me-2" />
             Vremenske kategorije
           </div>
-          <div class="category p-2">
+          <div  class="category p-2">
             <Icon icon="noto:tractor" width="30" class="me-2" />
             Dizel
           </div>
-          <div class="category p-2">
+          <div  class="category p-2">
             <Icon
               icon="mingcute:four-wheel-drive-line"
               width="30"
@@ -60,11 +58,11 @@
             />
             AWD
           </div>
-          <div class="category p-2">
+          <div  class="category p-2">
             <Icon icon="mdi:car-traction-control" width="30" class="me-2" />
             RWD
           </div>
-          <div class="category p-2">
+          <div  class="category p-2">
             <Icon
               icon="material-symbols:energy-savings-leaf-outline"
               width="30"
@@ -190,6 +188,15 @@
             </div>
           </div>
         </div>
+        <!--  -->
+        <div v-if="showSkeleton" class="skeletonOKVIR mt-4">
+          <img
+            src="@/assets/blog-loading-animation-skeletons.gif"
+            class=""
+            alt=""
+          />
+        </div>
+        <!--  -->
         <postCard
           v-for="card in filteredPosts"
           :key="card.posted_at"
@@ -202,6 +209,7 @@
       </div>
     </div>
   </div>
+  <div class="overlayPost" v-if="btnClicked"></div>
 </template>
 
 <script>
@@ -232,6 +240,7 @@ const auth = getAuth();
 export default {
   data() {
     return {
+      showSkeleton: false,
       cards: [],
       ProfileImageSrc: "",
       btnClicked: false,
@@ -255,8 +264,8 @@ export default {
     });
   },
   methods: {
-    onThePage(location){
-this.$router.push(`/${location}`)
+    onThePage(location) {
+      this.$router.push(`/${location}`);
     },
     deleteImage(index) {
       this.images.splice(index, 1);
@@ -279,10 +288,9 @@ this.$router.push(`/${location}`)
         alert("Nisi dodao nikakav sadržaj postu!");
         return;
       }
-
       this.btnClicked = true;
       const fileImages = this.fileImages;
-
+      this.showSkeleton = true;
       try {
         for (let index = 0; index < fileImages.length; index++) {
           const file = fileImages[index];
@@ -328,6 +336,7 @@ this.$router.push(`/${location}`)
         this.imageSrc = "";
         this.imageFile = null;
         window.location.reload();
+        this.showSkeleton = false;
       } catch (error) {
         console.error("Error uploading images: ", error);
         this.btnClicked = false;
@@ -448,6 +457,16 @@ ul {
 .imageList:first-child {
   margin-top: 0;
 }
+.overlayPost {
+  cursor: wait;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1); 
+  z-index: 99999; 
+  }
 .liIMG {
   background-color: #5e6266;
   position: relative;
@@ -497,6 +516,8 @@ p {
 .PostBG {
   background-color: rgb(36, 37, 38);
 }
+
+
 .okvir2 {
   position: relative;
   width: 100%;
@@ -522,7 +543,22 @@ p {
   width: 10vw;
   height: 10vw;
 }
+.skeletonOKVIR {
+  margin: auto;
+  position: relative;
+  width: 100%;
+  max-height: 300px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.skeletonImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .innerImg {
   max-height: 600px;
   object-fit: contain;
