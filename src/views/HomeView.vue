@@ -2,38 +2,66 @@
   <div class="container-fluid mt-4">
     <div class="row">
       <div class="d-none d-md-block col-3 border-end">
-        <div class="position-fixed  top-20 start-200">
-          <div class="vstack gap-2 my-3">
+        <div class="position-fixed top-20 start-200">
+          <div class="vstack gap-2 my-1">
             <div class="p-2">
-               <Icon icon="emojione:man-medium-skin-tone" width="30" class="me-2" />
+              <Icon
+                icon="emojione:man-medium-skin-tone"
+                width="30"
+                class="me-2"
+              />
               My Profile
             </div>
             <div class="p-2">
-               <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
-               Friends
+              <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
+              Friends
             </div>
             <div class="p-2">
-               <Icon icon="emojione:racing-car" width="30" class="me-2" />
-               Cars
+              <Icon icon="emojione:racing-car" width="30" class="me-2" />
+              Cars
             </div>
             <div class="p-2">
-               <Icon icon="emojione:trophy" width="30" class="me-2" />
-               Trophies
+              <Icon icon="emojione:trophy" width="30" class="me-2" />
+              Trophies
             </div>
             <div class="p-2">
-               <Icon icon="emojione:flag-for-chequered-flag" width="30" class="me-2" />
-               Races
+              <Icon
+                icon="emojione:flag-for-chequered-flag"
+                width="30"
+                class="me-2"
+              />
+              Races
             </div>
             <div class="p-2">
-               <Icon icon="ic:twotone-sell" width="30" class="me-2" />
-               Shop
+              <Icon icon="ic:twotone-sell" width="30" class="me-2" />
+              Shop
             </div>
-             <div class="p-2">
-               <Icon icon="emojione:spiral-calendar" width="30" class="me-2" />
-               Events
+            <div class="p-2">
+              <Icon icon="emojione:spiral-calendar" width="30" class="me-2" />
+              Events
             </div>
           </div>
-        <hr class="crta1 mt-4"/> 
+          <hr class="crta1 mt-4 mb-1" />
+          <div class="p-2">
+            <Icon icon="emojione:alarm-clock" width="30" class="me-2" />
+            Vremenske kategorije
+          </div>
+          <div class="p-2">
+            <Icon icon="noto:tractor" width="30" class="me-2" />
+            Dizel
+          </div>
+          <div class="p-2">
+            <Icon icon="mingcute:four-wheel-drive-line" width="30" class="me-2" />
+            AWD
+          </div>
+          <div class="p-2">
+            <Icon icon="mdi:car-traction-control" width="30" class="me-2" />
+            RWD
+          </div>
+          <div class="p-2">
+            <Icon icon="material-symbols:energy-savings-leaf-outline" width="30" class="me-2" />
+            FWD
+          </div>
         </div>
       </div>
       <div class="srednji col-sm-12 col-md-9 col-lg-6 col-12">
@@ -465,7 +493,7 @@ p {
   right: 10px;
   height: 85vh;
 }
-.crta1{
+.crta1 {
   width: 20vw;
 }
 .okvir {
