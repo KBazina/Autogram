@@ -9,7 +9,7 @@
         />
 
         <span class="curive ms-2">{{ info.username }}</span>
-        <span class="desno me-2"> {{ postedFromNow }}</span>
+        <span class="desno time me-2"> {{ postedFromNow }}</span>
       </div>
     </div>
     <div v-if="info.images.length > 0" class="image-wrapper carousel-inner">
@@ -60,7 +60,7 @@
         {{ likes }} <span v-if="info.likes == 1">Like</span>
         <span v-if="info.likes != 1"> Likes </span>
       </span>
-      <span class="desno me-2">
+      <span @click="commentShower" class="desno me-2">
         <Icon icon="mdi:comment-outline" width="30" class="me-2" />
         Komentiraj</span
       >
@@ -78,12 +78,24 @@
               />
 
               <span class="curive ms-2">{{ lover.username }}</span>
-              <span
-              v-if="lover.id != myMailID"
-               class="desno me-2">Pogledaj profil</span>
+              <span v-if="lover.id != myMailID" class="desno me-2"
+                >Pogledaj profil</span
+              >
             </div>
           </li>
         </ul>
+      </div>
+      <div>
+        <div v-if="showCommentBool" class="okvir2 mt-5">
+          <img
+            :src="info.ActiveUserImage"
+            class="rounded-circle sredina me-5 ms-2"
+            alt="..."
+          />
+          <input type="text" class="p-2 btnBG rounded-pill text-break" placeholder="Komentiraj.." maxlength="150">
+           
+       
+        </div>
       </div>
     </div>
   </div>
@@ -92,20 +104,15 @@
 <script>
 import moment from "moment";
 import store from "@/store";
-import {
-  db,
-  getDoc,
-  ref,
-  doc,
-  updateDoc,
-} from "@/firebase";
+import { db, getDoc, ref, doc, updateDoc } from "@/firebase";
 import { Icon } from "@iconify/vue";
 export default {
   data() {
     return {
+      showCommentBool:false,
       arrayLovers: [],
       likeBool: false,
-      myMailID:"ID"+store.userMail,
+      myMailID: "ID" + store.userMail,
       showLikesBool: false,
       counter: 0,
       likes: this.info.likes,
@@ -123,6 +130,9 @@ export default {
     this.postLovers();
   },
   methods: {
+    commentShower(){
+      this.showCommentBool = !this.showCommentBool;
+    },
     showLikes() {
       this.showLikesBool = !this.showLikesBool;
     },
@@ -215,6 +225,17 @@ export default {
 .pointer {
   cursor: pointer;
 }
+.btnBG::placeholder{
+  color: aliceblue;
+}
+.btnBG {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  width: 80%;
+  background-color: rgb(72, 74, 76);
+  color: white;
+}
 .lovers {
   background-color: #484a4c;
   height: auto;
@@ -236,7 +257,11 @@ export default {
   object-fit: contain;
   background-color: #5e6266;
 }
+.time {
+  cursor: default !important;
+}
 .desno {
+  cursor: pointer;
   float: right;
 }
 .okvir2 {

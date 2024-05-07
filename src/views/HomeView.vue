@@ -1,10 +1,10 @@
 <template>
-  <div  class="container-fluid mt-4">
+  <div class="container-fluid mt-4">
     <div class="row">
       <div class="d-none d-md-block col-3 border-end">
         <div class="position-fixed top-20 start-200">
           <div class="vstack gap-2 my-1">
-            <div  class="p-2" @click="onThePage(`profile`)">
+            <div class="p-2" @click="onThePage(`profile`)">
               <Icon
                 icon="emojione:man-medium-skin-tone"
                 width="30"
@@ -12,19 +12,19 @@
               />
               My Profile
             </div>
-            <div  class="p-2">
+            <div class="p-2">
               <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
               Friends
             </div>
-            <div  class="p-2">
+            <div class="p-2">
               <Icon icon="emojione:racing-car" width="30" class="me-2" />
               Cars
             </div>
-            <div  class="p-2">
+            <div class="p-2">
               <Icon icon="emojione:trophy" width="30" class="me-2" />
               Trophies
             </div>
-            <div  class="p-2">
+            <div class="p-2">
               <Icon
                 icon="emojione:flag-for-chequered-flag"
                 width="30"
@@ -32,7 +32,7 @@
               />
               Races
             </div>
-            <div  class="p-2">
+            <div class="p-2">
               <Icon icon="ic:twotone-sell" width="30" class="me-2" />
               Shop
             </div>
@@ -42,15 +42,15 @@
             </div>
           </div>
           <hr class="crta1 mt-4 mb-1" />
-          <div  class="category p-2">
+          <div class="category p-2">
             <Icon icon="emojione:alarm-clock" width="30" class="me-2" />
             Vremenske kategorije
           </div>
-          <div  class="category p-2">
+          <div class="category p-2">
             <Icon icon="noto:tractor" width="30" class="me-2" />
             Dizel
           </div>
-          <div  class="category p-2">
+          <div class="category p-2">
             <Icon
               icon="mingcute:four-wheel-drive-line"
               width="30"
@@ -58,11 +58,11 @@
             />
             AWD
           </div>
-          <div  class="category p-2">
+          <div class="category p-2">
             <Icon icon="mdi:car-traction-control" width="30" class="me-2" />
             RWD
           </div>
-          <div  class="category p-2">
+          <div class="category p-2">
             <Icon
               icon="material-symbols:energy-savings-leaf-outline"
               width="30"
@@ -257,10 +257,10 @@ export default {
     };
   },
   mounted() {
-    this.getPosts();
     onAuthStateChanged(auth, (user) => {
       this.getNews();
       this.getProfileInfo();
+      this.getPosts();
     });
   },
   methods: {
@@ -360,6 +360,7 @@ export default {
           lovers: data.lovers,
           id: doc.id,
           postOwner: data.postOwner,
+          ActiveUserImage: this.ProfileImageSrc,
         });
       });
       this.cards = this.cards.sort((a, b) => b.time - a.time);
@@ -464,9 +465,9 @@ ul {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.1); 
-  z-index: 99999; 
-  }
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 99999;
+}
 .liIMG {
   background-color: #5e6266;
   position: relative;
@@ -516,7 +517,6 @@ p {
 .PostBG {
   background-color: rgb(36, 37, 38);
 }
-
 
 .okvir2 {
   position: relative;

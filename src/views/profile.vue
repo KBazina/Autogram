@@ -73,13 +73,82 @@
       </div>
     </div>
   </div>
-
-  <div class="postContainer">
-    <postCard
-      v-for="card in filteredPosts"
-      :key="card.posted_at"
-      :info="card"
-    />
+  <div class="container-fluid">
+    <div class="row align-items-start">
+      <div class="col"></div>
+      <div class="col">
+        <div class="postContainer">
+          <postCard
+            v-for="card in filteredPosts"
+            :key="card.posted_at"
+            :info="card"
+          />
+        </div>
+      </div>
+      <div class="col mt-5 text-center">
+        <div class="p-3 w-50 m-auto bg-body-tertiary carAdder rounded">
+            <h3 class="p-2">Dodaj auto</h3>
+          Marka
+          <select
+            v-model="chosenMark"
+            class="form-select mb-2"
+            id="inputGroupSelect01"
+          >
+            <option
+              v-for="marka in marke"
+              :key="marka.marka"
+              :value="marka.marka"
+            >
+              {{ marka.marka }}
+            </option>
+          </select>
+          Model
+          <select class="form-select mb-2" id="inputGroupSelect01">
+            <option
+              v-for="model in selectedMarkModels"
+              :key="model"
+              :value="model"
+            >
+              {{ model }}
+            </option>
+          </select>
+          Pogon
+          <select class="form-select mb-2" id="inputGroupSelect01">
+            <option selected value="FWD">FWD</option>
+            <option value="RWD">RWD</option>
+            <option value="AWD">AWD</option>
+          </select>
+          Godina prozivodnje
+          <select class="form-select mb-2" v-model="selectedYear">
+            <option v-for="year in years" :key="year" :value="year">
+              {{ year }}
+            </option>
+          </select>
+          Motorizacija
+          <select class="form-select mb-2" id="inputGroupSelect01">
+            <option selected value="Dizel">Dizel</option>
+            <option value="Benzin">Benzin</option>
+            <option value="Hibrid">Hibrid</option>
+            <option value="Elektro">Elektro</option>
+          </select>
+          Snaga
+          <div class="input-group mb-2">
+            <input type="number" :min="1" class="form-control" />
+            <span class="input-group-text">kW</span>
+          </div>
+          Kilaža
+          <div class="input-group mb-2">
+            <input type="number" :min="50" class="form-control" />
+            <span class="input-group-text">kg</span>
+          </div>
+          Mjenjač
+          <select class="form-select mb-2" id="inputGroupSelect01">
+            <option selected value="automatic">Automatic</option>
+            <option value="manual">Manual</option>
+          </select>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -115,6 +184,13 @@ export default {
       showAddImage: false,
       showGallery: false,
       showHomepage: false,
+      marke: store.marke,
+      chosenMark: "",
+      selectedYear: new Date().getFullYear(),
+      years: Array.from(
+        { length: new Date().getFullYear() - 1899 },
+        (_, i) => 1900 + i
+      ).reverse(),
     };
   },
 
@@ -193,6 +269,13 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   computed: {
+    selectedMarkModels() {
+      const marka = this.marke.find((m) => m.marka === this.chosenMark);
+      console.log("OVO JE MARKA:", marka);
+      if (marka) {
+        return marka.modeli;
+      }
+    },
     filteredPosts() {
       let searchTags = this.store.searchTags
         .trim()
@@ -225,6 +308,9 @@ export default {
   width: 20vw;
   position: fixed;
   top: 27vh;
+}
+.carAdder {
+  border-top-left-radius: 70px !important;
 }
 .showGallery {
   width: 20vw;
