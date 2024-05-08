@@ -87,7 +87,7 @@
       </div>
       <div class="col mt-5 text-center">
         <div class="p-3 w-50 m-auto bg-body-tertiary carAdder rounded">
-            <h3 class="p-2">Dodaj auto</h3>
+          <h3 class="p-2">Dodaj auto</h3>
           Marka
           <select
             v-model="chosenMark"
@@ -146,6 +146,32 @@
             <option selected value="automatic">Automatic</option>
             <option value="manual">Manual</option>
           </select>
+          Registracija
+          <input type="text" class="form-control mb-2" />
+          <div v-if="carPic" class="image_wrapper p-0 mb-1">
+            <img :src="carPic" alt="Slika" />
+          </div>
+          <div class="form-check form-switch mb-2">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="flexSwitchCheckChecked"
+              checked
+            />
+            <label class="form-check-label" for="flexSwitchCheckChecked"
+              >Cestovno registriran auto</label
+            >
+          </div>
+          <div class="input-group mb-3">
+            <input
+              @change="onFileChange($event)"
+              type="file"
+              class="form-control"
+              id="inputGroupFile02"
+            />
+          </div>
+          <button type="button" class="btn btn-light">Dodaj auto</button>
         </div>
       </div>
     </div>
@@ -175,6 +201,8 @@ export default {
   name: "profile",
   data() {
     return {
+      carPicFile: "",
+      carPic: "",
       store,
       cards: [],
       ProfileImageSrc: "",
@@ -195,6 +223,13 @@ export default {
   },
 
   methods: {
+    onFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.carPic = URL.createObjectURL(file);
+        this.carPicFile = file;
+      }
+    },
     handleScroll() {
       const scrollPosition = window.scrollY;
       if (scrollPosition > 60) {
@@ -311,6 +346,7 @@ export default {
 }
 .carAdder {
   border-top-left-radius: 70px !important;
+  border-bottom-right-radius: 70px !important;
 }
 .showGallery {
   width: 20vw;
@@ -334,6 +370,24 @@ export default {
 .showHomePage.show {
   opacity: 1;
   transform: translateX(0%);
+}
+.image_wrapper {
+  border-style: solid;
+  border-color: aliceblue;
+  margin: auto;
+  background-color: #5e6266;
+  width: 200px;
+  height: auto;
+  max-height: 200px;
+  overflow: hidden;
+  text-align: center;
+}
+.image_wrapper img {
+  max-height: 200px;
+  max-width: 200px;
+  width: auto;
+  object-fit: contain;
+  background-color: #5e6266;
 }
 .showImage.show {
   animation: slideInImage 0.5s forwards;
