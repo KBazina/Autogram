@@ -85,8 +85,9 @@
           </li>
         </ul>
       </div>
+      <hr v-if="showCommentBool">
       <div>
-        <div v-if="showCommentBool" class="okvir2 mt-5">
+        <div v-if="showCommentBool" class="okvir2 mt-1">
           <img
             :src="info.ActiveUserImage"
             class="rounded-circle sredina me-5 ms-2"

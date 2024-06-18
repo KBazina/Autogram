@@ -56,6 +56,16 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/profile.vue"),
   },
+  {
+    path: "/cup",
+    name: "cup",
+    meta: {
+      needsUser: true,
+      needsDoneProfile: true,
+    },
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/cup.vue"),
+  },
 ];
 
 const router = createRouter({

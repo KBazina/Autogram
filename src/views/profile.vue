@@ -163,6 +163,7 @@
               >Cestovno registriran auto</label
             >
           </div>
+          Dodaj fotografiju
           <div class="input-group mb-3">
             <input
               @change="onFileChange($event)"
@@ -271,6 +272,7 @@ export default {
           lovers: data.lovers,
           id: doc.id,
           postOwner: data.postOwner,
+          ActiveUserImage:this.ProfileImageSrc
         });
       });
       console.log("karte su ovo: ", this.cards);
