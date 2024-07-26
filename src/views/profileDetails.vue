@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="overlay"></div>
   <div class="pozadina"></div>
   <div class="detailer position-absolute top-50 start-50 translate-middle">
@@ -9,7 +10,7 @@
         >
           <div class="profile_bg container-fluid p-3">
             <div class="">
-              <div class="okvir mb-5">
+              <div class="okvir m-auto mb-5">
                 <img
                   :src="imageSrc"
                   alt=""
@@ -95,6 +96,7 @@
       </form>
     </div>
   </div>
+</div>
 </template>
 <script>
 import store from "@/store";
@@ -202,6 +204,7 @@ export default {
       if (!isFormCorrect) {
         console.log("nesto je krivo");
       } else {
+        store.activeUsername= this.username
         this.btnClicked = true;
         const file = this.imageFile;
         const date = this.date;
@@ -257,7 +260,7 @@ export default {
   // components: { VueDatePicker },
 };
 </script>
-<style>
+<style scoped>
 .bgColor2 {
   background-color: rgb(36, 37, 38);
 }
@@ -288,7 +291,15 @@ export default {
   position: relative;
   width: 250px;
   height: 250px;
+  overflow: hidden;
 }
+
+.okvir img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .warningSpan {
   font-size: 10px;
   color: #737373;

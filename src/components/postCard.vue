@@ -85,7 +85,7 @@
           </li>
         </ul>
       </div>
-      <hr v-if="showCommentBool">
+      <hr v-if="showCommentBool" />
       <div>
         <div v-if="showCommentBool" class="okvir2 mt-1">
           <img
@@ -93,9 +93,14 @@
             class="rounded-circle sredina me-5 ms-2"
             alt="..."
           />
-          <input type="text" class="p-2 btnBG rounded-pill text-break" placeholder="Komentiraj.." maxlength="150">
-           
-       
+          <input
+            type="text"
+            class="p-2 btnBG rounded-pill text-break"
+            placeholder="Komentiraj.."
+            @keyup.enter="submitComment"
+            maxlength="150"
+            v-model="comment"
+          />
         </div>
       </div>
     </div>
@@ -105,12 +110,14 @@
 <script>
 import moment from "moment";
 import store from "@/store";
-import { db, getDoc, ref, doc, updateDoc } from "@/firebase";
+import { db, getDoc, ref, doc, updateDoc, setDoc } from "@/firebase";
 import { Icon } from "@iconify/vue";
 export default {
   data() {
     return {
-      showCommentBool:false,
+      store,
+      comment:"",
+      showCommentBool: false,
       arrayLovers: [],
       likeBool: false,
       myMailID: "ID" + store.userMail,
@@ -131,13 +138,13 @@ export default {
     this.postLovers();
   },
   methods: {
-    commentShower(){
+    commentShower() {
       this.showCommentBool = !this.showCommentBool;
     },
     showLikes() {
       this.showLikesBool = !this.showLikesBool;
     },
-
+    
     async ckeckIFlikes() {
       if (this.info.lovers.includes(store.userMail)) this.likeBool = true;
     },
@@ -151,6 +158,25 @@ export default {
           username: docSnap.data().username,
         });
       });
+    },
+    async submitComment() {
+      if(!this.comment){console.log("no text")} else {  
+        const postRef = doc(
+            db,
+            "users",
+            "ID" + this.info.postOwner,
+            "posts",
+            this.info.id,
+            "comments",
+            "post" + this.info.postOwner + Date.now()
+          );
+          await setDoc(postRef, {
+            commentText:this.comment,
+            commentPicture:this.info.ActiveUserImage,
+            commentName:this.store.activeUsername
+          });
+          this.comment=""
+      }
     },
     async likesPost() {
       try {
@@ -226,7 +252,7 @@ export default {
 .pointer {
   cursor: pointer;
 }
-.btnBG::placeholder{
+.btnBG::placeholder {
   color: aliceblue;
 }
 .btnBG {
@@ -272,8 +298,7 @@ export default {
 }
 .okvir2 img {
   width: 40px;
-  height: auto;
-  max-height: 40px;
+  height: 40px;
   object-fit: cover;
   background-color: beige;
 }

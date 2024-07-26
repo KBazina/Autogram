@@ -2,6 +2,7 @@ export default {
   ime_prezime_default: "",
   userActiveState: false,
   userMail: null,
+  activeUsername:"",
   searchTags: "",
   marke: [
     { marka: "Abarth", modeli: ["500", "Grande Punto"] },

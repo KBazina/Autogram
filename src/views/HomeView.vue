@@ -1,4 +1,5 @@
 <template>
+   <div>
   <div class="container-fluid mt-4">
     <div class="row">
       <div class="d-none d-md-block col-3 border-end">
@@ -210,6 +211,9 @@
     </div>
   </div>
   <div class="overlayPost" v-if="btnClicked"></div>
+ 
+
+  </div>
 </template>
 
 <script>
@@ -525,8 +529,7 @@ p {
 }
 .okvir2 img {
   width: 40px;
-  height: auto;
-  max-height: 40px;
+  height: 40px;
   object-fit: cover;
 }
 .visina {
