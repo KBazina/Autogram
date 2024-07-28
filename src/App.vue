@@ -125,6 +125,7 @@ export default {
   async created() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log("uses je ovo: ",user)
         store.userMail = user.email;
         this.UserActive = user;
         if (!currentRoute.value.meta.needsUser) {
@@ -156,7 +157,9 @@ export default {
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        console.log(doc, "storemail: ", store.userMail);
+        console.log(doc.data(), "storemail: ", store.userMail);
+        store.userMail=doc.data().email
+        store.activeUsername=doc.data().username
         this.done = true;
       });
     },

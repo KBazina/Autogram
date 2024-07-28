@@ -81,13 +81,14 @@
               <span v-if="lover.id != myMailID" class="desno me-2"
                 >Pogledaj profil</span
               >
+              <hr class="m-0 m-auto" style="width: 85%" />
             </div>
           </li>
         </ul>
       </div>
       <hr v-if="showCommentBool" />
-      <div>
-        <div v-if="showCommentBool" class="okvir2 mt-1">
+      <div class="limitedComments" v-if="showCommentBool">
+        <div class="okvir2 mt-1">
           <img
             :src="info.ActiveUserImage"
             class="rounded-circle sredina me-5 ms-2"
@@ -102,6 +103,24 @@
             v-model="comment"
           />
         </div>
+        <div v-if="this.arrayComments.length > 0" class="mt-3"></div>
+        <div class="okvir3 mt-1" v-for="comm in arrayComments" :key="comm">
+          <img
+            :src="comm.commentPicture"
+            class="rounded-circle sredina ms-2"
+            alt="..."
+          />
+
+          <div
+            class="sirinaKomentara desno bg-dark bg-gradient p-2 text-light-emphasis rounded"
+          >
+            <span class="curive text-warning-emphasis">
+              {{ comm.commentName }}
+            </span>
+            <br />
+            {{ comm.commentText }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -110,13 +129,23 @@
 <script>
 import moment from "moment";
 import store from "@/store";
-import { db, getDoc, ref, doc, updateDoc, setDoc } from "@/firebase";
+import {
+  db,
+  getDoc,
+  getDocs,
+  ref,
+  doc,
+  updateDoc,
+  setDoc,
+  collection,
+} from "@/firebase";
 import { Icon } from "@iconify/vue";
 export default {
   data() {
     return {
+      arrayComments: [],
       store,
-      comment:"",
+      comment: "",
       showCommentBool: false,
       arrayLovers: [],
       likeBool: false,
@@ -136,6 +165,7 @@ export default {
   mounted() {
     this.ckeckIFlikes();
     this.postLovers();
+    this.getComments();
   },
   methods: {
     commentShower() {
@@ -144,7 +174,35 @@ export default {
     showLikes() {
       this.showLikesBool = !this.showLikesBool;
     },
-    
+    async getComments() {
+      this.arrayComments = [];
+      const querySnapshot = await getDocs(
+        collection(
+          db,
+          "users",
+          "ID" + this.info.postOwner,
+          "posts",
+          this.info.id,
+          "comments"
+        )
+      );
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        console.log(
+          data,
+          "USERNAME: ",
+          store.activeUsername,
+          " i voo drugo ",
+          store.userMail
+        );
+        this.arrayComments.push({
+          commentText: data.commentText,
+          commentPicture: data.commentPicture,
+          commentName: data.commentName,
+        });
+      });
+      this.arrayComments = this.arrayComments.reverse();
+    },
     async ckeckIFlikes() {
       if (this.info.lovers.includes(store.userMail)) this.likeBool = true;
     },
@@ -160,23 +218,26 @@ export default {
       });
     },
     async submitComment() {
-      if(!this.comment){console.log("no text")} else {  
+      if (!this.comment) {
+        console.log("no text");
+      } else {
         const postRef = doc(
-            db,
-            "users",
-            "ID" + this.info.postOwner,
-            "posts",
-            this.info.id,
-            "comments",
-            "post" + this.info.postOwner + Date.now()
-          );
-          await setDoc(postRef, {
-            commentText:this.comment,
-            commentPicture:this.info.ActiveUserImage,
-            commentName:this.store.activeUsername
-          });
-          this.comment=""
+          db,
+          "users",
+          "ID" + this.info.postOwner,
+          "posts",
+          this.info.id,
+          "comments",
+          "post" + this.info.postOwner + Date.now()
+        );
+        await setDoc(postRef, {
+          commentText: this.comment,
+          commentPicture: this.info.ActiveUserImage,
+          commentName: this.store.activeUsername,
+        });
+        this.comment = "";
       }
+      this.getComments();
     },
     async likesPost() {
       try {
@@ -268,6 +329,7 @@ export default {
   height: auto;
   max-height: 150px;
   overflow-y: scroll !important;
+  scrollbar-width: none;
 }
 .image-wrapper {
   background-color: #5e6266;
@@ -287,10 +349,23 @@ export default {
 .time {
   cursor: default !important;
 }
+.limitedComments {
+  max-height: 500px;
+  overflow-y: auto;
+}
+.limitedComments::-webkit-scrollbar {
+  display: none;
+}
+
+.limitedComments {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 .desno {
   cursor: pointer;
   float: right;
 }
+
 .okvir2 {
   position: relative;
   width: 100%;
@@ -301,6 +376,21 @@ export default {
   height: 40px;
   object-fit: cover;
   background-color: beige;
+}
+.okvir3 {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.okvir3 img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  background-color: beige;
+}
+.sirinaKomentara {
+  width: 85%;
+  cursor: default;
 }
 .card {
   background-color: #242526 !important;

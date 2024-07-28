@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="pozadina"></div>
   <div class="joke">
     <span class="LifeIs">LIFE IS</span><br />TOO SHORT TO <br />
@@ -84,6 +85,7 @@
       >
     </div>
   </div>
+</div>
 </template>
 
 <script>

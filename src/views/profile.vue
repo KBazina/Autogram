@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div
     class="profile_bg container-fluid p-0 border-bottom border-4 border-secondary"
   >
@@ -177,6 +178,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
