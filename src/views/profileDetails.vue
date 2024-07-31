@@ -203,6 +203,7 @@ export default {
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) {
         console.log("nesto je krivo");
+        alert("Niste popunili cijelu formu")
       } else {
         store.activeUsername= this.username
         this.btnClicked = true;

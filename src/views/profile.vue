@@ -1,184 +1,241 @@
 <template>
   <div>
-  <div
-    class="profile_bg container-fluid p-0 border-bottom border-4 border-secondary"
-  >
-    <div class="profile_bg_img">
-      <img src="@/assets/profile_background.jpg" alt="" />
-    </div>
-    <div class="pola position-relative">
-      <div class="okvir position-absolute top-100 start-50 translate-middle">
-        <img
-          :src="this.ProfileImageSrc"
-          alt=""
-          class="rounded-circle border-4 border border-light"
-        />
+    <div
+      class="profile_bg container-fluid p-0 border-bottom border-4 border-secondary"
+    >
+      <div class="profile_bg_img">
+        <img src="@/assets/profile_background.jpg" alt="" />
       </div>
-    </div>
-  </div>
-
-  <div class="ProfileEditor">
-    <div class="vstack gap-2 ms-3 mt-2">
-      <div
-        v-show="showHomepage"
-        class="p-2 showHomePage"
-        @click="onThePage(``)"
-        :class="{ show: showHomepage }"
-      >
-        <Icon
-          icon="material-symbols:garage-door-rounded"
-          width="30"
-          class="me-2"
-        />
-        Homepage
-      </div>
-      <div
-        v-show="showGallery"
-        class="p-2 showGallery"
-        :class="{ show: showGallery }"
-      >
-        <Icon icon="emojione:framed-picture" width="30" class="me-2" />
-        Gallery
-      </div>
-      <div
-        class="p-2 showImage"
-        v-show="showAddImage"
-        :class="{ show: showAddImage }"
-      >
-        <Icon
-          icon="material-symbols:add-a-photo-outline"
-          width="30"
-          class="me-2"
-        />
-        Add image
-      </div>
-      <div class="fixedProfileEditor">
-        <div class="p-2 fs-1">@{{ this.username }}</div>
-        <hr />
-        <div class="p-2 fs-5">
-          {{ this.ime_prezime }}
-          <div class="p-2 bio">* {{ this.bio }}</div>
-        </div>
-        <div class="p-2">
-          <Icon icon="emojione:man-medium-skin-tone" width="30" class="me-2" />
-          Edit profile
-        </div>
-        <div class="p-2">
-          <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
-          Friends
-        </div>
-        <div class="p-2">
-          <Icon icon="emojione:racing-car" width="30" class="me-2" />
-          Cars
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="container-fluid">
-    <div class="row align-items-start">
-      <div class="col"></div>
-      <div class="col">
-        <div class="postContainer">
-          <postCard
-            v-for="card in filteredPosts"
-            :key="card.posted_at"
-            :info="card"
+      <div class="pola position-relative">
+        <div class="okvir position-absolute top-100 start-50 translate-middle">
+          <img
+            :src="this.ProfileImageSrc"
+            alt=""
+            class="rounded-circle border-4 border border-light"
           />
         </div>
       </div>
-      <div class="col mt-5 text-center">
-        <div class="p-3 w-50 m-auto bg-body-tertiary carAdder rounded">
-          <h3 class="p-2">Dodaj auto</h3>
-          Marka
-          <select
-            v-model="chosenMark"
-            class="form-select mb-2"
-            id="inputGroupSelect01"
-          >
-            <option
-              v-for="marka in marke"
-              :key="marka.marka"
-              :value="marka.marka"
-            >
-              {{ marka.marka }}
-            </option>
-          </select>
-          Model
-          <select class="form-select mb-2" id="inputGroupSelect01">
-            <option
-              v-for="model in selectedMarkModels"
-              :key="model"
-              :value="model"
-            >
-              {{ model }}
-            </option>
-          </select>
-          Pogon
-          <select class="form-select mb-2" id="inputGroupSelect01">
-            <option selected value="FWD">FWD</option>
-            <option value="RWD">RWD</option>
-            <option value="AWD">AWD</option>
-          </select>
-          Godina prozivodnje
-          <select class="form-select mb-2" v-model="selectedYear">
-            <option v-for="year in years" :key="year" :value="year">
-              {{ year }}
-            </option>
-          </select>
-          Motorizacija
-          <select class="form-select mb-2" id="inputGroupSelect01">
-            <option selected value="Dizel">Dizel</option>
-            <option value="Benzin">Benzin</option>
-            <option value="Hibrid">Hibrid</option>
-            <option value="Elektro">Elektro</option>
-          </select>
-          Snaga
-          <div class="input-group mb-2">
-            <input type="number" :min="1" class="form-control" />
-            <span class="input-group-text">kW</span>
+    </div>
+
+    <div class="ProfileEditor">
+      <div class="vstack gap-2 ms-3 mt-2">
+        <div
+          v-show="showHomepage"
+          class="p-2 showHomePage"
+          @click="onThePage(``)"
+          :class="{ show: showHomepage }"
+        >
+          <Icon
+            icon="material-symbols:garage-door-rounded"
+            width="30"
+            class="me-2"
+          />
+          Homepage
+        </div>
+        <div
+          v-show="showGallery"
+          class="p-2 showGallery"
+          :class="{ show: showGallery }"
+        >
+          <Icon icon="emojione:framed-picture" width="30" class="me-2" />
+          Gallery
+        </div>
+        <div
+          class="p-2 showImage"
+          v-show="showAddImage"
+          :class="{ show: showAddImage }"
+        >
+          <Icon
+            icon="material-symbols:add-a-photo-outline"
+            width="30"
+            class="me-2"
+          />
+          Add image
+        </div>
+        <div class="fixedProfileEditor">
+          <div class="p-2 fs-1">@{{ this.username }}</div>
+          <hr />
+          <div class="p-2 fs-5">
+            {{ this.ime_prezime }}
+            <div class="p-2 bio">* {{ this.bio }}</div>
           </div>
-          Kilaža
-          <div class="input-group mb-2">
-            <input type="number" :min="50" class="form-control" />
-            <span class="input-group-text">kg</span>
-          </div>
-          Mjenjač
-          <select class="form-select mb-2" id="inputGroupSelect01">
-            <option selected value="automatic">Automatic</option>
-            <option value="manual">Manual</option>
-          </select>
-          Registracija
-          <input type="text" class="form-control mb-2" />
-          <div v-if="carPic" class="image_wrapper p-0 mb-1">
-            <img :src="carPic" alt="Slika" />
-          </div>
-          <div class="form-check form-switch mb-2">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              role="switch"
-              id="flexSwitchCheckChecked"
-              checked
+          <div class="p-2">
+            <Icon
+              icon="emojione:man-medium-skin-tone"
+              width="30"
+              class="me-2"
             />
-            <label class="form-check-label" for="flexSwitchCheckChecked"
-              >Cestovno registriran auto</label
-            >
+            Edit profile
           </div>
-          Dodaj fotografiju
-          <div class="input-group mb-3">
-            <input
-              @change="onFileChange($event)"
-              type="file"
-              class="form-control"
-              id="inputGroupFile02"
+          <div class="p-2">
+            <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
+            Friends
+          </div>
+          <div class="p-2">
+            <Icon icon="emojione:racing-car" width="30" class="me-2" />
+            Cars
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row align-items-start">
+        <div class="col"></div>
+        <div class="col">
+          <div class="postContainer">
+            <postCard
+              v-for="card in filteredPosts"
+              :key="card.posted_at"
+              :info="card"
             />
           </div>
-          <button type="button" class="btn btn-light">Dodaj auto</button>
+        </div>
+        <div class="col mt-5 text-center">
+          <form @submit.prevent="addCar">
+            <div class="p-3 w-50 m-auto bg-body-tertiary carAdder mb-4 rounded">
+              <h3 class="p-2">Dodaj auto</h3>
+              Marka
+              <select
+                required
+                v-model="chosenMark"
+                class="form-select mb-2"
+                id="inputGroupSelect01"
+              >
+                <option
+                  v-for="marka in marke"
+                  :key="marka.marka"
+                  :value="marka.marka"
+                >
+                  {{ marka.marka }}
+                </option>
+              </select>
+              Model
+              <select
+                required
+                v-model="chosenModel"
+                class="form-select mb-2"
+                id="inputGroupSelect01"
+              >
+                <option
+                  v-for="model in selectedMarkModels"
+                  :key="model"
+                  :value="model"
+                >
+                  {{ model }}
+                </option>
+              </select>
+              Pogon
+              <select
+                required
+                v-model="chosenPogon"
+                class="form-select mb-2"
+                id="inputGroupSelect01"
+              >
+                <option selected value="FWD">FWD</option>
+                <option value="RWD">RWD</option>
+                <option value="AWD">AWD</option>
+              </select>
+              Godina prozivodnje
+              <select required class="form-select mb-2" v-model="selectedYear">
+                <option v-for="year in years" :key="year" :value="year">
+                  {{ year }}
+                </option>
+              </select>
+              Motorizacija
+              <select
+                required
+                v-model="chosenMotorizacija"
+                class="form-select mb-2"
+                id="inputGroupSelect01"
+              >
+                <option selected value="Dizel">Dizel</option>
+                <option value="Benzin">Benzin</option>
+                <option value="Hibrid">Hibrid</option>
+                <option value="Elektro">Elektro</option>
+              </select>
+              Snaga
+              <div class="input-group mb-2">
+                <input
+                  required
+                  v-model="chosenSnaga"
+                  type="number"
+                  :max="5000"
+                  :min="1"
+                  class="form-control"
+                />
+                <span class="input-group-text">kW</span>
+              </div>
+              Kilaža
+              <div class="input-group mb-2">
+                <input
+                  required
+                  v-model="chosenWeight"
+                  type="number"
+                  :min="50"
+                  :max="10000"
+                  class="form-control"
+                />
+                <span class="input-group-text">kg</span>
+              </div>
+              Mjenjač
+              <select
+                required
+                v-model="chosenTransmition"
+                class="form-select mb-2"
+                id="inputGroupSelect01"
+              >
+                <option selected value="automatic">Automatic</option>
+                <option value="manual">Manual</option>
+              </select>
+              Registracija
+              <input
+                :required="registeredCar"
+                 :disabled="!registeredCar"
+                v-model="chosenRegistration"
+                type="text"
+                maxlength="10"
+                @keydown.space.prevent
+                class="form-control mb-2"
+              />
+              <div v-if="carPic" class="image_wrapper p-0 mb-1">
+                <img :src="carPic" alt="Slika" />
+              </div>
+              <div class="form-check form-switch mb-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckChecked"
+                  checked
+                  v-model="registeredCar"
+                />
+                <label class="form-check-label" for="flexSwitchCheckChecked"
+                  >Cestovno registriran auto</label
+                >
+              </div>
+              Dodaj fotografiju
+              <div class="input-group mb-3">
+                <input
+                  required
+                  @change="onFileChange($event)"
+                  type="file"
+                  class="form-control"
+                  id="inputGroupFile02"
+                />
+              </div>
+              <button
+                :disabled="btnClicked"
+                type="submit"
+                class="btn btn-light"
+              >
+                Dodaj auto
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -191,23 +248,36 @@ import {
   db,
   getStorage,
   ref,
+  uploadBytes,
   query,
+  getDownloadURL,
   orderBy,
   where,
+  setDoc,
   getDocs,
   getAuth,
   onAuthStateChanged,
 } from "@/firebase";
 const auth = getAuth();
-
+const storage = getStorage();
 export default {
   name: "profile",
   data() {
     return {
+      btnClicked: false,
+      chosenModel: "",
+      chosenMotorizacija: "",
+      chosenPogon: "",
+      chosenRegistration: "",
+      chosenSnaga: "",
+      chosenTransmition: "",
+      chosenWeight: "",
+      registeredCar: true,
       carPicFile: "",
       carPic: "",
       store,
       cards: [],
+      carImageSrc: "",
       ProfileImageSrc: "",
       bio: "",
       ime_prezime: "",
@@ -226,7 +296,72 @@ export default {
   },
 
   methods: {
+    async addCar() {
+      const isUnique = await this.checkUniqueRegistration(
+        this.chosenRegistration.toUpperCase()
+      );
+      if (!isUnique) {
+        alert(
+          "Registracija već postoji. Molimo unesite jedinstvenu registraciju."
+        );
+        return;
+      }
+      this.btnClicked = true;
+      console.log("ADD A CAR TO MY GARAGE");
+      const file = this.carPicFile;
+      const storageRef = ref(
+        storage,
+        "carsPictures/" + Date.now() + file.name
+      );
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(ref(storageRef));
+      this.carImageSrc = url;
+      const carRef = doc(
+        db,
+        "users",
+        "ID" + store.userMail,
+        "cars",
+        "car" + this.chosenMark + this.chosenModel + Date.now()
+      );
+      await setDoc(carRef, {
+        Marka: this.chosenMark,
+        Model: this.chosenModel,
+        carYear: this.selectedYear,
+        Motorizacija: this.chosenMotorizacija,
+        Pogon: this.chosenPogon,
+        Registracija: this.chosenRegistration.toUpperCase(),
+        Snaga: this.chosenSnaga,
+        Transmition: this.chosenTransmition,
+        Weight: this.chosenWeight,
+        registeredCar: true,
+        carPic: this.carImageSrc,
+        carOwner: store.userMail,
+      });
+      this.chosenMark = "";
+      (this.chosenModel = ""),
+        (this.chosenMotorizacija = ""),
+        (this.chosenPogon = ""),
+        (this.chosenRegistration = ""),
+        (this.chosenSnaga = ""),
+        (this.chosenTransmition = ""),
+        (this.chosenWeight = ""),
+        (this.registeredCar = true),
+        (this.carPicFile = ""),
+        (this.carPic = "");
+      this.btnClicked = false;
+      window.location.reload();
+    },
+    async checkUniqueRegistration(registration) {
+      const q = query(
+        collection(db, `users/ID${store.userMail}/cars`),
+        where("Registracija", "==", registration)
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.empty;
+    },
+
     onFileChange(event) {
+      console.log(this.registeredCar);
       const file = event.target.files[0];
       if (file) {
         this.carPic = URL.createObjectURL(file);
@@ -274,7 +409,7 @@ export default {
           lovers: data.lovers,
           id: doc.id,
           postOwner: data.postOwner,
-          ActiveUserImage:this.ProfileImageSrc
+          ActiveUserImage: this.ProfileImageSrc,
         });
       });
       console.log("karte su ovo: ", this.cards);
