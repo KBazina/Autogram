@@ -2,45 +2,45 @@
   <div class="container-fluid text-center mt-1">
     <div class="row justify-content-evenly mb-2">
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-1 me-5">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-1 me-5">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-1 me-5">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar me-1">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
     </div>
     <div class="row justify-content-evenly mb-2">
       <div class="col border border-0"></div>
       <div class="col colCar ms-1 me-2">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col ms-1 me-5 border border-0"></div>
       <div class="col border border-0"></div>
       <div class="col colCar ms-1 me-2">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar me-1">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col border border-0"></div>
     </div>
@@ -49,10 +49,10 @@
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
       <div class="col colCar ms-2 me-4">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-5 me-2">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
@@ -63,7 +63,7 @@
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
@@ -74,7 +74,7 @@
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
@@ -85,10 +85,10 @@
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
       <div class="col colCar ms-2 me-4">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-5 me-2">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col border border-0"></div>
       <div class="col border border-0"></div>
@@ -97,50 +97,57 @@
     <div class="row justify-content-evenly mb-2">
       <div class="col border border-0"></div>
       <div class="col colCar ms-1 me-2">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col ms-1 me-5 border border-0"></div>
       <div class="col border border-0"></div>
       <div class="col colCar ms-1 me-2">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar me-1">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col border border-0"></div>
     </div>
     <div class="row justify-content-evenly mb-2">
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-1 me-5">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-1 me-5">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar ms-1 me-5">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar me-1">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
       <div class="col colCar">
-        <img src="https://picsum.photos/600/300" alt="" />
+        <img src="" alt="" />
       </div>
     </div>
   </div>
 </template>
-
+<script>
+export default{
+  name: "cup",
+  data() {
+    return {};
+  },
+}
+</script>
 <style scoped>
 .colCar {
   background-color:darkgrey;

@@ -235,7 +235,7 @@
               </button>
             </div>
           </form>
-          <div ref="probni" class="probni">
+          <div ref="probni" class="carFlower overflow-y-scroll">
             <carProfCard  v-for="car in myCars" :key="car" :carNew="car">
 
             </carProfCard>
@@ -378,6 +378,7 @@ export default {
     handleScroll() {
       const carAdderDiv = this.$refs.carAdder;
       const probniDiv = this.$refs.probni;
+      if (!carAdderDiv || !probniDiv) return;
       const carAdderRect = carAdderDiv.getBoundingClientRect();
 
       const isCarAdderOutOfView = carAdderRect.bottom < 50;
@@ -633,6 +634,10 @@ export default {
   width: 20vw;
   position: fixed;
   top: 35vh;
+}
+.carFlower{
+  height: 90vh;
+  scrollbar-width: none;
 }
 .ProfileEditor {
   width: 20vw;
