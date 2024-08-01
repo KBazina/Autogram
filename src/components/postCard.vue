@@ -188,13 +188,6 @@ export default {
       );
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        console.log(
-          data,
-          "USERNAME: ",
-          store.activeUsername,
-          " i voo drugo ",
-          store.userMail
-        );
         this.arrayComments.push({
           commentText: data.commentText,
           commentPicture: data.commentPicture,

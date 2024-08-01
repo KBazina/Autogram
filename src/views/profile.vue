@@ -92,7 +92,10 @@
         </div>
         <div class="col mt-5 text-center">
           <form @submit.prevent="addCar">
-            <div class="p-3 w-50 m-auto bg-body-tertiary carAdder mb-4 rounded">
+            <div
+              ref="carAdder"
+              class="p-3 w-50 m-auto bg-body-tertiary carAdder mb-4 rounded"
+            >
               <h3 class="p-2">Dodaj auto</h3>
               Marka
               <select
@@ -190,7 +193,7 @@
               Registracija
               <input
                 :required="registeredCar"
-                 :disabled="!registeredCar"
+                :disabled="!registeredCar"
                 v-model="chosenRegistration"
                 type="text"
                 maxlength="10"
@@ -232,6 +235,11 @@
               </button>
             </div>
           </form>
+          <div ref="probni" class="probni">
+            <carProfCard  v-for="car in myCars" :key="car" :carNew="car">
+
+            </carProfCard>
+          </div>
         </div>
       </div>
     </div>
@@ -240,6 +248,7 @@
 
 <script>
 import postCard from "@/components/postCard.vue";
+import carProfCard from "@/components/carProfCard.vue";
 import store from "@/store";
 import { Icon } from "@iconify/vue";
 import {
@@ -264,6 +273,7 @@ export default {
   name: "profile",
   data() {
     return {
+      myCars: [],
       btnClicked: false,
       chosenModel: "",
       chosenMotorizacija: "",
@@ -309,10 +319,7 @@ export default {
       this.btnClicked = true;
       console.log("ADD A CAR TO MY GARAGE");
       const file = this.carPicFile;
-      const storageRef = ref(
-        storage,
-        "carsPictures/" + Date.now() + file.name
-      );
+      const storageRef = ref(storage, "carsPictures/" + Date.now() + file.name);
       const snapshot = await uploadBytes(storageRef, file);
       const url = await getDownloadURL(ref(storageRef));
       this.carImageSrc = url;
@@ -369,6 +376,17 @@ export default {
       }
     },
     handleScroll() {
+      const carAdderDiv = this.$refs.carAdder;
+      const probniDiv = this.$refs.probni;
+      const carAdderRect = carAdderDiv.getBoundingClientRect();
+
+      const isCarAdderOutOfView = carAdderRect.bottom < 50;
+
+      if (isCarAdderOutOfView) {
+        probniDiv.classList.add("fixed");
+      } else {
+        probniDiv.classList.remove("fixed");
+      }
       const scrollPosition = window.scrollY;
       if (scrollPosition > 60) {
         this.showAddImage = true;
@@ -388,6 +406,28 @@ export default {
     },
     onThePage(location) {
       this.$router.push(`/${location}`);
+    },
+    async getCars() {
+      const q = query(collection(db, `users/ID${store.userMail}/cars`));
+      const querySnapshot = await getDocs(q);
+      this.myCars = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.myCars.push({
+          Marka: data.Marka,
+          Model: data.Model,
+          carYear: data.carYear,
+          Motorizacija: data.Motorizacija,
+          Pogon: data.Pogon,
+          Registracija: data.Registracija,
+          Snaga: data.Snaga,
+          Transmition: data.Transmition,
+          Weight: data.Weight,
+          registeredCar: data.registeredCar,
+          carPic: data.carPic,
+          carOwner: data.carOwner,
+        });
+      });
     },
     async getPosts() {
       const q = query(
@@ -437,6 +477,7 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.getProfileInfo();
       this.getPosts();
+      this.getCars();
     });
   },
   async destroyed() {
@@ -470,6 +511,7 @@ export default {
   components: {
     postCard,
     Icon,
+    carProfCard,
   },
 };
 </script>
@@ -483,6 +525,12 @@ export default {
   position: fixed;
   top: 27vh;
 }
+.fixed {
+  position: fixed;
+  top: 80px;
+  width: 32%;
+}
+
 .carAdder {
   border-top-left-radius: 70px !important;
   border-bottom-right-radius: 70px !important;
