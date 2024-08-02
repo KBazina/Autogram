@@ -236,8 +236,7 @@
             </div>
           </form>
           <div ref="probni" class="carFlower overflow-y-scroll">
-            <carProfCard  v-for="car in myCars" :key="car" :carNew="car">
-
+            <carProfCard v-for="car in myCars" :key="car" :carNew="car">
             </carProfCard>
           </div>
         </div>
@@ -273,6 +272,7 @@ export default {
   name: "profile",
   data() {
     return {
+      idealET: 0,
       myCars: [],
       btnClicked: false,
       chosenModel: "",
@@ -307,15 +307,41 @@ export default {
 
   methods: {
     async addCar() {
-      const isUnique = await this.checkUniqueRegistration(
-        this.chosenRegistration.toUpperCase()
-      );
-      if (!isUnique) {
-        alert(
-          "Registracija već postoji. Molimo unesite jedinstvenu registraciju."
+      if (this.registeredCar) {
+        const isUnique = await this.checkUniqueRegistration(
+          this.chosenRegistration.toUpperCase()
         );
-        return;
+        if (!isUnique) {
+          alert(
+            "Registracija već postoji. Molimo unesite jedinstvenu registraciju."
+          );
+          return;
+        }
       }
+      switch (this.chosenPogon) {
+        case "AWD":
+          this.idealET =
+            5.9 *
+            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+              (1 / 3);
+          break;
+        case "FWD":
+          this.idealET =
+            6.18 *
+            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+              (1 / 3);
+          break;
+        case "RWD":
+          this.idealET =
+            6.25 *
+            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+              (1 / 3);
+          break;
+      }
+      // if (this.chosenTransmition == "Manual") this.idealET += 0.5;
+      // if (this.chosenMotorizacija == "Elektro") this.idealET -= 0.2;
+      // if ((this.chosenMotorizacija = "Dizel")) this.idealET += 0.3;
+      // if (this.chosenMark == "Porsche") this.idealET -= 0.2;
       this.btnClicked = true;
       console.log("ADD A CAR TO MY GARAGE");
       const file = this.carPicFile;
@@ -328,7 +354,7 @@ export default {
         "users",
         "ID" + store.userMail,
         "cars",
-        "car" + this.chosenMark + this.chosenModel + Date.now()
+        Date.now() + "car" + this.chosenMark + this.chosenModel
       );
       await setDoc(carRef, {
         Marka: this.chosenMark,
@@ -343,6 +369,7 @@ export default {
         registeredCar: true,
         carPic: this.carImageSrc,
         carOwner: store.userMail,
+        idealET: this.idealET,
       });
       this.chosenMark = "";
       (this.chosenModel = ""),
@@ -635,7 +662,7 @@ export default {
   position: fixed;
   top: 35vh;
 }
-.carFlower{
+.carFlower {
   height: 90vh;
   scrollbar-width: none;
 }

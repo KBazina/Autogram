@@ -2,7 +2,7 @@ export default {
   ime_prezime_default: "",
   userActiveState: false,
   userMail: null,
-  activeUsername:"",
+  activeUsername: "",
   searchTags: "",
   marke: [
     { marka: "Abarth", modeli: ["500", "Grande Punto"] },
@@ -78,6 +78,7 @@ export default {
         "RS6",
         "RS7",
         "S1",
+        "S2",
         "S3",
         "S4 Avant",
         "S5",
