@@ -1,4 +1,5 @@
 <template>
+  <div>
   <nav class="navImp navbar navbar-expand-lg sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
@@ -93,7 +94,7 @@
       </div>
     </div>
   </div>
-  <router-view />
+  <router-view /></div>
 </template>
 
 <script>

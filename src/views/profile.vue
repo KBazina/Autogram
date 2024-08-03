@@ -338,10 +338,10 @@ export default {
               (1 / 3);
           break;
       }
-      // if (this.chosenTransmition == "Manual") this.idealET += 0.5;
-      // if (this.chosenMotorizacija == "Elektro") this.idealET -= 0.2;
-      // if ((this.chosenMotorizacija = "Dizel")) this.idealET += 0.3;
-      // if (this.chosenMark == "Porsche") this.idealET -= 0.2;
+      if (this.chosenTransmition === "Manual") this.idealET += 0.5;
+      if (this.chosenMotorizacija === "Elektro") this.idealET -= 0.2;
+      if (this.chosenMotorizacija === "Dizel") this.idealET += 0.3;
+      if (this.chosenMark === "Porsche") this.idealET -= 0.2;
       this.btnClicked = true;
       console.log("ADD A CAR TO MY GARAGE");
       const file = this.carPicFile;
@@ -369,7 +369,8 @@ export default {
         registeredCar: true,
         carPic: this.carImageSrc,
         carOwner: store.userMail,
-        idealET: this.idealET,
+        carOwnerUsername:store.activeUsername,
+        idealET: this.idealET.toFixed(2),
       });
       this.chosenMark = "";
       (this.chosenModel = ""),

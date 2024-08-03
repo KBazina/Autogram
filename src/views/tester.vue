@@ -1,43 +1,42 @@
 <template>
-  <div class="card position-relative my-4">
-    <div class="card-header">
-      <div class="okvir2">
-        <img
-          src="@/assets/mateo.png"
-          class="rounded-circle sredina"
-          alt="..."
-        />
-
-        <span class="curive ms-2">Karlo_VK</span>
-        <span class="desno me-2"> 2 days ago</span>
-      </div>
-    </div>
-    <div class="carousel-inner">
-      <button class="carousel-control-prev" type="button">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      </button>
-      <img src="@/assets/cars.jpg" class="card-img-top" alt="..." />
-      <button
-        class="carousel-control-next"
-        type="button"
-        data-bs-target="#carouselExampleFade"
-        data-bs-slide="next"
-      >
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      </button>
-    </div>
-    <div class="card-body">
-      <p class="card-text">
-        Cura me naterala da kupim rozi auto. <br />
-        Obiteljski!
-      </p>
-      <p class="mb-1 hashtags">#cars #porsche #audi #ljubav</p>
-      <hr class="mt-0" />
-      Like @ <span class="desno me-2"> Komentiraj</span>
-    </div>
+  <div >
+    <div>{{ count.toFixed(2) }}</div>
+    <button @click="startStoperica()">Start</button>
+    <button @click="resetStoperica()">Reset</button>
   </div>
 </template>
-<style>
+<script>
+export default {
+  
+  data() {
+    return {
+      count: 0.00,
+      intervalId: null
+    };
+  },
+  methods: {
+        startStoperica() {
+          if (this.intervalId) return; // Sprječava višestruko pokretanje intervala
+
+          this.intervalId = setInterval(() => {
+            if (this.count >= 10) {
+              clearInterval(this.intervalId);
+              this.intervalId = null; // Resetiranje intervalId kada stoperica stane
+            } else {
+              this.count += 0.01;
+            }
+          }, 10); // Interval od 10 milisekundi
+        },
+        resetStoperica() {
+          clearInterval(this.intervalId);
+          this.intervalId = null; // Resetiranje intervalId kada se stoperica resetira
+          this.count = 0;
+        }
+      }
+}
+</script>
+<style lang="scss" scoped>
+
 .desno {
   float: right;
 }
