@@ -242,6 +242,48 @@
         </div>
       </div>
     </div>
+
+    <div
+  v-if="showModal"
+  class="modal fade show d-block"
+  tabindex="-1"
+  role="dialog"
+  style="background-color: rgba(0,0,0,0.5);"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Prilagodi ime auta</h5>
+        <button
+          type="button"
+          class="btn-close"
+          @click="showModal = false"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="example">
+          <p><strong>Primjeri:</strong></p>
+          <p><em>C-Class &rarr; C 220d coupe</em></p>
+          <p><em>911 &rarr; 911 Turbo s</em></p>
+        </div>
+        <div class="form-group">
+          <label for="carName">Ime auta:</label>
+          <input
+            v-model="carName"
+            type="text"
+            class="form-control"
+            id="carName"
+            maxlength="30"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @click="showModal = false">Odustani</button>
+        <button type="button" class="btn btn-primary" @click="confirmAddCar">Potvrdi</button>
+      </div>
+    </div>
+  </div>
+</div>
   </div>
 </template>
 
@@ -282,6 +324,8 @@ export default {
       chosenSnaga: "",
       chosenTransmition: "",
       chosenWeight: "",
+      showModal: false,
+      carName: "",
       registeredCar: true,
       carPicFile: "",
       carPic: "",
@@ -307,85 +351,101 @@ export default {
 
   methods: {
     async addCar() {
-      if (this.registeredCar) {
-        const isUnique = await this.checkUniqueRegistration(
-          this.chosenRegistration.toUpperCase()
-        );
-        if (!isUnique) {
-          alert(
-            "Registracija već postoji. Molimo unesite jedinstvenu registraciju."
-          );
-          return;
-        }
-      }
-      switch (this.chosenPogon) {
-        case "AWD":
-          this.idealET =
-            5.9 *
-            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
-              (1 / 3);
-          break;
-        case "FWD":
-          this.idealET =
-            6.18 *
-            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
-              (1 / 3);
-          break;
-        case "RWD":
-          this.idealET =
-            6.25 *
-            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
-              (1 / 3);
-          break;
-      }
-      if (this.chosenTransmition === "Manual") this.idealET += 0.5;
-      if (this.chosenMotorizacija === "Elektro") this.idealET -= 0.2;
-      if (this.chosenMotorizacija === "Dizel") this.idealET += 0.3;
-      if (this.chosenMark === "Porsche") this.idealET -= 0.2;
-      this.btnClicked = true;
-      console.log("ADD A CAR TO MY GARAGE");
-      const file = this.carPicFile;
-      const storageRef = ref(storage, "carsPictures/" + Date.now() + file.name);
-      const snapshot = await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(ref(storageRef));
-      this.carImageSrc = url;
-      const carRef = doc(
-        db,
-        "users",
-        "ID" + store.userMail,
-        "cars",
-        Date.now() + "car" + this.chosenMark + this.chosenModel
+   
+    if (this.registeredCar) {
+      const isUnique = await this.checkUniqueRegistration(
+        this.chosenRegistration.toUpperCase()
       );
-      await setDoc(carRef, {
-        Marka: this.chosenMark,
-        Model: this.chosenModel,
-        carYear: this.selectedYear,
-        Motorizacija: this.chosenMotorizacija,
-        Pogon: this.chosenPogon,
-        Registracija: this.chosenRegistration.toUpperCase(),
-        Snaga: this.chosenSnaga,
-        Transmition: this.chosenTransmition,
-        Weight: this.chosenWeight,
-        registeredCar: true,
-        carPic: this.carImageSrc,
-        carOwner: store.userMail,
-        carOwnerUsername:store.activeUsername,
-        idealET: this.idealET.toFixed(2),
-      });
-      this.chosenMark = "";
-      (this.chosenModel = ""),
-        (this.chosenMotorizacija = ""),
-        (this.chosenPogon = ""),
-        (this.chosenRegistration = ""),
-        (this.chosenSnaga = ""),
-        (this.chosenTransmition = ""),
-        (this.chosenWeight = ""),
-        (this.registeredCar = true),
-        (this.carPicFile = ""),
-        (this.carPic = "");
-      this.btnClicked = false;
-      window.location.reload();
-    },
+      if (!isUnique) {
+        alert(
+          "Registracija već postoji. Molimo unesite jedinstvenu registraciju."
+        );
+        return;
+      }
+    }
+    this.carName = this.chosenModel;
+    this.showModal = true;
+  },
+  async confirmAddCar() {
+    this.showModal = false;
+
+    switch (this.chosenPogon) {
+      case "AWD":
+        this.idealET =
+          5.9 *
+          ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+            (1 / 3);
+        break;
+      case "FWD":
+        this.idealET =
+          6.18 *
+          ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+            (1 / 3);
+        break;
+      case "RWD":
+        this.idealET =
+          6.25 *
+          ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+            (1 / 3);
+        break;
+    }
+
+    if (this.chosenTransmition === "Manual") this.idealET += 0.5;
+    if (this.chosenMotorizacija === "Elektro") this.idealET -= 0.2;
+    if (this.chosenMotorizacija === "Dizel") this.idealET += 0.3;
+    if (this.chosenMark === "Porsche") this.idealET -= 0.3;
+    if (this.chosenMark === "Porsche") this.idealET += 0.3;
+
+    this.btnClicked = true;
+
+    const file = this.carPicFile;
+    const storageRef = ref(storage, "carsPictures/" + Date.now() + file.name);
+    const snapshot = await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(ref(storageRef));
+    this.carImageSrc = url;
+
+    const carRef = doc(
+      db,
+      "users",
+      "ID" + store.userMail,
+      "cars",
+      Date.now() + "car" + this.chosenMark + this.chosenModel
+    );
+
+    await setDoc(carRef, {
+      Marka: this.chosenMark,
+      Model: this.carName, 
+      carYear: this.selectedYear,
+      Motorizacija: this.chosenMotorizacija,
+      Pogon: this.chosenPogon,
+      Registracija: this.chosenRegistration.toUpperCase(),
+      Snaga: this.chosenSnaga,
+      Transmition: this.chosenTransmition,
+      Weight: this.chosenWeight,
+      registeredCar: true,
+      carPic: this.carImageSrc,
+      carOwner: store.userMail,
+      carOwnerUsername: store.activeUsername,
+      idealET: this.idealET.toFixed(2),
+    });
+
+    this.resetForm();
+    window.location.reload();
+  },
+  resetForm() {
+    this.chosenMark = "";
+    this.chosenModel = "";
+    this.chosenMotorizacija = "";
+    this.chosenPogon = "";
+    this.chosenRegistration = "";
+    this.chosenSnaga = "";
+    this.chosenTransmition = "";
+    this.chosenWeight = "";
+    this.registeredCar = true;
+    this.carPicFile = "";
+    this.carPic = "";
+    this.btnClicked = false;
+  },
     async checkUniqueRegistration(registration) {
       const q = query(
         collection(db, `users/ID${store.userMail}/cars`),

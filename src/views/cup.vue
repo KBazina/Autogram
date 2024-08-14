@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button class="DUGME" @click="nextRowCars()">TRKAJ SE MBRALE</button>
+    <button v-if="this.rowNumber !== 3" class="DUGME" @click="nextRowCars()">
+      TRKAJ SE MBRALE
+    </button>
 
     <div v-if="auti.length === 16" class="container-fluid text-center mt-1">
       <div class="row justify-content-evenly mb-2">
@@ -64,18 +66,34 @@
       <div class="row justify-content-evenly mb-2">
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar ms-1 me-2">
-          <img v-if="winners1.length > 0" :src="winners1[0].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[0].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[16] > 0">
+            {{ count[16].toFixed(2) }}
+          </div>
+          <img v-if="winners1[0] !== 0" :src="winners1[0].carPic" alt="" />
         </div>
         <div class="col col1 colCar">
-          <img v-if="winners1.length > 0" :src="winners1[1].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[1].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[17] > 0">
+            {{ count[17].toFixed(2) }}
+          </div>
+          <img v-if="winners1[1] !== 0" :src="winners1[1].carPic" alt="" />
         </div>
         <div class="col col1 ms-1 me-5 border border-0"></div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar ms-1 me-2">
-          <img v-if="winners1.length > 0" :src="winners1[2].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[2].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[18] > 0">
+            {{ count[18].toFixed(2) }}
+          </div>
+          <img v-if="winners1[2] !== 0" :src="winners1[2].carPic" alt="" />
         </div>
         <div class="col col1 colCar me-1">
-          <img v-if="winners1.length > 0" :src="winners1[3].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[3].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[19] > 0">
+            {{ count[19].toFixed(2) }}
+          </div>
+          <img v-if="winners1[3] !== 0" :src="winners1[3].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
       </div>
@@ -84,10 +102,18 @@
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar ms-2 me-4">
-          <img src="" alt="" />
+          <div class="onHoverNesto">{{ polufinale[0].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[24] > 0">
+            {{ count[24].toFixed(2) }}
+          </div>
+          <img v-if="polufinale[0] !== 0" :src="polufinale[0].carPic" alt="" />
         </div>
         <div class="col col1 colCar ms-5 me-2">
-          <img src="" alt="" />
+          <div class="onHoverNesto">{{ polufinale[1].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[25] > 0">
+            {{ count[25].toFixed(2) }}
+          </div>
+          <img v-if="polufinale[1] !== 0" :src="polufinale[1].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
@@ -98,7 +124,8 @@
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar">
-          <img src="" alt="" />
+          <div class="onHoverNesto">{{ finale[0].carOwnerUsername }}</div>
+          <img v-if="finale[0] !== 0" :src="finale[0].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
@@ -109,7 +136,8 @@
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar">
-          <img src="" alt="" />
+          <div class="onHoverNesto">{{ finale[1].carOwnerUsername }}</div>
+          <img v-if="finale[1] !== 0" :src="finale[1].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
@@ -120,10 +148,18 @@
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar ms-2 me-4">
-          <img src="" alt="" />
+          <div class="onHoverNesto">{{ polufinale[2].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[26] > 0">
+            {{ count[26].toFixed(2) }}
+          </div>
+          <img v-if="polufinale[2] !== 0" :src="polufinale[2].carPic" alt="" />
         </div>
         <div class="col col1 colCar ms-5 me-2">
-          <img src="" alt="" />
+          <div class="onHoverNesto">{{ polufinale[3].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[27] > 0">
+            {{ count[27].toFixed(2) }}
+          </div>
+          <img v-if="polufinale[3] !== 0" :src="polufinale[3].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 border border-0"></div>
@@ -132,18 +168,34 @@
       <div class="row justify-content-evenly mb-2">
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar ms-1 me-2">
-          <img v-if="winners1.length > 0" :src="winners1[4].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[4].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[20] > 0">
+            {{ count[20].toFixed(2) }}
+          </div>
+          <img v-if="winners1[4] !== 0" :src="winners1[4].carPic" alt="" />
         </div>
         <div class="col col1 colCar">
-          <img v-if="winners1.length > 0" :src="winners1[5].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[5].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[21] > 0">
+            {{ count[21].toFixed(2) }}
+          </div>
+          <img v-if="winners1[5] !== 0" :src="winners1[5].carPic" alt="" />
         </div>
         <div class="col col1 ms-1 me-5 border border-0"></div>
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar ms-1 me-2">
-          <img v-if="winners1.length > 0" :src="winners1[6].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[6].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[22] > 0">
+            {{ count[22].toFixed(2) }}
+          </div>
+          <img v-if="winners1[6] !== 0" :src="winners1[6].carPic" alt="" />
         </div>
         <div class="col col1 colCar me-1">
-          <img v-if="winners1.length > 0" :src="winners1[7].carPic" alt="" />
+          <div class="onHoverNesto">{{ winners1[7].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[23] > 0">
+            {{ count[23].toFixed(2) }}
+          </div>
+          <img v-if="winners1[7] !== 0" :src="winners1[7].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
       </div>
@@ -252,6 +304,7 @@
         </div>
       </div>
     </div>
+    <div class="overlayPost" v-if="btnClicked"></div>
   </div>
 </template>
 <script>
@@ -268,16 +321,36 @@ export default {
   name: "cup",
   data() {
     return {
+      rowNumber: 0,
+      btnClicked: false,
       selectedCars: [],
       auti: [],
-      winners1: [],
-      polufinale: [],
-      finale: [],
+      winners1: [0, 0, 0, 0, 0, 0, 0, 0],
+      RACINGauti: [],
+      polufinale: [0, 0, 0, 0],
+      finale: [0, 0],
       count: [
         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0,
       ],
       intervalId: [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
         null,
         null,
         null,
@@ -304,7 +377,7 @@ export default {
   },
   methods: {
     addCarToSCars(index) {
-      this.selectedCars.push(this.selectedCars[index]);
+      this.selectedCars.push(this.auti[index]);
       this.auti.splice(index, 1);
     },
     addCarToAuti(index) {
@@ -312,36 +385,91 @@ export default {
       this.selectedCars.splice(index, 1);
     },
     nextRowCars() {
-      for (let i = 0; i < 8; i++){
-        
-        let ET1=this.getWeightedRandomNumber(parseFloat(this.auti[2*i].idealET) )
-        let ET2=this.getWeightedRandomNumber(parseFloat(this.auti[2*i+1].idealET) )
-        this.intervalId[2*i] = setInterval(() => {
-          if (this.count[2*i] >= ET1) {
-            clearInterval(this.intervalId[2*i]);
-            this.intervalId[2*i] = null;
-          } else {
-            this.count[2*i] += 0.01;
-          }
-        }, 10); 
-        this.intervalId[2*i+1] = setInterval(() => {
-          if (this.count[2*i+1] >= ET2) {
-            clearInterval(this.intervalId[2*i+1]);
-            this.intervalId[2*i+1] = null;
-          } else {
-            this.count[2*i+1] += 0.01;
-          }
-        }, 10); 
+      this.btnClicked = true;
+      let timeoutET = 0;
+      if (this.rowNumber === 0) {
+        this.RACINGauti = this.auti;
       }
+      if (this.rowNumber === 1) {
+        this.RACINGauti = this.winners1;
+      }
+      if (this.rowNumber === 2) {
+        this.RACINGauti = this.polufinale;
+      }
+      for (let i = 0; i < this.RACINGauti.length / 2; i++) {
+        let ET1 = parseFloat(
+          this.getWeightedRandomNumber(
+            parseFloat(this.RACINGauti[2 * i].idealET)
+          )
+        );
+        let ET2 = parseFloat(
+          this.getWeightedRandomNumber(
+            parseFloat(this.RACINGauti[2 * i + 1].idealET)
+          )
+        );
+        if (ET1 > timeoutET) {
+          timeoutET = ET1;
+        }
+        if (ET2 > timeoutET) {
+          timeoutET = ET2;
+        }
+        if (ET1 < ET2) {
+          setTimeout(() => {
+            if (this.rowNumber === 0) {
+              this.winners1.splice(i, 1, this.RACINGauti[2 * i]);
+            }
+            if (this.rowNumber === 1) {
+              this.polufinale.splice(i, 1, this.RACINGauti[2 * i]);
+            }
+            if (this.rowNumber === 2) {
+              this.finale.splice(i, 1, this.RACINGauti[2 * i]);
+            }
+          }, ET1 * 1000);
+        } else {
+          setTimeout(() => {
+            if (this.rowNumber === 0) {
+              this.winners1.splice(i, 1, this.RACINGauti[2 * i + 1]);
+            }
+            if (this.rowNumber === 1) {
+              this.polufinale.splice(i, 1, this.RACINGauti[2 * i + 1]);
+            }
+            if (this.rowNumber === 2) {
+              this.finale.splice(i, 1, this.RACINGauti[2 * i + 1]);
+            }
+          }, ET2 * 1000);
+        }
+        let varCar = 2 * i;
+        if (this.rowNumber === 1) varCar += 16;
+        if (this.rowNumber === 2) varCar += 24;
+        this.intervalId[varCar] = setInterval(() => {
+          if (this.count[varCar] >= ET1) {
+            clearInterval(this.intervalId[varCar]);
+            this.intervalId[varCar] = null;
+          } else {
+            this.count[varCar] += 0.01;
+          }
+        }, 10);
+        this.intervalId[varCar + 1] = setInterval(() => {
+          if (this.count[varCar + 1] >= ET2) {
+            clearInterval(this.intervalId[varCar + 1]);
+            this.intervalId[varCar + 1] = null;
+          } else {
+            this.count[varCar + 1] += 0.01;
+          }
+        }, 10);
+      }
+      setTimeout(() => {
+        this.btnClicked = false;
+        this.rowNumber += 1;
+      }, timeoutET * 1000);
     },
-    getWeightedRandomNumber(min) { 
-    let random = Math.random();
-    
-    let weightedRandom = (min + ((0.5) * Math.pow(random, 2))).toFixed(2)
+    getWeightedRandomNumber(min) {
+      let random = Math.random();
 
-    return weightedRandom;
-}
-,
+      let weightedRandom = (min + 0.5 * Math.pow(random, 2)).toFixed(2);
+
+      return weightedRandom;
+    },
     async getCars() {
       const q = query(collectionGroup(db, `cars`));
       const querySnapshot = await getDocs(q);
@@ -356,6 +484,16 @@ export default {
 <style scoped>
 .colCar {
   background-color: darkgrey;
+}
+.overlayPost {
+  cursor: wait;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 99999;
 }
 .dugmeBr2 {
   padding: 5px !important;
