@@ -395,6 +395,7 @@ export default {
     if (this.chosenMotorizacija === "Dizel") this.idealET += 0.3;
     if (this.chosenMark === "Porsche") this.idealET -= 0.3;
     if (this.chosenMark === "Porsche") this.idealET += 0.3;
+    if(this.idealET<9) this.idealET+=(1-(this.idealET/10))
 
     this.btnClicked = true;
 

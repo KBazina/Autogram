@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button v-if="this.rowNumber !== 3" class="DUGME" @click="nextRowCars()">
+    <button v-if="this.rowNumber !== 4" class="DUGME" @click="nextRowCars()">
       TRKAJ SE MBRALE
     </button>
 
@@ -125,6 +125,9 @@
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar">
           <div class="onHoverNesto">{{ finale[0].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[29] > 0">
+            {{ count[28].toFixed(2) }}
+          </div>
           <img v-if="finale[0] !== 0" :src="finale[0].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
@@ -137,6 +140,9 @@
         <div class="col col1 border border-0"></div>
         <div class="col col1 colCar">
           <div class="onHoverNesto">{{ finale[1].carOwnerUsername }}</div>
+          <div class="centriraj" v-if="count[29] > 0">
+            {{ count[29].toFixed(2) }}
+          </div>
           <img v-if="finale[1] !== 0" :src="finale[1].carPic" alt="" />
         </div>
         <div class="col col1 border border-0"></div>
@@ -387,14 +393,21 @@ export default {
     nextRowCars() {
       this.btnClicked = true;
       let timeoutET = 0;
-      if (this.rowNumber === 0) {
-        this.RACINGauti = this.auti;
-      }
-      if (this.rowNumber === 1) {
-        this.RACINGauti = this.winners1;
-      }
-      if (this.rowNumber === 2) {
-        this.RACINGauti = this.polufinale;
+      switch (this.rowNumber) {
+        case 0:
+          this.RACINGauti = this.auti;
+          break;
+        case 1:
+          this.RACINGauti = this.winners1;
+          break;
+        case 2:
+          this.RACINGauti = this.polufinale;
+          break;
+        case 3:
+          this.RACINGauti = this.finale;
+          break;
+        default:
+          this.RACINGauti = [];
       }
       for (let i = 0; i < this.RACINGauti.length / 2; i++) {
         let ET1 = parseFloat(
@@ -441,6 +454,7 @@ export default {
         let varCar = 2 * i;
         if (this.rowNumber === 1) varCar += 16;
         if (this.rowNumber === 2) varCar += 24;
+        if (this.rowNumber === 3) varCar += 28;
         this.intervalId[varCar] = setInterval(() => {
           if (this.count[varCar] >= ET1) {
             clearInterval(this.intervalId[varCar]);
@@ -500,7 +514,8 @@ export default {
   font-size: small;
 }
 .centriraj {
-  font-weight: bold;
+  font-weight: bolder;
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 3;
   position: absolute;
   top: 50%;
