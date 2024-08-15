@@ -78,7 +78,10 @@
               />
 
               <span class="curive ms-2">{{ lover.username }}</span>
-              <span v-if="lover.id != myMailID" class="desno me-2"
+              <span
+                @click="posjetiProf(lover.username)"
+                v-if="lover.id != myMailID"
+                class="desno me-2"
                 >Pogledaj profil</span
               >
               <hr class="m-0 m-auto" style="width: 85%" />
@@ -152,7 +155,7 @@ export default {
       myMailID: "ID" + store.userMail,
       showLikesBool: false,
       counter: 0,
-      likes: this.info.likes,
+      likes: 0,
     };
   },
   props: ["info"],
@@ -168,6 +171,12 @@ export default {
     this.getComments();
   },
   methods: {
+    posjetiProf(username) {
+      this.$router.push({
+        name: "profil",
+        params: { username: username },
+      });
+    },
     commentShower() {
       this.showCommentBool = !this.showCommentBool;
     },
@@ -200,16 +209,22 @@ export default {
       if (this.info.lovers.includes(store.userMail)) this.likeBool = true;
     },
     async postLovers() {
-      this.info.lovers.forEach(async (lover) => {
+      for (const lover of this.info.lovers) {
         const docRef = doc(db, "users", "ID" + lover);
         const docSnap = await getDoc(docRef);
-        this.arrayLovers.push({
-          id: docSnap.id,
-          image: docSnap.data().imageSrc,
-          username: docSnap.data().username,
-        });
-      });
-    },
+        if (docSnap.exists()) {
+          this.arrayLovers.push({
+            id: docSnap.id,
+            image: docSnap.data().imageSrc,
+            username: docSnap.data().username,
+          });
+        } else {
+          console.log("lover:", lover);
+          this.info.lovers = this.info.lovers.filter((mail) => mail !== lover);
+        }
+      }
+      this.likes = this.arrayLovers.length;
+    },  
     async submitComment() {
       if (!this.comment) {
         console.log("no text");
@@ -244,7 +259,7 @@ export default {
           this.info.id
         );
         await updateDoc(postRef, {
-          likes: this.info.likes + 1,
+          likes: this.likes + 1,
           lovers: this.info.lovers,
         });
         this.info.likes += 1;
@@ -273,7 +288,7 @@ export default {
           this.info.id
         );
         await updateDoc(postRef, {
-          likes: this.info.likes - 1,
+          likes: this.likes - 1,
           lovers: this.info.lovers,
         });
         this.info.likes -= 1;

@@ -3,7 +3,10 @@
     <button v-if="this.rowNumber !== 4" class="DUGME" @click="nextRowCars()">
       TRKAJ SE MBRALE
     </button>
-
+    <div v-if="pobjednik!==0" class="ABSOLUTNIDIV">
+      <button class="close-btn" @click="zatvoriDiv">✖</button>
+      <img v-if="pobjednik!==0" :src="pobjednik.carPic" alt="">
+    </div>
     <div v-if="auti.length === 16" class="container-fluid text-center mt-1">
       <div class="row justify-content-evenly mb-2">
         <div class="col col1 colCar">
@@ -314,6 +317,7 @@
   </div>
 </template>
 <script>
+import JSConfetti from "js-confetti";
 import {
   getAuth,
   onAuthStateChanged,
@@ -323,10 +327,12 @@ import {
   getDocs,
 } from "@/firebase";
 const auth = getAuth();
+const jsConfetti = new JSConfetti();
 export default {
   name: "cup",
   data() {
     return {
+      pobjednik:0,
       rowNumber: 0,
       btnClicked: false,
       selectedCars: [],
@@ -382,6 +388,9 @@ export default {
     });
   },
   methods: {
+    zatvoriDiv() {
+    this.pobjednik = 0;
+  },
     addCarToSCars(index) {
       this.selectedCars.push(this.auti[index]);
       this.auti.splice(index, 1);
@@ -437,6 +446,12 @@ export default {
             if (this.rowNumber === 2) {
               this.finale.splice(i, 1, this.RACINGauti[2 * i]);
             }
+            if (this.rowNumber === 3) {
+              this.pobjednik=this.RACINGauti[2 * i]
+              jsConfetti.addConfetti({
+                emojis: ["🚗", +"🏎️", "🏁", "🚩", "👑", "🔥", "🏎️"],
+              });
+            }
           }, ET1 * 1000);
         } else {
           setTimeout(() => {
@@ -448,6 +463,12 @@ export default {
             }
             if (this.rowNumber === 2) {
               this.finale.splice(i, 1, this.RACINGauti[2 * i + 1]);
+            }
+            if (this.rowNumber === 3) {
+              this.pobjednik=this.RACINGauti[2 * i + 1]
+              jsConfetti.addConfetti({
+                emojis: ["🚗", +"🏎️", "🏁", "🚩", "👑", "🔥", "🏎️"],
+              });
             }
           }, ET2 * 1000);
         }
@@ -584,4 +605,37 @@ li {
 .li:nth-child(even) {
   background-color: rgb(162, 153, 153);
 }
+.ABSOLUTNIDIV {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0.7); 
+    z-index: 9999;
+    padding: 20px; 
+    border-radius: 10px; 
+    text-align: center;
+}
+  .ABSOLUTNIDIV img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto; 
+  }
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: white;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .close-btn:hover {
+    color: #f00; 
+  }
 </style>

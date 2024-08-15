@@ -45,13 +45,10 @@ const db = getFirestore(app);
 
 export {
   getAuth,
-  get,
   getDoc,
   updateDoc,
   createUserWithEmailAndPassword,
-  onValue,
   signInWithEmailAndPassword,
-  child,
   onAuthStateChanged,
   signOut,
   getStorage,

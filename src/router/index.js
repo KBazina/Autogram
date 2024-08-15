@@ -1,7 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import ProfilePage from "../views/ProfilePage.vue";
 import store from "@/store";
 const routes = [
+  {
+    path: "/profil/:username",
+    name: "profil",
+    component: ProfilePage,
+    meta: {
+      needsUser: true,
+      needsDoneProfile: true,
+    },
+  },
   {
     path: "/",
     name: "home",
@@ -22,10 +32,10 @@ const routes = [
     name: "tester",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/tester.vue"),
-      meta: {
-        needsUser: true,
-        needsDoneProfile: true,
-      },
+    meta: {
+      needsUser: true,
+      needsDoneProfile: true,
+    },
   },
   {
     path: "/login",
@@ -63,8 +73,7 @@ const routes = [
       needsUser: true,
       needsDoneProfile: true,
     },
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/cup.vue"),
+    component: () => import(/* webpackChunkName: "about" */ "../views/cup.vue"),
   },
 ];
 

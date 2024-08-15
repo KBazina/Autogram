@@ -1,102 +1,102 @@
 <template>
   <div>
-  <div class="overlay"></div>
-  <div class="pozadina"></div>
-  <div class="detailer position-absolute top-50 start-50 translate-middle">
-    <div class="container p-3 bgColor2 rounded rowOpacity">
-      <form class="row" @submit.prevent="detailProfile">
-        <div
-          class="col shadow-sm p-3 mx-3 my-3 bgColor1 rounded align-self-end firstCol"
-        >
-          <div class="profile_bg container-fluid p-3">
-            <div class="">
-              <div class="okvir m-auto mb-5">
-                <img
-                  :src="imageSrc"
-                  alt=""
-                  class="rounded-circle border-4 border border-light bg-light-subtle"
-                />
+    <div class="overlay"></div>
+    <div class="pozadina"></div>
+    <div class="detailer position-absolute top-50 start-50 translate-middle">
+      <div class="container p-3 bgColor2 rounded rowOpacity">
+        <form class="row" @submit.prevent="detailProfile">
+          <div
+            class="col shadow-sm p-3 mx-3 my-3 bgColor1 rounded align-self-end firstCol"
+          >
+            <div class="profile_bg container-fluid p-3">
+              <div class="">
+                <div class="okvir m-auto mb-5">
+                  <img
+                    :src="imageSrc"
+                    alt=""
+                    class="rounded-circle border-4 border border-light bg-light-subtle"
+                  />
+                </div>
               </div>
             </div>
+            <div class="input-group">
+              <input
+                type="file"
+                ref="file"
+                class="form-control"
+                id="inputGroupFile04"
+                aria-describedby="inputGroupFileAddon04"
+                accept="image/*"
+                aria-label="Upload"
+                @change="onFileChange($event)"
+              />
+              <button
+                class="btn btn-outline-light"
+                type="button"
+                id="button-addon2"
+                @click="signOut"
+              >
+                Odustani
+              </button>
+            </div>
           </div>
-          <div class="input-group">
-            <input
-              type="file"
-              ref="file"
-              class="form-control"
-              id="inputGroupFile04"
-              aria-describedby="inputGroupFileAddon04"
-              accept="image/*"
-              aria-label="Upload"
-              @change="onFileChange($event)"
+          <div class="col secondCol mt-5">
+            <h1>"Dobar dan kolege"</h1>
+            <h5 class="mb-5">
+              Voljeli bi znati nešto više o vama, pa bih vas zamolili da
+              ispunite sljedeće podatke..
+            </h5>
+
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Ime i prezime"
+                aria-label="ime_prezime"
+                v-model="ime_prezime"
+              />
+              <span class="input-group-text">@</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Username"
+                aria-label="Username"
+                v-model="username"
+              />
+            </div>
+            <VueDatePicker
+              class="dp__theme_dark"
+              v-model="date"
+              placeholder="Enter your birthday"
+              text-input
+              :enable-time-picker="false"
             />
+
+            <div class="input-group mt-3">
+              <span class="input-group-text">My description</span>
+              <textarea
+                placeholder="Tell us more about yourself.."
+                class="form-control"
+                aria-label="With textarea"
+                v-model="bio"
+              ></textarea>
+            </div>
             <button
-              class="btn btn-outline-light"
-              type="button"
-              id="button-addon2"
-              @click="signOut"
+              :disabled="btnClicked"
+              type="submit"
+              class="btn btn-outline-warning mt-3 me-3"
             >
-              Odustani
+              Dalje
             </button>
+            <span class="warningSpan">
+              Sljedeći podaci neće se koristiti za unaprijeđivanje vašeg
+              iskustva, nego će biti zlouporabljeni!
+            </span>
           </div>
-        </div>
-        <div class="col secondCol mt-5">
-          <h1>"Dobar dan kolege"</h1>
-          <h5 class="mb-5">
-            Voljeli bi znati nešto više o vama, pa bih vas zamolili da ispunite
-            sljedeće podatke..
-          </h5>
-
-          <div class="input-group mb-3">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Ime i prezime"
-              aria-label="ime_prezime"
-              v-model="ime_prezime"
-            />
-            <span class="input-group-text">@</span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Username"
-              aria-label="Username"
-              v-model="username"
-            />
-          </div>
-          <VueDatePicker
-            class="dp__theme_dark"
-            v-model="date"
-            placeholder="Enter your birthday"
-            text-input
-            :enable-time-picker="false"
-          />
-
-          <div class="input-group mt-3">
-            <span class="input-group-text">My description</span>
-            <textarea
-              placeholder="Tell us more about yourself.."
-              class="form-control"
-              aria-label="With textarea"
-              v-model="bio"
-            ></textarea>
-          </div>
-          <button
-            :disabled="btnClicked"
-            type="submit"
-            class="btn btn-outline-warning mt-3 me-3"
-          >
-            Dalje
-          </button>
-          <span class="warningSpan">
-            Sljedeći podaci neće se koristiti za unaprijeđivanje vašeg iskustva,
-            nego će biti zlouporabljeni!
-          </span>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 </template>
 <script>
 import store from "@/store";
@@ -120,7 +120,7 @@ import {
   getDocs,
   getAuth,
   onAuthStateChanged,
-  signOut
+  signOut,
 } from "@/firebase";
 import {
   required,
@@ -130,7 +130,6 @@ import {
   sameAs,
 } from "@vuelidate/validators";
 const auth = getAuth();
-
 const oneWord = (value) => value.trim().split(" ").length == 1;
 const moreWords = (value) => value.trim().split(" ").length >= 2;
 const storage = getStorage();
@@ -180,6 +179,13 @@ export default {
   },
 
   methods: {
+    async checkIfUserUnique(value) {
+      console.log("USAO U FUNKCIJU TO MI JE BITNO");
+      const q = query(collection(db, `users`), where("username", "==", value));
+      const querySnapshot = await getDocs(q);
+      console.log("A OVAJ SE MORA MATCHAMT SA ONIM: ", querySnapshot.empty);
+      return querySnapshot.empty;
+    },
     async checkDone() {
       this.ime_prezime = store.ime_prezime_default;
       console.log(
@@ -200,12 +206,17 @@ export default {
       });
     },
     async detailProfile(e) {
+      const uniqueUsername = await this.checkIfUserUnique(this.username);
       const isFormCorrect = await this.v$.$validate();
+      console.log(isFormCorrect, "OVO TI SADA CITAJ MORA DA RADI");
+      if (!uniqueUsername) {
+        alert("Username vec postojji");
+        return;
+      }
       if (!isFormCorrect) {
-        console.log("nesto je krivo");
-        alert("Niste popunili cijelu formu")
+        alert("Niste popunili cijelu formu");
       } else {
-        store.activeUsername= this.username
+        store.activeUsername = this.username;
         this.btnClicked = true;
         const file = this.imageFile;
         const date = this.date;
