@@ -16,7 +16,77 @@
         </div>
       </div>
     </div>
-
+    <div
+      v-if="isModalOpen"
+      class="modal fade show d-block"
+      tabindex="-1"
+      role="dialog"
+      style="background-color: rgba(0, 0, 0, 0.5)"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit profil</h5>
+            <button
+              type="button"
+              class="btn-close"
+              @click="isModalOpen = false"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="imePrezime">Ime i prezime: </label>
+              <div class="input-group">
+                <span class="input-group-text" id="imePrezime">{{
+                  ime_prezime.split(" ")[0]
+                }}</span>
+                <input
+                  minlength="1"
+                  v-model="prezime"
+                  @keydown.space.prevent
+                  type="text"
+                  class="form-control"
+                  id="basic-url"
+                  aria-describedby="basic-addon3 basic-addon4"
+                />
+              </div>
+              <label for="username">Username: </label>
+              <input
+              v-model="newusername"
+                type="text"
+                id="username"
+                class="form-control"
+                maxlength="30"
+              />
+              <label for="bio">bio: </label>
+              <input
+               v-model="newbio"
+                type="text"
+                id="bio"
+                class="form-control"
+                maxlength="30"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="isModalOpen = false"
+            >
+              Odustani
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="confirmEditProfile()"
+            >
+              Potvrdi
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="ProfileEditor">
       <div class="vstack gap-2 ms-3 mt-2">
         <div
@@ -59,7 +129,7 @@
             {{ this.ime_prezime }}
             <div class="p-2 bio">* {{ this.bio }}</div>
           </div>
-          <div class="p-2">
+          <div class="p-2 cursiveCC" @click="isModalOpen = true">
             <Icon
               icon="emojione:man-medium-skin-tone"
               width="30"
@@ -67,11 +137,11 @@
             />
             Edit profile
           </div>
-          <div class="p-2">
+          <div class="p-2 cursiveCC">
             <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
             Friends
           </div>
-          <div class="p-2">
+          <div class="p-2 cursiveCC">
             <Icon icon="emojione:racing-car" width="30" class="me-2" />
             Cars
           </div>
@@ -244,46 +314,58 @@
     </div>
 
     <div
-  v-if="showModal"
-  class="modal fade show d-block"
-  tabindex="-1"
-  role="dialog"
-  style="background-color: rgba(0,0,0,0.5);"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Prilagodi ime auta</h5>
-        <button
-          type="button"
-          class="btn-close"
-          @click="showModal = false"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <div class="example">
-          <p><strong>Primjeri:</strong></p>
-          <p><em>C-Class &rarr; C 220d coupe</em></p>
-          <p><em>911 &rarr; 911 Turbo s</em></p>
+      v-if="showModal"
+      class="modal fade show d-block"
+      tabindex="-1"
+      role="dialog"
+      style="background-color: rgba(0, 0, 0, 0.5)"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Prilagodi ime auta</h5>
+            <button
+              type="button"
+              class="btn-close"
+              @click="showModal = false"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="example">
+              <p><strong>Primjeri:</strong></p>
+              <p><em>C-Class &rarr; C 220d coupe</em></p>
+              <p><em>911 &rarr; 911 Turbo s</em></p>
+            </div>
+            <div class="form-group">
+              <label for="carName">Ime auta:</label>
+              <input
+                v-model="carName"
+                type="text"
+                class="form-control"
+                id="carName"
+                maxlength="30"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="showModal = false"
+            >
+              Odustani
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="confirmAddCar"
+            >
+              Potvrdi
+            </button>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="carName">Ime auta:</label>
-          <input
-            v-model="carName"
-            type="text"
-            class="form-control"
-            id="carName"
-            maxlength="30"
-          />
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click="showModal = false">Odustani</button>
-        <button type="button" class="btn btn-primary" @click="confirmAddCar">Potvrdi</button>
       </div>
     </div>
-  </div>
-</div>
   </div>
 </template>
 
@@ -306,6 +388,7 @@ import {
   setDoc,
   getDocs,
   getAuth,
+  updateDoc,
   onAuthStateChanged,
 } from "@/firebase";
 const auth = getAuth();
@@ -314,6 +397,10 @@ export default {
   name: "profile",
   data() {
     return {
+      newbio:"",
+      newusername:"",
+      prezime: "",
+      isModalOpen: false,
       idealET: 0,
       myCars: [],
       btnClicked: false,
@@ -351,102 +438,121 @@ export default {
 
   methods: {
     async addCar() {
-   
-    if (this.registeredCar) {
-      const isUnique = await this.checkUniqueRegistration(
-        this.chosenRegistration.toUpperCase()
-      );
-      if (!isUnique) {
-        alert(
-          "Registracija već postoji. Molimo unesite jedinstvenu registraciju."
+      if (this.registeredCar) {
+        const isUnique = await this.checkUniqueRegistration(
+          this.chosenRegistration.toUpperCase()
         );
-        return;
+        if (!isUnique) {
+          alert(
+            "Registracija već postoji. Molimo unesite jedinstvenu registraciju."
+          );
+          return;
+        }
       }
-    }
-    this.carName = this.chosenModel;
-    this.showModal = true;
-  },
-  async confirmAddCar() {
-    this.showModal = false;
+      this.carName = this.chosenModel;
+      this.showModal = true;
+    },
+    async confirmEditProfile() {
+      const uniqueUsername = await this.checkIfUserUnique(this.newusername);
+      if(!uniqueUsername && this.newbio===this.bio && this.prezime===this.ime_prezime.split(" ")[1]){
+        alert("username vec postoji!")
+        return
+      }
+      this.isModalOpen = false;
+      const q = doc(
+          db,
+          "users",
+          "ID" + store.userMail,
+        
+        );
+      await updateDoc(q, {
+        bio: this.newbio,
+        ime_prezime: this.ime_prezime.split(" ")[0] + " " + this.prezime,
+        username: this.newusername,
+      });
+      window.location.reload();
+    },
+    async confirmAddCar() {
+      this.showModal = false;
 
-    switch (this.chosenPogon) {
-      case "AWD":
-        this.idealET =
-          5.9 *
-          ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
-            (1 / 3);
-        break;
-      case "FWD":
-        this.idealET =
-          6.18 *
-          ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
-            (1 / 3);
-        break;
-      case "RWD":
-        this.idealET =
-          6.25 *
-          ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
-            (1 / 3);
-        break;
-    }
+      switch (this.chosenPogon) {
+        case "AWD":
+          this.idealET =
+            5.9 *
+            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+              (1 / 3);
+          break;
+        case "FWD":
+          this.idealET =
+            6.18 *
+            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+              (1 / 3);
+          break;
+        case "RWD":
+          this.idealET =
+            6.25 *
+            ((this.chosenWeight * 2.2046) / (this.chosenSnaga * 1.34)) **
+              (1 / 3);
+          break;
+      }
 
-    if (this.chosenTransmition === "Manual") this.idealET += 0.5;
-    if (this.chosenMotorizacija === "Elektro") this.idealET -= 0.2;
-    if (this.chosenMotorizacija === "Dizel") this.idealET += 0.3;
-    if (this.chosenMark === "Porsche") this.idealET -= 0.3;
-    if (this.chosenMark === "Porsche") this.idealET += 0.3;
-    if(this.idealET<9) this.idealET+=(1-(this.idealET/10))
+      if (this.chosenTransmition === "Manual") this.idealET += 0.5;
+      if (this.chosenMotorizacija === "Elektro") this.idealET -= 0.2;
+      if (this.chosenMotorizacija === "Dizel") this.idealET += 0.3;
+      if (this.chosenMark === "Porsche") this.idealET -= 0.3;
+      if (this.chosenMark === "BMW") this.idealET += 0.3;
+      if (this.idealET < 9) this.idealET += 1 - this.idealET / 10;
 
-    this.btnClicked = true;
+      this.btnClicked = true;
 
-    const file = this.carPicFile;
-    const storageRef = ref(storage, "carsPictures/" + Date.now() + file.name);
-    const snapshot = await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(ref(storageRef));
-    this.carImageSrc = url;
+      const file = this.carPicFile;
+      const storageRef = ref(storage, "carsPictures/" + Date.now() + file.name);
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(ref(storageRef));
+      this.carImageSrc = url;
 
-    const carRef = doc(
-      db,
-      "users",
-      "ID" + store.userMail,
-      "cars",
-      Date.now() + "car" + this.chosenMark + this.chosenModel
-    );
+      const carRef = doc(
+        db,
+        "users",
+        "ID" + store.userMail,
+        "cars",
+        Date.now() + "car" + this.chosenMark + this.chosenModel
+      );
 
-    await setDoc(carRef, {
-      Marka: this.chosenMark,
-      Model: this.carName, 
-      carYear: this.selectedYear,
-      Motorizacija: this.chosenMotorizacija,
-      Pogon: this.chosenPogon,
-      Registracija: this.chosenRegistration.toUpperCase(),
-      Snaga: this.chosenSnaga,
-      Transmition: this.chosenTransmition,
-      Weight: this.chosenWeight,
-      registeredCar: true,
-      carPic: this.carImageSrc,
-      carOwner: store.userMail,
-      carOwnerUsername: store.activeUsername,
-      idealET: this.idealET.toFixed(2),
-    });
+      await setDoc(carRef, {
+        Marka: this.chosenMark,
+        Model: this.carName,
+        carYear: this.selectedYear,
+        Motorizacija: this.chosenMotorizacija,
+        Pogon: this.chosenPogon,
+        Registracija: this.chosenRegistration.toUpperCase(),
+        Snaga: this.chosenSnaga,
+        Transmition: this.chosenTransmition,
+        Weight: this.chosenWeight,
+        registeredCar: true,
+        carPic: this.carImageSrc,
+        carOwner: store.userMail,
+        carOwnerUsername: store.activeUsername,
+        idealET: this.idealET.toFixed(2),
+      });
 
-    this.resetForm();
-    window.location.reload();
-  },
-  resetForm() {
-    this.chosenMark = "";
-    this.chosenModel = "";
-    this.chosenMotorizacija = "";
-    this.chosenPogon = "";
-    this.chosenRegistration = "";
-    this.chosenSnaga = "";
-    this.chosenTransmition = "";
-    this.chosenWeight = "";
-    this.registeredCar = true;
-    this.carPicFile = "";
-    this.carPic = "";
-    this.btnClicked = false;
-  },
+      this.resetForm();
+      window.location.reload();
+    },
+    resetForm() {
+      this.chosenMark = "";
+      this.chosenModel = "";
+      this.chosenMotorizacija = "";
+      this.chosenPogon = "";
+      this.chosenRegistration = "";
+      this.chosenSnaga = "";
+      this.chosenTransmition = "";
+      this.chosenWeight = "";
+      this.registeredCar = true;
+      this.carPicFile = "";
+      this.carPic = "";
+      this.btnClicked = false;
+    },
     async checkUniqueRegistration(registration) {
       const q = query(
         collection(db, `users/ID${store.userMail}/cars`),
@@ -544,7 +650,11 @@ export default {
       });
       console.log("karte su ovo: ", this.cards);
     },
-
+    async checkIfUserUnique(value) {
+      const q = query(collection(db, `users`), where("username", "==", value));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.empty;
+    },
     async getProfileInfo() {
       const q = query(
         collection(db, "users"),
@@ -558,6 +668,9 @@ export default {
         this.ProfileImageSrc = data.imageSrc;
         this.bio = data.bio;
         this.username = data.username;
+        this.prezime = data.ime_prezime.split(" ")[1];
+        this.newbio=data.bio
+        this.newusername=data.username
       });
     },
   },
@@ -716,6 +829,10 @@ export default {
 .showImage:hover,
 .showGallery:hover,
 .showHomePage:hover {
+  cursor: pointer;
+  background-color: #2a2b2c;
+}
+.cursiveCC:hover {
   cursor: pointer;
   background-color: #2a2b2c;
 }

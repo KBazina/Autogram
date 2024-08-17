@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ user }}
   </div>
 </template>
 <script>
@@ -14,7 +15,8 @@ export default {
     }
   },
   created() {
-    console.log("evo ti voo:",this.id)
-  },
-};
+    this.user=this.$route.params.username
+}
+}
+
 </script>

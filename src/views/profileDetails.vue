@@ -180,10 +180,8 @@ export default {
 
   methods: {
     async checkIfUserUnique(value) {
-      console.log("USAO U FUNKCIJU TO MI JE BITNO");
       const q = query(collection(db, `users`), where("username", "==", value));
       const querySnapshot = await getDocs(q);
-      console.log("A OVAJ SE MORA MATCHAMT SA ONIM: ", querySnapshot.empty);
       return querySnapshot.empty;
     },
     async checkDone() {
