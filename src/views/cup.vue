@@ -1,13 +1,19 @@
 <template>
   <div>
-    <div v-if="runda" class="runda">
-RUNDA
-    </div>
-    <audio ref="myAudio">
-      <source src="@/assets/911.mp3" type="audio/ogg" />
+    <div v-if="runda" class="runda">RUNDA</div>
+    <audio ref="myAudio1">
+      <source src="@/assets/karlo1.mp3" type="audio/ogg" />
       Your browser does not support the audio element.
     </audio>
-    <button v-if="this.rowNumber !== 4 && this.auti.length===16" class="DUGME" @click="nextRowCars()">
+    <audio ref="myAudio2">
+      <source src="@/assets/karlo2.mp3" type="audio/ogg" />
+      Your browser does not support the audio element.
+    </audio>
+    <button
+      v-if="this.rowNumber ===0 && this.auti.length === 16"
+      class="DUGME"
+      @click="nextRowCars()"
+    >
       TRKAJ SE MBRALE
     </button>
     <div v-if="pobjednik !== 0" class="ABSOLUTNIDIV">
@@ -339,7 +345,7 @@ export default {
   name: "cup",
   data() {
     return {
-      runda:false,
+      runda: false,
       pobjednik: 0,
       rowNumber: 0,
       btnClicked: false,
@@ -408,115 +414,148 @@ export default {
       this.selectedCars.splice(index, 1);
     },
     nextRowCars() {
-      this.runda=true
-      setTimeout(()=>{
-        this.runda=false
-      
-      this.btnClicked = true;
-      let timeoutET = 0;
-      switch (this.rowNumber) {
-        case 0:
-          this.RACINGauti = this.auti;
-          const audioElement = this.$refs.myAudio;
-          if (audioElement) {
-            audioElement.play();
-          }
-          break;
-        case 1:
-          this.RACINGauti = this.winners1;
-          break;
-        case 2:
-          this.RACINGauti = this.polufinale;
-          break;
-        case 3:
-          this.RACINGauti = this.finale;
-          break;
-        default:
-          this.RACINGauti = [];
-      }
-      for (let i = 0; i < this.RACINGauti.length / 2; i++) {
-        let ET1 = parseFloat(
-          this.getWeightedRandomNumber(
-            parseFloat(this.RACINGauti[2 * i].idealET)
-          )
-        );
-        let ET2 = parseFloat(
-          this.getWeightedRandomNumber(
-            parseFloat(this.RACINGauti[2 * i + 1].idealET)
-          )
-        );
-        if (ET1 > timeoutET) {
-          timeoutET = ET1;
-        }
-        if (ET2 > timeoutET) {
-          timeoutET = ET2;
-        }
-        if (ET1 < ET2) {
-          setTimeout(() => {
-            if (this.rowNumber === 0) {
-              this.winners1.splice(i, 1, this.RACINGauti[2 * i]);
-            }
-            if (this.rowNumber === 1) {
-              this.polufinale.splice(i, 1, this.RACINGauti[2 * i]);
-            }
-            if (this.rowNumber === 2) {
-              this.finale.splice(i, 1, this.RACINGauti[2 * i]);
-            }
-            if (this.rowNumber === 3) {
-              this.pobjednik = this.RACINGauti[2 * i];
-              jsConfetti.addConfetti({
-                emojis: ["🚗", +"🏎️", "🏁", "🚩", "👑", "🔥", "🏎️"],
-              });
-            }
-          }, ET1 * 1000);
-        } else {
-          setTimeout(() => {
-            if (this.rowNumber === 0) {
-              this.winners1.splice(i, 1, this.RACINGauti[2 * i + 1]);
-            }
-            if (this.rowNumber === 1) {
-              this.polufinale.splice(i, 1, this.RACINGauti[2 * i + 1]);
-            }
-            if (this.rowNumber === 2) {
-              this.finale.splice(i, 1, this.RACINGauti[2 * i + 1]);
-            }
-            if (this.rowNumber === 3) {
-              this.pobjednik = this.RACINGauti[2 * i + 1];
-              jsConfetti.addConfetti({
-                emojis: ["🚗", +"🏎️", "🏁", "🚩", "👑", "🔥", "🏎️"],
-              });
-            }
-          }, ET2 * 1000);
-        }
-        let varCar = 2 * i;
-        if (this.rowNumber === 1) varCar += 16;
-        if (this.rowNumber === 2) varCar += 24;
-        if (this.rowNumber === 3) varCar += 28;
-        this.intervalId[varCar] = setInterval(() => {
-          if (this.count[varCar] >= ET1) {
-            clearInterval(this.intervalId[varCar]);
-            this.intervalId[varCar] = null;
-          } else {
-            this.count[varCar] += 0.01;
-          }
-        }, 10);
-        this.intervalId[varCar + 1] = setInterval(() => {
-          if (this.count[varCar + 1] >= ET2) {
-            clearInterval(this.intervalId[varCar + 1]);
-            this.intervalId[varCar + 1] = null;
-          } else {
-            this.count[varCar + 1] += 0.01;
-          }
-        }, 10);
-      }
+      this.runda = true;
       setTimeout(() => {
-        this.btnClicked = false;
-        this.rowNumber += 1;
-        if (this.rowNumber != 4) {
-          this.nextRowCars();
+        this.runda = false;
+        this.btnClicked = true;
+        let timeoutET = 0;
+        let timeoutET2 = 0;
+        switch (this.rowNumber) {
+          case 0:
+            this.RACINGauti = this.auti;
+            const audioElement = this.$refs.myAudio1;
+            if (audioElement) {
+              audioElement.play();
+            }
+            break;
+          case 1:
+            this.RACINGauti = this.winners1;
+            break;
+          case 2:
+            this.RACINGauti = this.polufinale;
+            break;
+          case 3:
+            this.RACINGauti = this.finale;
+            break;
+          default:
+            this.RACINGauti = [];
         }
-      }, timeoutET * 1000);
-    },1500)
+        for (let i = 0; i < this.RACINGauti.length / 2; i++) {
+          let ET1 = parseFloat(
+            this.getWeightedRandomNumber(
+              parseFloat(this.RACINGauti[2 * i].idealET)
+            )
+          );
+          let ET2 = parseFloat(
+            this.getWeightedRandomNumber(
+              parseFloat(this.RACINGauti[2 * i + 1].idealET)
+            )
+          );
+          if (ET1 > timeoutET) {
+            timeoutET = ET1;
+            timeoutET2 = ET2;
+          }
+          if (ET2 > timeoutET) {
+            timeoutET = ET2;
+            timeoutET2 = ET1;
+          }
+          if (ET1 < ET2) {
+            setTimeout(() => {
+              if (this.rowNumber === 0) {
+                this.winners1.splice(i, 1, this.RACINGauti[2 * i]);
+              }
+              if (this.rowNumber === 1) {
+                this.polufinale.splice(i, 1, this.RACINGauti[2 * i]);
+              }
+              if (this.rowNumber === 2) {
+                this.finale.splice(i, 1, this.RACINGauti[2 * i]);
+              }
+            }, ET1 * 1000);
+          } else {
+            setTimeout(() => {
+              if (this.rowNumber === 0) {
+                this.winners1.splice(i, 1, this.RACINGauti[2 * i + 1]);
+              }
+              if (this.rowNumber === 1) {
+                this.polufinale.splice(i, 1, this.RACINGauti[2 * i + 1]);
+              }
+              if (this.rowNumber === 2) {
+                this.finale.splice(i, 1, this.RACINGauti[2 * i + 1]);
+              }
+            }, ET2 * 1000);
+          }
+          let varCar = 2 * i;
+          if (this.rowNumber === 1) varCar += 16;
+          if (this.rowNumber === 2) varCar += 24;
+          if (this.rowNumber === 3) {
+            setTimeout(() => {
+              jsConfetti.addConfetti({
+                emojis: ["🚗", +"🏎️", "🏁", "🚩", "👑", "🔥", "🏎️"],
+              });
+              if (ET1 < ET2) {
+                this.pobjednik = this.RACINGauti[2 * i];
+              } else {
+                this.pobjednik = this.RACINGauti[2 * i + 1];
+              }
+            }, 15000);
+            const audioElement2 = this.$refs.myAudio2;
+            const audioElement = this.$refs.myAudio1;
+            audioElement2.play();
+            setTimeout(() => {
+              audioElement.volume = 0.5;
+            }, 2000);
+            setTimeout(() => {
+              audioElement.volume = 0.2;
+            }, 4000);
+            setTimeout(() => {
+              audioElement.pause();
+            }, 5000);
+            varCar += 28;
+            setTimeout(() => {
+              this.intervalId[varCar] = setInterval(() => {
+                if (this.count[varCar] >= ET1) {
+                  clearInterval(this.intervalId[varCar]);
+                  this.intervalId[varCar] = null;
+                } else {
+                  this.count[varCar] += 0.01;
+                }
+              }, 10);
+              this.intervalId[varCar + 1] = setInterval(() => {
+                if (this.count[varCar + 1] >= ET2) {
+                  clearInterval(this.intervalId[varCar + 1]);
+                  this.intervalId[varCar + 1] = null;
+                } else {
+                  this.count[varCar + 1] += 0.01;
+                }
+              }, 10);
+            }, 15000 - timeoutET2 * 1000);
+          } else {
+            this.intervalId[varCar] = setInterval(() => {
+              if (this.count[varCar] >= ET1) {
+                clearInterval(this.intervalId[varCar]);
+                this.intervalId[varCar] = null;
+              } else {
+                this.count[varCar] += 0.01;
+              }
+            }, 10);
+            this.intervalId[varCar + 1] = setInterval(() => {
+              if (this.count[varCar + 1] >= ET2) {
+                clearInterval(this.intervalId[varCar + 1]);
+                this.intervalId[varCar + 1] = null;
+              } else {
+                this.count[varCar + 1] += 0.01;
+              }
+            }, 10);
+          }
+        }
+        setTimeout(() => {
+          this.btnClicked = false;
+          this.rowNumber += 1;
+          if (this.rowNumber != 4) {
+            this.nextRowCars();
+          }
+        }, timeoutET * 1000);
+      }, 1500);
     },
     getWeightedRandomNumber(min) {
       let random = Math.random();
@@ -655,7 +694,7 @@ li {
   border: none;
   cursor: pointer;
 }
-.runda{
+.runda {
   position: absolute;
   top: 50%;
   left: 50%;

@@ -1,5 +1,13 @@
 <template>
-  <div >
+  <div>
+    <audio ref="myAudio1">
+      <source src="@/assets/karlo1.mp3" type="audio/ogg" />
+      Your browser does not support the audio element.
+    </audio>
+    <audio ref="myAudio2">
+      <source src="@/assets/karlo2.mp3" type="audio/ogg" />
+      Your browser does not support the audio element.
+    </audio>
     <div>{{ count.toFixed(2) }}</div>
     <button @click="startStoperica()">Start</button>
     <button @click="resetStoperica()">Reset</button>
@@ -7,36 +15,71 @@
 </template>
 <script>
 export default {
-  
   data() {
     return {
-      count: 0.00,
-      intervalId: null
+      count: 0.0,
+      intervalId: null,
     };
   },
   methods: {
-        startStoperica() {
-          if (this.intervalId) return; // Sprječava višestruko pokretanje intervala
-
-          this.intervalId = setInterval(() => {
-            if (this.count >= 10) {
-              clearInterval(this.intervalId);
-              this.intervalId = null; // Resetiranje intervalId kada stoperica stane
-            } else {
-              this.count += 0.01;
-            }
-          }, 10); // Interval od 10 milisekundi
-        },
-        resetStoperica() {
+    startStoperica() {
+      if (this.intervalId) return; 
+      this.intervalId = setInterval(() => {
+        if (this.count >= 10) {
           clearInterval(this.intervalId);
-          this.intervalId = null; // Resetiranje intervalId kada se stoperica resetira
-          this.count = 0;
+          this.intervalId = null; 
+          this.count += 0.01;
         }
+      }, 10); 
+      //-----------------------------------------------------------------------
+      const audioElement = this.$refs.myAudio1;
+      if (audioElement) {
+        audioElement.play();
+        
       }
-}
+      setTimeout(() => {
+        const audioElement2 = this.$refs.myAudio2;
+        const audioElement = this.$refs.myAudio1;
+        if (audioElement2) {
+          audioElement.volume=0.7
+          audioElement2.volume=0.2
+          audioElement2.play();
+        }
+      }, 1000);
+      setTimeout(() => {
+        const audioElement2 = this.$refs.myAudio2;
+        const audioElement = this.$refs.myAudio1;
+        if (audioElement2) {
+          audioElement.volume=0.5
+          audioElement2.volume=0.5
+        }
+      }, 2000);
+      setTimeout(() => {
+        const audioElement2 = this.$refs.myAudio2;
+        const audioElement = this.$refs.myAudio1;
+        if (audioElement2) {
+          audioElement.volume=0.3
+          audioElement2.volume=0.8
+        }
+      }, 3000);
+      setTimeout(() => {
+        const audioElement2 = this.$refs.myAudio2;
+        const audioElement = this.$refs.myAudio1;
+        audioElement.volume=0.15
+        audioElement2.volume=1
+        audioElement.pause()
+      }, 4000);
+  
+    },
+    resetStoperica() {
+      clearInterval(this.intervalId);
+      this.intervalId = null; 
+      this.count = 0;
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
-
 .desno {
   float: right;
 }
