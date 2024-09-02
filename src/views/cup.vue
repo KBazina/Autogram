@@ -7,7 +7,7 @@ RUNDA
       <source src="@/assets/911.mp3" type="audio/ogg" />
       Your browser does not support the audio element.
     </audio>
-    <button v-if="this.rowNumber !== 4" class="DUGME" @click="nextRowCars()">
+    <button v-if="this.rowNumber !== 4 && this.auti.length===16" class="DUGME" @click="nextRowCars()">
       TRKAJ SE MBRALE
     </button>
     <div v-if="pobjednik !== 0" class="ABSOLUTNIDIV">
@@ -593,6 +593,7 @@ li {
   position: absolute;
   top: 400px;
   right: 100px;
+  z-index: 2;
 }
 .carSelectorParent {
   width: 90%;
