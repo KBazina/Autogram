@@ -241,6 +241,8 @@ export default {
               username: this.username,
               bio: this.bio,
               email: store.userMail,
+              followers:[],
+              friends:[],
               done: true,
             });
           })
