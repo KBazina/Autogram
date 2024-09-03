@@ -30,20 +30,16 @@
       </button>
     </div>
     <div class="row container-fluid mt-5">
-      <div class="col-4">PRVA KOLOKNA</div>
+      <div class="col-3">PRVA KOLOKNA</div>
       <div class="col-6">
         <postCard v-for="card in cards" :key="card.posted_at" :info="card" />
       </div>
-      <div class="col-2">
+      <div class="col-3">
         <div ref="probni" class="carFlower overflow-y-scroll">
           <div class="text-center my-3">Friends:</div>
-          <div
-            class="p-2"
-            v-for="friend in friends"
-            :key="friend"
-            :friend="friend"
-          >
-            {{ friend.username }}
+          <div class="p-2" v-for="follower in FFfollowers" :key="follower">
+            {{ follower.username }}
+            <img :src=follower.imageSrc alt="" class="okvir">
           </div>
         </div>
       </div>
@@ -74,6 +70,7 @@ export default {
   },
   data() {
     return {
+      FFfollowers:[],
       followers: [],
       friends: [],
       follow: false,
@@ -115,6 +112,7 @@ export default {
       await updateDoc(userRef2, {
         friends: this.friends,
       });
+      this.FollowersWatcher()
     },
     async getPosts() {
       const q = query(
@@ -150,9 +148,26 @@ export default {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         this.myProfile = data.imageSrc;
-        this.followers = data.followers;
-        this.follow = data.followers.includes(this.UserInfo.email);
+        this.friends = data.friends;
+        this.follow = data.friends.includes(this.UserInfo.email);
       });
+    },
+    async FollowersWatcher() {
+      this.FFfollowers=[]
+      for (const follower of this.followers) {
+        try {
+          const q = query(
+            collection(db, "users"),
+            where("email", "==", follower)
+          );
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            this.FFfollowers.push(doc.data());
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
     },
     async getProfileInfo() {
       const q = query(
@@ -163,23 +178,8 @@ export default {
       for (const doc of querySnapshot.docs) {
         const data = doc.data();
         this.UserInfo = data;
-        console.log("AAAAAAAAAAAAAAAAAAAAAAA::::", data.followers);
-        for (const friend of data.followers) {
-          try {
-            const q = query(
-              collection(db, "users"),
-              where("email", "==", friend)
-            );
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-              this.friends.push(doc.data())
-            });
-          } catch (error) {
-            console.error(error);
-          }
-        }
+        this.followers = data.followers;
       }
-      console.log("prijateljis u ovo:", this.friends);
     },
   },
   async created() {
@@ -189,11 +189,13 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.getMyProfilePic();
     });
-    this.getPosts();
+    await this.getPosts();
+    this.FollowersWatcher()
   },
   async destroyed() {
     window.removeEventListener("scroll", this.handleScroll);
   },
+  
   components: {
     postCard,
     Icon,
