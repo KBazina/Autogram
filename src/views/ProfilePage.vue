@@ -17,29 +17,67 @@
         </div>
       </div>
     </div>
-    <div class="p-3 ms-5 mt-3">
-      <button @click="followBtnFun()" class="p-2">
-        <span v-if="!follow">
-          Zaprati korisnika
-          <Icon icon="mdi:account-plus" width="30" class="mx-2" />
-        </span>
-        <span v-if="follow">
-          Prestani pratiti
-          <Icon icon="mdi:account-remove" width="30" class="mx-2" />
-        </span>
-      </button>
+    <div v-if="UserInfo" class="p-3 ms-5 mt-3 d-flex align-items-center">
+      <span class="fs-1">
+        {{ UserInfo.username }}
+      </span>
+
+      <div class="ms-auto me-5">
+        <button @click="followBtnFun()" class="p-2">
+          <span v-if="!follow">
+            Zaprati korisnika
+            <Icon icon="mdi:account-plus" width="30" class="mx-2" />
+          </span>
+          <span v-if="follow">
+            Prestani pratiti
+            <Icon icon="mdi:account-remove" width="30" class="mx-2" />
+          </span>
+        </button>
+      </div>
     </div>
-    <div class="row container-fluid mt-5">
-      <div class="col-3">PRVA KOLOKNA</div>
-      <div class="col-6">
+    <div class="row container-fluid">
+      <div class="col-4">
+        <div v-if="UserInfo" class="p-3 ms-5 fst-italic">
+          *{{ UserInfo.bio }}
+        </div>
+        <div
+          v-if="myCars.length > 0"
+          ref="probni2"
+          class="carFlower overflow-y-scroll mt-3 border-end"
+        >
+          <carProfCard v-for="car in myCars" :key="car" :carNew="car">
+          </carProfCard>
+        </div>
+      </div>
+      <div class="col-5">
         <postCard v-for="card in cards" :key="card.posted_at" :info="card" />
       </div>
       <div class="col-3">
         <div ref="probni" class="carFlower overflow-y-scroll">
           <div class="text-center my-3">Friends:</div>
-          <div class="p-2" v-for="follower in FFfollowers" :key="follower">
-            {{ follower.username }}
-            <img :src=follower.imageSrc alt="" class="okvir">
+          <div
+            class="p-2 border border-light row"
+            v-for="follower in FFfollowers"
+            :key="follower"
+          >
+            <div class="mt-2 col">
+              <div class="fs-3">
+                {{ follower.username }}
+              </div>
+              <hr />
+              <div class="fst-italic">_{{ follower.ime_prezime }}_</div>
+              <br />
+              <div
+                v-if="myEmail != follower.email"
+                @click="posjetiProf(follower.username)"
+                class="text-primary text-decoration-underline pointer"
+              >
+                Pogledaj ovog korisnika
+              </div>
+            </div>
+            <div class="col okvir2">
+              <img :src="follower.imageSrc" alt="" class="" />
+            </div>
           </div>
         </div>
       </div>
@@ -48,6 +86,7 @@
 </template>
 <script>
 import { Icon } from "@iconify/vue";
+import carProfCard from "@/components/carProfCard.vue";
 import store from "@/store";
 import postCard from "@/components/postCard.vue";
 import {
@@ -70,24 +109,68 @@ export default {
   },
   data() {
     return {
-      FFfollowers:[],
+      FFfollowers: [],
       followers: [],
       friends: [],
+      myCars: [],
       follow: false,
       user: 0,
       UserInfo: null,
       cards: [],
       myProfile: null,
+      myEmail: null,
     };
   },
   methods: {
+    async posjetiProf(username) {
+      this.$router
+        .replace({
+          name: "profil",
+          params: { username: username },
+        })
+        .then(() => {
+          window.location.reload();
+        });
+    },
+    async getCars() {
+      const q = query(collection(db, `users/ID${this.UserInfo.email}/cars`));
+      const querySnapshot = await getDocs(q);
+      this.myCars = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.myCars.push({
+          Marka: data.Marka,
+          Model: data.Model,
+          carYear: data.carYear,
+          Motorizacija: data.Motorizacija,
+          Pogon: data.Pogon,
+          Registracija: data.Registracija,
+          Snaga: data.Snaga,
+          Transmition: data.Transmition,
+          Weight: data.Weight,
+          registeredCar: data.registeredCar,
+          carPic: data.carPic,
+          carOwner: data.carOwner,
+        });
+      });
+    },
     handleScroll() {
       const probniDiv = this.$refs.probni;
+      const probniDiv2 = this.$refs.probni2;
       const scrollPosition = window.scrollY;
-      if (scrollPosition > 310) {
-        probniDiv.classList.add("fixed");
-      } else {
-        probniDiv.classList.remove("fixed");
+      if (probniDiv) {
+        if (scrollPosition > 320) {
+          probniDiv.classList.add("fixed");
+        } else {
+          probniDiv.classList.remove("fixed");
+        }
+      }
+      if (probniDiv2) {
+        if (scrollPosition > 360) {
+          probniDiv2.classList.add("fixed2");
+        } else {
+          probniDiv2.classList.remove("fixed2");
+        }
       }
     },
     async followBtnFun() {
@@ -112,7 +195,7 @@ export default {
       await updateDoc(userRef2, {
         friends: this.friends,
       });
-      this.FollowersWatcher()
+      this.FollowersWatcher();
     },
     async getPosts() {
       const q = query(
@@ -148,12 +231,14 @@ export default {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         this.myProfile = data.imageSrc;
+        this.myEmail = data.email;
         this.friends = data.friends;
         this.follow = data.friends.includes(this.UserInfo.email);
       });
+      await this.getPosts();
     },
     async FollowersWatcher() {
-      this.FFfollowers=[]
+      this.FFfollowers = [];
       for (const follower of this.followers) {
         try {
           const q = query(
@@ -189,15 +274,16 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.getMyProfilePic();
     });
-    await this.getPosts();
-    this.FollowersWatcher()
+    this.getCars();
+    this.FollowersWatcher();
   },
   async destroyed() {
     window.removeEventListener("scroll", this.handleScroll);
   },
-  
+
   components: {
     postCard,
+    carProfCard,
     Icon,
   },
 };
@@ -207,10 +293,15 @@ export default {
   height: 200px;
   overflow: hidden;
 }
+.fixed2 {
+  position: fixed;
+  top: 100px;
+  width: 30vw;
+}
 .fixed {
   position: fixed;
   top: 80px;
-  width: 15vw;
+  width: 23vw;
 }
 .profile_bg_img img {
   opacity: 0.9;
@@ -218,13 +309,28 @@ export default {
   height: auto;
   object-fit: cover;
 }
+.pointer {
+  cursor: pointer;
+}
 .okvir {
   position: relative;
   width: 250px;
   height: 250px;
 }
+.okvir2 {
+  float: right;
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
 .pola {
   width: 60vw;
+}
+.okvir2 img {
+  background-color: aliceblue;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .okvir img {
