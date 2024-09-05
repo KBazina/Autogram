@@ -1,218 +1,216 @@
 <template>
-   <div>
-  <div class="container-fluid mt-4">
-    <div class="row">
-      <div class="d-none d-md-block col-3 border-end">
-        <div class="position-fixed top-20 start-200">
-          <div class="vstack gap-2 my-1">
-            <div class="p-2" @click="onThePage(`profile`)">
+  <div>
+    <div class="container-fluid mt-4">
+      <div class="row">
+        <div class="d-none d-md-block col-3 border-end">
+          <div class="position-fixed top-20 start-200">
+            <div class="vstack gap-2 my-1">
+              <div class="p-2" @click="onThePage(`profile`)">
+                <Icon
+                  icon="emojione:man-medium-skin-tone"
+                  width="30"
+                  class="me-2"
+                />
+                My Profile
+              </div>
+              <div class="p-2">
+                <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
+                Friends
+              </div>
+              <div class="p-2">
+                <Icon icon="emojione:racing-car" width="30" class="me-2" />
+                Cars
+              </div>
+              <div class="p-2">
+                <Icon icon="emojione:trophy" width="30" class="me-2" />
+                Trophies
+              </div>
+              <div class="p-2">
+                <Icon
+                  icon="emojione:flag-for-chequered-flag"
+                  width="30"
+                  class="me-2"
+                />
+                Races
+              </div>
+              <div class="p-2">
+                <Icon icon="ic:twotone-sell" width="30" class="me-2" />
+                Shop
+              </div>
+              <div class="p-2">
+                <Icon icon="emojione:spiral-calendar" width="30" class="me-2" />
+                Events
+              </div>
+            </div>
+            <hr class="crta1 mt-4 mb-1" />
+            <div class="category p-2">
+              <Icon icon="emojione:alarm-clock" width="30" class="me-2" />
+              Vremenske kategorije
+            </div>
+            <div class="category p-2">
+              <Icon icon="noto:tractor" width="30" class="me-2" />
+              Dizel
+            </div>
+            <div class="category p-2">
               <Icon
-                icon="emojione:man-medium-skin-tone"
+                icon="mingcute:four-wheel-drive-line"
                 width="30"
                 class="me-2"
               />
-              My Profile
+              AWD
             </div>
-            <div class="p-2">
-              <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
-              Friends
+            <div class="category p-2">
+              <Icon icon="mdi:car-traction-control" width="30" class="me-2" />
+              RWD
             </div>
-            <div class="p-2">
-              <Icon icon="emojione:racing-car" width="30" class="me-2" />
-              Cars
-            </div>
-            <div class="p-2">
-              <Icon icon="emojione:trophy" width="30" class="me-2" />
-              Trophies
-            </div>
-            <div class="p-2">
+            <div class="category p-2">
               <Icon
-                icon="emojione:flag-for-chequered-flag"
+                icon="material-symbols:energy-savings-leaf-outline"
                 width="30"
                 class="me-2"
               />
-              Races
+              FWD
             </div>
-            <div class="p-2">
-              <Icon icon="ic:twotone-sell" width="30" class="me-2" />
-              Shop
-            </div>
-            <div class="p-2">
-              <Icon icon="emojione:spiral-calendar" width="30" class="me-2" />
-              Events
-            </div>
-          </div>
-          <hr class="crta1 mt-4 mb-1" />
-          <div class="category p-2">
-            <Icon icon="emojione:alarm-clock" width="30" class="me-2" />
-            Vremenske kategorije
-          </div>
-          <div class="category p-2">
-            <Icon icon="noto:tractor" width="30" class="me-2" />
-            Dizel
-          </div>
-          <div class="category p-2">
-            <Icon
-              icon="mingcute:four-wheel-drive-line"
-              width="30"
-              class="me-2"
-            />
-            AWD
-          </div>
-          <div class="category p-2">
-            <Icon icon="mdi:car-traction-control" width="30" class="me-2" />
-            RWD
-          </div>
-          <div class="category p-2">
-            <Icon
-              icon="material-symbols:energy-savings-leaf-outline"
-              width="30"
-              class="me-2"
-            />
-            FWD
           </div>
         </div>
-      </div>
-      <div class="srednji col-sm-12 col-md-9 col-lg-6 col-12">
-        <!-- --------------- -->
-        <div class="container PostBG pt-3 pb-1 rounded-4">
-          <div class="okvir2">
-            <img
-              :src="ProfileImageSrc"
-              class="rounded-circle sredina me-5 ms-2"
-              alt="..."
-            />
-            <button
-              class="btn btn-secondary btnBG rounded-pill w-75 text-start"
+        <div class="srednji col-sm-12 col-md-9 col-lg-6 col-12">
+          <!-- --------------- -->
+          <div class="container PostBG pt-3 pb-1 rounded-4">
+            <div class="okvir2">
+              <img
+                :src="ProfileImageSrc"
+                class="rounded-circle sredina me-5 ms-2"
+                alt="..."
+              />
+              <button
+                class="btn btn-secondary btnBG rounded-pill w-75 text-start"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop2"
+              >
+                Podijeli svoju autopriču..
+              </button>
+            </div>
+            <hr class="mb-1" />
+            <div
+              class="btn btn-dark PostBG"
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop2"
+              @click="$refs.fileInputer.click()"
             >
-              Podijeli svoju autopriču..
-            </button>
+              <Icon icon="mdi:tooltip-image" width="30" class="me-2" /> Dodaj
+              fotografiju
+            </div>
           </div>
-          <hr class="mb-1" />
+          <!-- ---------------- -->
+          <!-- Modal -->
           <div
-            class="btn btn-dark PostBG"
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop2"
-            @click="$refs.fileInputer.click()"
+            class="modal fade"
+            id="staticBackdrop2"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
           >
-            <Icon icon="mdi:tooltip-image" width="30" class="me-2" /> Dodaj
-            fotografiju
-          </div>
-        </div>
-        <!-- ---------------- -->
-        <!-- Modal -->
-        <div
-          class="modal fade"
-          id="staticBackdrop2"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          tabindex="-1"
-          aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header p-3">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                  Nova objava
-                </h1>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body p-0">
-                <p
-                  ref="paragraph"
-                  class="m-0 p-1"
-                  contenteditable="true"
-                  @input="handleInput"
-                ></p>
-                <!-- ------- -->
-                <div class="image_wrapper p-0">
-                  <ul class="imageList p-0 mb-0">
-                    <li
-                      class="liIMG mt-2"
-                      v-for="(image, index) in images"
-                      :key="index"
-                    >
-                      <img :src="image" alt="Slika" />
-                      <button
-                        class="btn-close btnDelete"
-                        @click="deleteImage(index)"
-                      ></button>
-                    </li>
-                  </ul>
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header p-3">
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                    Nova objava
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
                 </div>
-                <!-- ------ -->
-              </div>
-              <hr class="my-0" />
-              <textarea
-                v-model="hashtags"
-                class="visina2"
-                ref="textarea"
-                placeholder="#BaciHEŠTEG"
-                id="floatingTextarea"
-                @input="handleTextArea"
-                @keydown.space.prevent
-                spellcheck="false"
-              ></textarea>
-              <div class="modal-footer p-1">
-                <div class="btn btn-dark PostBG me-2 p-0">
-                  <label for="fileInput" class="input-label p-1">
-                    <Icon icon="mdi:tooltip-image" width="30" class="me-2" />
-                    Dodaj fotografiju
-                  </label>
-                  <input
+                <div class="modal-body p-0">
+                  <p
+                    ref="paragraph"
+                    class="m-0 p-1"
+                    contenteditable="true"
+                    @input="handleInput"
+                  ></p>
+                  <!-- ------- -->
+                  <div class="image_wrapper p-0">
+                    <ul class="imageList p-0 mb-0">
+                      <li
+                        class="liIMG mt-2"
+                        v-for="(image, index) in images"
+                        :key="index"
+                      >
+                        <img :src="image" alt="Slika" />
+                        <button
+                          class="btn-close btnDelete"
+                          @click="deleteImage(index)"
+                        ></button>
+                      </li>
+                    </ul>
+                  </div>
+                  <!-- ------ -->
+                </div>
+                <hr class="my-0" />
+                <textarea
+                  v-model="hashtags"
+                  class="visina2"
+                  ref="textarea"
+                  placeholder="#BaciHEŠTEG"
+                  id="floatingTextarea"
+                  @input="handleTextArea"
+                  @keydown.space.prevent
+                  spellcheck="false"
+                ></textarea>
+                <div class="modal-footer p-1">
+                  <div class="btn btn-dark PostBG me-2 p-0">
+                    <label for="fileInput" class="input-label p-1">
+                      <Icon icon="mdi:tooltip-image" width="30" class="me-2" />
+                      Dodaj fotografiju
+                    </label>
+                    <input
+                      :disabled="btnClicked"
+                      type="file"
+                      ref="fileInputer"
+                      id="fileInput"
+                      @change="onFileChange($event)"
+                      style="display: none"
+                    />
+                  </div>
+                  <button
                     :disabled="btnClicked"
-                    type="file"
-                    ref="fileInputer"
-                    id="fileInput"
-                    @change="onFileChange($event)"
-                    style="display: none"
-                  />
+                    type="button"
+                    data-bs-dismiss="modal"
+                    @click="addPost"
+                    class="btn btn-light mx-2"
+                  >
+                    Objavi
+                  </button>
                 </div>
-                <button
-                  :disabled="btnClicked"
-                  type="button"
-                  data-bs-dismiss="modal"
-                  @click="addPost"
-                  class="btn btn-light mx-2"
-                >
-                  Objavi
-                </button>
               </div>
             </div>
           </div>
-        </div>
-        <!--  -->
-        <div v-if="showSkeleton" class="skeletonOKVIR mt-4">
-          <img
-            src="@/assets/blog-loading-animation-skeletons.gif"
-            class=""
-            alt=""
+          <!--  -->
+          <div v-if="showSkeleton" class="skeletonOKVIR mt-4">
+            <img
+              src="@/assets/blog-loading-animation-skeletons.gif"
+              class=""
+              alt=""
+            />
+          </div>
+          <!--  -->
+          <postCard
+            v-for="card in filteredPosts"
+            :key="card.posted_at"
+            :info="card"
           />
         </div>
-        <!--  -->
-        <postCard
-          v-for="card in filteredPosts"
-          :key="card.posted_at"
-          :info="card"
-        />
-      </div>
-      <div class="visina d-none d-lg-block col-3 overflow-y-scroll">
-        <newsCard v-for="article in news" :key="article" :infoNew="article">
-        </newsCard>
+        <div class="visina d-none d-lg-block col-3 overflow-y-scroll">
+          <newsCard v-for="article in news" :key="article" :infoNew="article">
+          </newsCard>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="overlayPost" v-if="btnClicked"></div>
- 
-
+    <div class="overlayPost" v-if="btnClicked"></div>
   </div>
 </template>
 
@@ -244,12 +242,13 @@ const auth = getAuth();
 export default {
   data() {
     return {
+      API_URL:"",
       showSkeleton: false,
       cards: [],
       ProfileImageSrc: "",
       btnClicked: false,
       newFireURL_Images: [],
-      isFriendPosts: false ,
+      isFriendPosts: false,
       images: [],
       fileImages: [],
       currentIndex: 0,
@@ -258,9 +257,12 @@ export default {
       imageFile: null,
       imageSrc: "",
       hashtags: "",
-      user:null,
+      user: null,
       news: [],
     };
+  },
+  created(){
+
   },
   mounted() {
     onAuthStateChanged(auth, (user) => {
@@ -395,13 +397,13 @@ export default {
         const data = doc.data();
         this.ProfileImageSrc = data.imageSrc;
         this.username = data.username;
-        this.user=data
+        this.user = data;
       });
     },
     async getNews() {
       try {
         let res = await axios.get(
-          `https://newsapi.org/v2/everything?q=sport cars&language=en&pageSize=50&apiKey=${process.env.VUE_APP_NEWS_API_KEY}`
+         ` https://newsapi.org/v2/everything?q=sport cars&language=en&pageSize50&apiKey=${process.env.VUE_APP_PATH_START}`
         );
 
         this.news = res.data.articles;
@@ -415,11 +417,11 @@ export default {
       return this.news;
     },
     filteredPosts() {
-      this.getPosts()
-      if(this.store.isFriendPosts){
-        this.cards = this.cards.filter(post => 
-        this.user.friends.includes(post.postOwner)
-      );
+      this.getPosts();
+      if (this.store.isFriendPosts) {
+        this.cards = this.cards.filter((post) =>
+          this.user.friends.includes(post.postOwner)
+        );
       }
       let searchTags = this.store.searchTags
         .trim()
