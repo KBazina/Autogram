@@ -13,7 +13,11 @@
                 />
                 My Profile
               </div>
-              <div class="p-2">
+              <div
+                class="p-2"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop3"
+              >
                 <Icon icon="ic:twotone-people-alt" width="30" class="me-2" />
                 Friends
               </div>
@@ -211,6 +215,75 @@
       </div>
     </div>
     <div class="overlayPost" v-if="btnClicked"></div>
+    <div
+      class="modal fade"
+      id="staticBackdrop3"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Friends</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body row">
+            <div class="targetPrijatelji overflow-y-scroll col border-end">
+           <div class="text-center">
+                   Prijatelji 
+              </div>
+              <hr />
+              <div
+                data-bs-dismiss="modal"
+                @click="posjetiProf(friend.username)"
+                class="pointer friend mt-2"
+                v-for="friend in friends"
+                :key="friend.email"
+              >
+                <img class="me-2" :src="friend.imageSrc" alt="" />
+                {{ friend.username }}
+              </div>
+            </div>
+            <div class="targetPrijatelji col overflow-y-scroll">
+              <div class=" text-center">
+                Svi korisnici
+              </div>
+              <hr />
+              <div
+                @click="posjetiProf(man.username)"
+                data-bs-dismiss="modal"
+                class="pointer friend mt-2"
+                v-for="man in filteredPeople"
+                :key="man"
+              >
+                <img class="me-2" :src="man.imageSrc" alt="" />
+                {{ man.username }}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="" role="search">
+              <input
+                v-model="TargetFriend"
+                class="form-control me-2"
+                type="text"
+                @keydown.space.prevent
+                placeholder="Search"
+                aria-label="Search"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -242,10 +315,13 @@ const auth = getAuth();
 export default {
   data() {
     return {
+      people: [],
+      TargetFriend: "",
       API_URL: "",
       showSkeleton: false,
       cards: [],
       ProfileImageSrc: "",
+      friends: [],
       btnClicked: false,
       newFireURL_Images: [],
       isFriendPosts: false,
@@ -262,14 +338,34 @@ export default {
     };
   },
   created() {},
-  mounted() {
+  async mounted() {
     onAuthStateChanged(auth, (user) => {
+      this.getProfileInfo().then(() => {
+        this.friendWatcher();
+        this.getPeople();
+      });
       this.getNews();
-      this.getProfileInfo();
       this.getPosts();
     });
   },
   methods: {
+    async getPeople() {
+      const q = query(
+        collection(db, "users"),
+        where("email", "!=", store.userMail)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        this.people.push(doc.data());
+      });
+      console.log(this.people, "LJUDII::");
+    },
+    posjetiProf(username) {
+      this.$router.push({
+        name: "profil",
+        params: { username: username },
+      });
+    },
     onThePage(location) {
       this.$router.push(`/${location}`);
     },
@@ -348,6 +444,24 @@ export default {
         this.btnClicked = false;
       }
     },
+    async friendWatcher() {
+      this.friends = [];
+      for (const friend of this.user.friends) {
+        try {
+          const q = query(
+            collection(db, "users"),
+            where("email", "==", friend)
+          );
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            this.friends.push(doc.data());
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      console.log("PRIJATELJI: ", this.friends);
+    },
     changePosts() {
       console.log("Promenjen prikaz postova");
       // Ovdje dodaj logiku za prikazivanje postova prijatelja
@@ -401,17 +515,28 @@ export default {
     async getNews() {
       try {
         let res = await axios.get(
-          `https://gnews.io/api/v4/search?q=cars&lang=en&country=us&max=99&apikey=${process.env.VUE_APP_PATH_START}`
+          `https://gnews.io/api/v4/search?q=cars&lang=en&country=us&max=10&apikey=${process.env.VUE_APP_PATH_START}`
         );
 
         this.news = res.data.articles;
-        console.log(res.data)
+        console.log(res.data);
       } catch (error) {
         console.error(error);
       }
     },
   },
   computed: {
+    filteredPeople() {
+      if (!this.TargetFriend || this.TargetFriend.trim() === "") {
+        return this.people;
+      } else {
+        return this.people.filter((person) =>
+          person.username
+            .toLowerCase()
+            .includes(this.TargetFriend.toLowerCase())
+        );
+      }
+    },
     FilteredNews() {
       return this.news;
     },
@@ -494,7 +619,9 @@ ul {
   overflow: hidden;
   text-align: center;
 }
-
+.pointer {
+  cursor: pointer;
+}
 .liIMG img {
   max-height: 500px;
   max-width: 500px;
@@ -533,7 +660,10 @@ p {
 .PostBG {
   background-color: rgb(36, 37, 38);
 }
-
+.targetPrijatelji {
+  scrollbar-width: none;
+  max-height: 250px;
+}
 .okvir2 {
   position: relative;
   width: 100%;
@@ -551,6 +681,11 @@ p {
 }
 .crta1 {
   width: 20vw;
+}
+.friend img {
+  height: 50px;
+  width: 50px;
+  object-fit: cover;
 }
 .okvir {
   margin: auto;
