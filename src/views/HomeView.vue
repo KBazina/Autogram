@@ -373,7 +373,6 @@ export default {
         });
       });
       this.cards = this.cards.sort((a, b) => b.time - a.time);
-      console.log("karte su ovo: ", this.cards);
     },
     onFileChange(event) {
       const file = event.target.files[0];
