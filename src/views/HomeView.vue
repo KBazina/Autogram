@@ -401,7 +401,7 @@ export default {
     async getNews() {
       try {
         let res = await axios.get(
-          "https://newsapi.org/v2/everything?q=sport cars&language=en&pageSize50&apiKey=374a9102e94e4621a11a1608cbed0f83"
+          `https://newsapi.org/v2/everything?q=sport cars&language=en&pageSize=50&apiKey=${process.env.VUE_APP_NEWS_API_KEY}`
         );
 
         this.news = res.data.articles;
