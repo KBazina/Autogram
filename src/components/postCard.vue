@@ -9,6 +9,9 @@
         />
 
         <span class="curive ms-2">{{ info.username }}</span>
+        <span v-if="info.postOwner===store.userMail" class="desno">
+          <button type="button" @click="deletePosts()" class="btn-close" aria-label="Close"></button>
+        </span>
         <span class="desno time me-2"> {{ postedFromNow }}</span>
       </div>
     </div>
@@ -138,6 +141,7 @@ import {
   getDocs,
   ref,
   doc,
+  deleteDoc ,
   updateDoc,
   setDoc,
   collection,
@@ -205,6 +209,39 @@ export default {
       });
       this.arrayComments = this.arrayComments.reverse();
     },
+    async deletePosts() {
+      const confirmed = window.confirm("Jeste li sigurni da želite obrisati ovaj post?");
+      if(confirmed) {
+    try {
+      const commentsCollectionRef = collection(
+        db,
+        "users",
+        "ID" + this.info.postOwner,
+        "posts",
+        this.info.id,
+        "comments"
+      );
+      const commentsSnapshot = await getDocs(commentsCollectionRef);
+      const deletePromises = commentsSnapshot.docs.map((commentDoc) => {
+        return deleteDoc(commentDoc.ref);
+      });
+      await Promise.all(deletePromises);
+      const postRef = doc(
+        db,
+        "users",
+        "ID" + this.info.postOwner,
+        "posts",
+        this.info.id
+      );
+      await deleteDoc(postRef).then(()=>{
+        window.location.reload()
+      })
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  },
+
     async ckeckIFlikes() {
       if (this.info.lovers.includes(store.userMail)) this.likeBool = true;
     },

@@ -1,6 +1,7 @@
 export default {
   ime_prezime_default: "",
   userActiveState: false,
+  isFriendPosts: false,
   userMail: null,
   activeUsername: "",
   searchTags: "",

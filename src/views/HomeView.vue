@@ -249,6 +249,7 @@ export default {
       ProfileImageSrc: "",
       btnClicked: false,
       newFireURL_Images: [],
+      isFriendPosts: false ,
       images: [],
       fileImages: [],
       currentIndex: 0,
@@ -257,6 +258,7 @@ export default {
       imageFile: null,
       imageSrc: "",
       hashtags: "",
+      user:null,
       news: [],
     };
   },
@@ -346,7 +348,10 @@ export default {
         this.btnClicked = false;
       }
     },
-
+    changePosts() {
+      console.log("Promenjen prikaz postova");
+      // Ovdje dodaj logiku za prikazivanje postova prijatelja
+    },
     async getPosts() {
       const q = query(collectionGroup(db, `posts`));
       const querySnapshot = await getDocs(q);
@@ -391,6 +396,7 @@ export default {
         const data = doc.data();
         this.ProfileImageSrc = data.imageSrc;
         this.username = data.username;
+        this.user=data
       });
     },
     async getNews() {
@@ -410,6 +416,12 @@ export default {
       return this.news;
     },
     filteredPosts() {
+      this.getPosts()
+      if(this.store.isFriendPosts){
+        this.cards = this.cards.filter(post => 
+        this.user.friends.includes(post.postOwner)
+      );
+      }
       let searchTags = this.store.searchTags
         .trim()
         .toLowerCase()
