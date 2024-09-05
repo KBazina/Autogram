@@ -242,7 +242,7 @@ const auth = getAuth();
 export default {
   data() {
     return {
-      API_URL:"",
+      API_URL: "",
       showSkeleton: false,
       cards: [],
       ProfileImageSrc: "",
@@ -261,9 +261,7 @@ export default {
       news: [],
     };
   },
-  created(){
-
-  },
+  created() {},
   mounted() {
     onAuthStateChanged(auth, (user) => {
       this.getNews();
@@ -403,7 +401,7 @@ export default {
     async getNews() {
       try {
         let res = await axios.get(
-         ` https://newsapi.org/v2/everything?q=sport cars&language=en&pageSize50&apiKey=${process.env.VUE_APP_PATH_START}`
+          `https://newsapi.org/v2/everything?q=sport cars&language=en&pageSize=50&apiKey=${process.env.VUE_APP_PATH_START}`
         );
 
         this.news = res.data.articles;
