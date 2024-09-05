@@ -401,7 +401,7 @@ export default {
     async getNews() {
       try {
         let res = await axios.get(
-          `https://gnews.io/api/v4/search?q=cars&lang=en&country=us&max=100&apikey=${process.env.VUE_APP_PATH_START}`
+          `https://gnews.io/api/v4/search?q=cars&lang=en&country=us&max=99&apikey=${process.env.VUE_APP_PATH_START}`
         );
 
         this.news = res.data.articles;
