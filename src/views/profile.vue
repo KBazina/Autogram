@@ -52,7 +52,7 @@
               </div>
               <label for="username">Username: </label>
               <input
-              v-model="newusername"
+                v-model="newusername"
                 type="text"
                 id="username"
                 class="form-control"
@@ -60,7 +60,7 @@
               />
               <label for="bio">bio: </label>
               <input
-               v-model="newbio"
+                v-model="newbio"
                 type="text"
                 id="bio"
                 class="form-control"
@@ -153,6 +153,65 @@
         <div class="col"></div>
         <div class="col">
           <div class="postContainer">
+            <div v-if="admin" class="text-center">
+              <button data-bs-toggle="modal" data-bs-target="#exampleModal5">
+                Dodaj trku
+              </button>
+              <div
+                class="border bg-secondary p-2 mt-5"
+                v-for="utrka in UtrkeAdmin"
+                :key="utrka.id"
+              >
+                {{ utrka.raceName }}
+                <hr />
+                {{ utrka.raceDesc }}
+                <hr />
+                Imas zahtjev za {{ utrka.zahtjevAuti.length }} auta
+                <div class="mt-3">
+                  <button
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModalAutiRace"
+                  >
+                    UPRAVLJAJ
+                  </button>
+                </div>
+                <div
+                  class="modal fade"
+                  id="exampleModalAutiRace"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Kontroliraj aute
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        <div v-for="carId in utrka.zahtjevAuti" :key="carId">
+                          <div v-if="getCarById(carId)">
+                            {{ getCarById(carId).Marka }}
+                            {{ getCarById(carId).Model }}/
+                            {{ getCarById(carId).Snaga }}kw
+                            {{ getCarById(carId).Weight }} kg from
+                            {{ getCarById(carId).Owner }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <postCard
               v-for="card in filteredPosts"
               :key="card.posted_at"
@@ -366,6 +425,70 @@
         </div>
       </div>
     </div>
+    <div
+      class="modal fade"
+      id="exampleModal5"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Nova Utrka</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group mb-3">
+              <label for="raceName">Ime trke:</label>
+              <input
+                v-model="raceName"
+                type="text"
+                class="form-control"
+                id="raceName"
+                placeholder="Unesite ime trke"
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="raceDescription">Opis trke:</label>
+              <textarea
+                v-model="raceDesc"
+                class="form-control"
+                id="raceDescription"
+                rows="3"
+                placeholder="Unesite opis trke"
+              ></textarea>
+            </div>
+            <div class="form-group mb-3 text-center">
+              <label for="trophyIcon"
+                >Trofej:
+                <Icon icon="emojione:trophy" width="30" class="me-2" />
+              </label>
+              <div>
+                <i class="bi bi-trophy-fill fs-1"></i>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Odustani
+            </button>
+            <button @click="addRace()" type="button" class="btn btn-primary">
+              Dodaj trku
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -378,7 +501,9 @@ import {
   doc,
   collection,
   db,
+  collectionGroup,
   getStorage,
+  documentId,
   ref,
   uploadBytes,
   query,
@@ -387,6 +512,7 @@ import {
   where,
   setDoc,
   getDocs,
+  getDoc,
   getAuth,
   updateDoc,
   onAuthStateChanged,
@@ -397,8 +523,14 @@ export default {
   name: "profile",
   data() {
     return {
-      newbio:"",
-      newusername:"",
+      carsInRequest: [],
+      carsInRequestID: [],
+      raceName: "",
+      UtrkeAdmin: [],
+      raceDesc: "",
+      newbio: "",
+      newusername: "",
+      allCars: [],
       prezime: "",
       isModalOpen: false,
       idealET: 0,
@@ -411,6 +543,7 @@ export default {
       chosenSnaga: "",
       chosenTransmition: "",
       chosenWeight: "",
+      admin: false,
       showModal: false,
       carName: "",
       registeredCar: true,
@@ -454,17 +587,16 @@ export default {
     },
     async confirmEditProfile() {
       const uniqueUsername = await this.checkIfUserUnique(this.newusername);
-      if(!uniqueUsername && this.newbio===this.bio && this.prezime===this.ime_prezime.split(" ")[1]){
-        alert("username vec postoji!")
-        return
+      if (
+        !uniqueUsername &&
+        this.newbio === this.bio &&
+        this.prezime === this.ime_prezime.split(" ")[1]
+      ) {
+        alert("username vec postoji!");
+        return;
       }
       this.isModalOpen = false;
-      const q = doc(
-          db,
-          "users",
-          "ID" + store.userMail,
-        
-        );
+      const q = doc(db, "users", "ID" + store.userMail);
       await updateDoc(q, {
         bio: this.newbio,
         ime_prezime: this.ime_prezime.split(" ")[0] + " " + this.prezime,
@@ -534,6 +666,7 @@ export default {
         carOwner: store.userMail,
         carOwnerUsername: store.activeUsername,
         idealET: this.idealET.toFixed(2),
+        trofeji: [],
       });
 
       this.resetForm();
@@ -561,7 +694,19 @@ export default {
       const querySnapshot = await getDocs(q);
       return querySnapshot.empty;
     },
-
+    async addRace() {
+      if (this.raceName === "") {
+        alert("Niste unjeli ime utrke");
+        return;
+      }
+      await setDoc(doc(db, "races", Date.now() + this.raceName), {
+        raceName: this.raceName,
+        raceDesc: this.raceDesc,
+        zahtjevAuti: [],
+        auti: [],
+      });
+      window.location.reload();
+    },
     onFileChange(event) {
       console.log(this.registeredCar);
       const file = event.target.files[0];
@@ -570,6 +715,7 @@ export default {
         this.carPicFile = file;
       }
     },
+
     handleScroll() {
       const carAdderDiv = this.$refs.carAdder;
       const probniDiv = this.$refs.probni;
@@ -610,6 +756,7 @@ export default {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         this.myCars.push({
+          id: doc.id,
           Marka: data.Marka,
           Model: data.Model,
           carYear: data.carYear,
@@ -624,6 +771,29 @@ export default {
           carOwner: data.carOwner,
         });
       });
+    },
+    async getUtrke() {
+      const q = query(collection(db, `races`));
+      const querySnapshot = await getDocs(q);
+
+      this.UtrkeAdmin = [];
+      const allCarIds = new Set();
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.UtrkeAdmin.push({
+          raceName: data.raceName,
+          raceDesc: data.raceDesc,
+          auti: data.auti,
+          zahtjevAuti: data.zahtjevAuti,
+          id: doc.id,
+        });
+        if (data.zahtjevAuti) {
+          data.zahtjevAuti.forEach((carId) => allCarIds.add(carId));
+        }
+      });
+
+      this.carsInRequestID = Array.from(allCarIds);
     },
     async getPosts() {
       const q = query(
@@ -655,6 +825,26 @@ export default {
       const querySnapshot = await getDocs(q);
       return querySnapshot.empty;
     },
+    getCarById(carId) {
+      return this.allCars.find((car) => car.id === carId) || {};
+    },
+    async getAllCars() {
+      const cars = query(collectionGroup(db, "cars"));
+      const querySnapshot = await getDocs(cars);
+      querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        this.allCars.push({
+          id: doc.id,
+          Marka: data.Marka,
+          Model: data.Model,
+          Snaga: data.Snaga,
+          Weight: data.Weight,
+          Owner: data.carOwnerUsername,
+          Pogon: data.Pogon,
+        });
+      });
+    },
+
     async getProfileInfo() {
       const q = query(
         collection(db, "users"),
@@ -669,8 +859,9 @@ export default {
         this.bio = data.bio;
         this.username = data.username;
         this.prezime = data.ime_prezime.split(" ")[1];
-        this.newbio=data.bio
-        this.newusername=data.username
+        this.newbio = data.bio;
+        this.newusername = data.username;
+        this.admin = data.admin;
       });
     },
   },
@@ -681,6 +872,8 @@ export default {
       this.getProfileInfo();
       this.getPosts();
       this.getCars();
+      this.getAllCars();
+      this.getUtrke();
     });
   },
   async destroyed() {

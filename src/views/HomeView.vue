@@ -29,7 +29,7 @@
                 <Icon icon="emojione:trophy" width="30" class="me-2" />
                 Trophies
               </div>
-              <div class="p-2">
+              <div class="p-2" @click="openRaces()">
                 <Icon
                   icon="emojione:flag-for-chequered-flag"
                   width="30"
@@ -107,6 +107,39 @@
           </div>
           <!-- ---------------- -->
           <!-- Modal -->
+          <div class="racesModal" v-if="openRacesBool">
+            <button
+              type="button"
+              @click="this.openRacesBool = !this.openRacesBool"
+              class="btn-close"
+              aria-label="Close"
+            ></button>
+            <div
+              class="border bg-secondary p-2 mt-5"
+              v-for="utrka in UtrkeAdmin"
+              :key="utrka.id"
+            >
+              {{ utrka.raceName }}
+              <hr />
+              {{ utrka.raceDesc }}
+              <hr />
+              <div class="mt-3">
+                <div
+                  v-for="car in myCars.filter(
+                    (car) =>
+                      !utrka.zahtjevAuti.includes(car.id) &&
+                      !utrka.auti.includes(car.id)
+                  )"
+                  :key="car.id"
+                >
+                  {{ car.Marka }} {{ car.Model }} {{ car.Registracija }}
+                  <button @click="carRequest(car.id, utrka.id)">
+                    Posalji zahtjev
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           <div
             class="modal fade"
             id="staticBackdrop2"
@@ -209,6 +242,12 @@
           />
         </div>
         <div class="visina d-none d-lg-block col-3 overflow-y-scroll">
+          <div v-if="ApiIstekao">
+            DANAS JE SVE SKUPO TAKO DA SU I OVI RASPALI APIJI SKUPI, AKO VIDITE
+            OVU PORUKU ZNACI DA SAM DOSEGAO MAKSIMALNI BROJ API ZAHTJEVA U DANU
+            I ZAO MI JE ALI NEDAM 30€ MJESECNO SAMO ZBOG SKOLSKOG PROJEKTA,
+            UZIVAJTE U OSTATKU APLIKACIJE
+          </div>
           <newsCard v-for="article in news" :key="article" :infoNew="article">
           </newsCard>
         </div>
@@ -237,9 +276,7 @@
           </div>
           <div class="modal-body row">
             <div class="targetPrijatelji overflow-y-scroll col border-end">
-           <div class="text-center">
-                   Prijatelji 
-              </div>
+              <div class="text-center">Prijatelji</div>
               <hr />
               <div
                 data-bs-dismiss="modal"
@@ -253,9 +290,7 @@
               </div>
             </div>
             <div class="targetPrijatelji col overflow-y-scroll">
-              <div class=" text-center">
-                Svi korisnici
-              </div>
+              <div class="text-center">Svi korisnici</div>
               <hr />
               <div
                 @click="posjetiProf(man.username)"
@@ -276,7 +311,7 @@
                 class="form-control me-2"
                 type="text"
                 @keydown.space.prevent
-                placeholder="Search"
+                placeholder="Pronadi prijatelja"
                 aria-label="Search"
               />
             </div>
@@ -299,6 +334,8 @@ import {
   doc,
   where,
   setDoc,
+  arrayUnion,
+  updateDoc,
   orderBy,
   collection,
   ref,
@@ -310,20 +347,25 @@ import {
   query,
   getDocs,
 } from "@/firebase";
+import { addYears } from "date-fns";
 const storage = getStorage();
 const auth = getAuth();
 export default {
   data() {
     return {
+      myCars: [],
+      openRacesBool: false,
       people: [],
       TargetFriend: "",
       API_URL: "",
       showSkeleton: false,
       cards: [],
+      ApiIstekao: false,
       ProfileImageSrc: "",
       friends: [],
       btnClicked: false,
       newFireURL_Images: [],
+      UtrkeAdmin: [],
       isFriendPosts: false,
       images: [],
       fileImages: [],
@@ -346,6 +388,7 @@ export default {
       });
       this.getNews();
       this.getPosts();
+      this.getMyCars();
     });
   },
   methods: {
@@ -383,6 +426,17 @@ export default {
     handleTextArea() {
       if (this.$refs.textarea.value.length > 60) {
         this.$refs.textarea.value = this.$refs.textarea.value.substring(0, 60);
+      }
+    },
+    async carRequest(autoID, utrkaID) {
+      try {
+        const raceRef = doc(db, "races", utrkaID);
+        await updateDoc(raceRef, {
+          zahtjevAuti: arrayUnion(autoID),
+        });
+        this.getRaces();
+      } catch (error) {
+        console.error(error);
       }
     },
     async addPost() {
@@ -444,23 +498,66 @@ export default {
         this.btnClicked = false;
       }
     },
+    async getMyCars() {
+      const q = query(collection(db, `users/ID${store.userMail}/cars`));
+      const querySnapshot = await getDocs(q);
+      this.myCars = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.myCars.push({
+          id: doc.id,
+          Marka: data.Marka,
+          Model: data.Model,
+          carYear: data.carYear,
+          Motorizacija: data.Motorizacija,
+          Pogon: data.Pogon,
+          Registracija: data.Registracija,
+          Snaga: data.Snaga,
+          Transmition: data.Transmition,
+          Weight: data.Weight,
+          registeredCar: data.registeredCar,
+          carPic: data.carPic,
+          carOwner: data.carOwner,
+        });
+      });
+    },
+    async openRaces() {
+      this.openRacesBool = !this.openRacesBool;
+      this.getRaces();
+    },
+    async getRaces() {
+      const q = query(collection(db, `races`));
+      const querySnapshot = await getDocs(q);
+      this.UtrkeAdmin = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        this.UtrkeAdmin.push({
+          raceName: data.raceName,
+          raceDesc: data.raceDesc,
+          auti: data.auti,
+          zahtjevAuti: data.zahtjevAuti,
+          id: doc.id,
+        });
+      });
+    },
     async friendWatcher() {
       this.friends = [];
-      for (const friend of this.user.friends) {
-        try {
-          const q = query(
-            collection(db, "users"),
-            where("email", "==", friend)
-          );
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            this.friends.push(doc.data());
-          });
-        } catch (error) {
-          console.error(error);
+      if (this.user.friends) {
+        for (const friend of this.user.friends) {
+          try {
+            const q = query(
+              collection(db, "users"),
+              where("email", "==", friend)
+            );
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+              this.friends.push(doc.data());
+            });
+          } catch (error) {
+            console.error(error);
+          }
         }
       }
-      console.log("PRIJATELJI: ", this.friends);
     },
     changePosts() {
       console.log("Promenjen prikaz postova");
@@ -522,6 +619,7 @@ export default {
         console.log(res.data);
       } catch (error) {
         console.error(error);
+        this.ApiIstekao = true;
       }
     },
   },
@@ -542,7 +640,7 @@ export default {
     },
     filteredPosts() {
       this.getPosts();
-      if (this.store.isFriendPosts) {
+      if (this.store.isFriendPosts && this.user) {
         this.cards = this.cards.filter((post) =>
           this.user.friends.includes(post.postOwner)
         );
@@ -723,5 +821,17 @@ p {
 .srednji {
   padding-left: 7vw;
   padding-right: 7vw;
+}
+.racesModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: rgb(44, 42, 42);
+  z-index: 1050;
 }
 </style>
