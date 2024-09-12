@@ -25,11 +25,11 @@
                 <Icon icon="emojione:racing-car" width="30" class="me-2" />
                 Cars
               </div>
-              <div class="p-2">
+              <div class="p-2" @click="openTrophiesModal">
                 <Icon icon="emojione:trophy" width="30" class="me-2" />
                 Trophies
               </div>
-              <div class="p-2" @click="openRaces()">
+              <div class="p-2" @click="goToCup()">
                 <Icon
                   icon="emojione:flag-for-chequered-flag"
                   width="30"
@@ -41,7 +41,7 @@
                 <Icon icon="ic:twotone-sell" width="30" class="me-2" />
                 Shop
               </div>
-              <div class="p-2">
+              <div class="p-2" @click="openRaces()">
                 <Icon icon="emojione:spiral-calendar" width="30" class="me-2" />
                 Events
               </div>
@@ -79,6 +79,42 @@
         </div>
         <div class="srednji col-sm-12 col-md-9 col-lg-6 col-12">
           <!-- --------------- -->
+          <div
+            class="modal fade"
+            id="trophiesModal"
+            tabindex="-1"
+            aria-labelledby="trophiesModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="trophiesModalLabel">
+                    Automobili s trofejima
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <ul v-if="carsWithTrophies.length">
+                    <li v-for="car in carsWithTrophies" :key="car.id">
+                      <span class="fs-4 fst-italic text-decoration-underline">
+                         {{ car.carOwnerUsername }}-{{ car.Marka }}
+                      {{ car.Model }}
+                      </span>
+                      <div v-for="trofej in car.trofeji" :key="trofej">
+                        {{ trofej }}  <Icon icon="emojione:trophy" width="30" class="me-2" />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="container PostBG pt-3 pb-1 rounded-4">
             <div class="okvir2">
               <img
@@ -336,7 +372,6 @@ import {
   setDoc,
   arrayUnion,
   updateDoc,
-  orderBy,
   collection,
   ref,
   getStorage,
@@ -347,7 +382,6 @@ import {
   query,
   getDocs,
 } from "@/firebase";
-import { addYears } from "date-fns";
 const storage = getStorage();
 const auth = getAuth();
 export default {
@@ -358,6 +392,7 @@ export default {
       people: [],
       TargetFriend: "",
       API_URL: "",
+      carsWithTrophies: [],
       showSkeleton: false,
       cards: [],
       ApiIstekao: false,
@@ -392,6 +427,28 @@ export default {
     });
   },
   methods: {
+    openTrophiesModal() {
+      this.getCarsWithTrophies();
+      const modal = new bootstrap.Modal(
+        document.getElementById("trophiesModal")
+      );
+      modal.show();
+    },
+    async getCarsWithTrophies() {
+      const carsRef = collectionGroup(db, "cars");
+      const querySnapshot = await getDocs(carsRef);
+
+      this.carsWithTrophies = [];
+
+      querySnapshot.forEach((doc) => {
+        const car = doc.data();
+
+        if (car.trofeji && car.trofeji.length > 0) {
+          car.id = doc.id;
+          this.carsWithTrophies.push(car);
+        }
+      });
+    },
     async getPeople() {
       const q = query(
         collection(db, "users"),
@@ -402,6 +459,11 @@ export default {
         this.people.push(doc.data());
       });
       console.log(this.people, "LJUDII::");
+    },
+    goToCup(){
+      this.$router.push({
+        name: "cup",
+      });
     },
     posjetiProf(username) {
       this.$router.push({
@@ -503,22 +565,9 @@ export default {
       const querySnapshot = await getDocs(q);
       this.myCars = [];
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        this.myCars.push({
-          id: doc.id,
-          Marka: data.Marka,
-          Model: data.Model,
-          carYear: data.carYear,
-          Motorizacija: data.Motorizacija,
-          Pogon: data.Pogon,
-          Registracija: data.Registracija,
-          Snaga: data.Snaga,
-          Transmition: data.Transmition,
-          Weight: data.Weight,
-          registeredCar: data.registeredCar,
-          carPic: data.carPic,
-          carOwner: data.carOwner,
-        });
+        const car = doc.data();
+        car.id=doc.id
+        this.myCars.push(car);
       });
     },
     async openRaces() {

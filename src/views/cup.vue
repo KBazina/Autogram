@@ -10,11 +10,11 @@
       Your browser does not support the audio element.
     </audio>
     <button
-      v-if="this.rowNumber ===0 && this.auti.length === 16"
+      v-if="this.rowNumber === 0 && this.auti.length === 16"
       class="DUGME"
       @click="nextRowCars()"
     >
-      TRKAJ SE MBRALE
+      RACE
     </button>
     <div v-if="pobjednik !== 0" class="ABSOLUTNIDIV">
       <button class="close-btn" @click="zatvoriDiv">✖</button>
@@ -336,7 +336,11 @@ import {
   onAuthStateChanged,
   db,
   collectionGroup,
+  doc,
+  deleteDoc,
+  updateDoc,
   query,
+  arrayUnion,
   getDocs,
 } from "@/firebase";
 const auth = getAuth();
@@ -345,7 +349,11 @@ export default {
   name: "cup",
   data() {
     return {
+      adminUtrkaBool: false,
+      SendedCars: [],
+      imeUtrke: "",
       runda: false,
+      idUtrke: "",
       pobjednik: 0,
       rowNumber: 0,
       btnClicked: false,
@@ -398,10 +406,29 @@ export default {
   },
   created() {
     onAuthStateChanged(auth, (user) => {
-      this.getCars();
+      this.getCars().then(() => {
+        try {
+          this.imeUtrke = this.$route.query.imeUtrke;
+          this.idUtrke = this.$route.query.idUtrke;
+          this.SendedCars = JSON.parse(
+            JSON.stringify(JSON.parse(this.$route.query.SendedCars))
+          );
+          if (this.imeUtrke) this.adminUtrkaBool = true;
+          if (this.SendedCars.length == 16) {
+            this.getSendedToAuti();
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      });
     });
   },
   methods: {
+    getSendedToAuti() {
+      this.auti = this.selectedCars.filter((car) =>
+        this.SendedCars.includes(car.id)
+      );
+    },
     zatvoriDiv() {
       this.pobjednik = 0;
     },
@@ -494,9 +521,22 @@ export default {
               });
               if (ET1 < ET2) {
                 this.pobjednik = this.RACINGauti[2 * i];
+                if (this.adminUtrkaBool) {
+                  this.setTrophyy(this.pobjednik.carOwner, this.pobjednik.id);
+                  this.deleteUtrka();
+                }
               } else {
                 this.pobjednik = this.RACINGauti[2 * i + 1];
+                if (this.adminUtrkaBool) {
+                  this.setTrophyy(this.pobjednik.carOwner, this.pobjednik.id);
+                  this.deleteUtrka();
+                }
               }
+              setTimeout(() => {
+                this.$router.replace({
+                  name: "home",
+                });
+              }, 5000);
             }, 15000);
             const audioElement2 = this.$refs.myAudio2;
             const audioElement = this.$refs.myAudio1;
@@ -564,12 +604,25 @@ export default {
 
       return weightedRandom;
     },
+    async deleteUtrka() {
+      const carDocRef = doc(db, `races/${this.idUtrke}`);
+      await deleteDoc(carDocRef);
+    },
+    async setTrophyy(userId, CarId) {
+      const carDocRef = doc(db, `users/ID${userId}/cars/${CarId}`);
+      await updateDoc(carDocRef, {
+        trofeji: arrayUnion(this.imeUtrke),
+      });
+    },
     async getCars() {
       const q = query(collectionGroup(db, `cars`));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        this.selectedCars.push(data);
+        const car = doc.data();
+        car.id=doc.id
+        this.selectedCars.push(
+         car
+        );
       });
     },
   },

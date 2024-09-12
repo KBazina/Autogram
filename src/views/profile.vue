@@ -166,18 +166,43 @@
                 <hr />
                 {{ utrka.raceDesc }}
                 <hr />
-                Imas zahtjev za {{ utrka.zahtjevAuti.length }} auta
-                <div class="mt-3">
+                Lista auta koji se trkaju:
+                <div
+                  class="text-black fw-bold"
+                  v-for="carId in utrka.auti"
+                  :key="carId"
+                >
+                  <div v-if="getCarById(carId)">
+                    {{ getCarById(carId).Marka }}
+                    {{ getCarById(carId).Model }}
+                    ({{ getCarById(carId).Snaga }}kw /
+                    {{ getCarById(carId).Weight }} kg) from
+                    {{ getCarById(carId).Owner }}
+                    <div></div>
+                  </div>
+                </div>
+                <hr />
+                <div v-if="utrka.auti.length != 16">
+                  Imas zahtjev za {{ utrka.zahtjevAuti.length }} auta
+                </div>
+                <div v-if="utrka.auti.length != 16" class="mt-3">
                   <button
                     data-bs-toggle="modal"
-                    data-bs-target="#exampleModalAutiRace"
+                    :data-bs-target="'#exampleModalAutiRace' + utrka.id"
                   >
                     UPRAVLJAJ
                   </button>
                 </div>
+                <div v-if="utrka.auti.length === 16">
+                  <button
+                    @click="goToPageRace(utrka.auti, utrka.raceName, utrka.id)"
+                  >
+                    ODRADI
+                  </button>
+                </div>
                 <div
                   class="modal fade"
-                  id="exampleModalAutiRace"
+                  :id="'exampleModalAutiRace' + utrka.id"
                   tabindex="-1"
                   aria-labelledby="exampleModalLabel"
                   aria-hidden="true"
@@ -195,15 +220,21 @@
                           aria-label="Close"
                         ></button>
                       </div>
-                      <div class="modal-body">
+                      <div v-if="utrka.auti.length != 16" class="modal-body">
                         <div v-for="carId in utrka.zahtjevAuti" :key="carId">
                           <div v-if="getCarById(carId)">
                             {{ getCarById(carId).Marka }}
-                            {{ getCarById(carId).Model }}/
-                            {{ getCarById(carId).Snaga }}kw
-                            {{ getCarById(carId).Weight }} kg from
+                            {{ getCarById(carId).Model }}
+                            {{ getCarById(carId).Snaga }}(kw
+                            {{ getCarById(carId).Weight }} kg) from
                             {{ getCarById(carId).Owner }}
+                            <div>
+                              <button @click="acceptCar(carId, utrka.id)">
+                                PRIHVATI
+                              </button>
+                            </div>
                           </div>
+                          <hr />
                         </div>
                       </div>
                       <div class="modal-footer"></div>
@@ -502,6 +533,7 @@ import {
   collection,
   db,
   collectionGroup,
+  runTransaction,
   getStorage,
   documentId,
   ref,
@@ -570,6 +602,17 @@ export default {
   },
 
   methods: {
+    goToPageRace(auti, imeUtrke, idUtrke) {
+      this.$router.push({
+        name: "cup",
+        query: {
+          idUtrke: idUtrke,
+          imeUtrke: imeUtrke,
+          SendedCars: JSON.stringify(auti),
+        },
+      });
+    },
+
     async addCar() {
       if (this.registeredCar) {
         const isUnique = await this.checkUniqueRegistration(
@@ -828,6 +871,37 @@ export default {
     getCarById(carId) {
       return this.allCars.find((car) => car.id === carId) || {};
     },
+    async acceptCar(carId, utrkaId) {
+      try {
+        const raceRef = doc(db, "races", utrkaId);
+
+        await runTransaction(db, async (transaction) => {
+          const raceDoc = await transaction.get(raceRef);
+
+          if (!raceDoc.exists()) {
+            throw new Error("Utrka ne postoji!");
+          }
+
+          const raceData = raceDoc.data();
+
+          const updatedZahtjevAuti = raceData.zahtjevAuti.filter(
+            (id) => id !== carId
+          );
+
+          const updatedAuti = [...raceData.auti, carId];
+
+          transaction.update(raceRef, {
+            zahtjevAuti: updatedZahtjevAuti,
+            auti: updatedAuti,
+          });
+        });
+        this.getUtrke();
+
+        console.log("Auto uspješno prebačen.");
+      } catch (error) {
+        console.error("Greška prilikom premještanja auta:", error);
+      }
+    },
     async getAllCars() {
       const cars = query(collectionGroup(db, "cars"));
       const querySnapshot = await getDocs(cars);
@@ -882,7 +956,6 @@ export default {
   computed: {
     selectedMarkModels() {
       const marka = this.marke.find((m) => m.marka === this.chosenMark);
-      console.log("OVO JE MARKA:", marka);
       if (marka) {
         return marka.modeli;
       }

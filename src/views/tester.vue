@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button >FIREBAE JE RETARDIRANA BAZA PODATKA KOJU TREBA ZAPALIT</button>
+    <button>FIREBAE JE RETARDIRANA BAZA PODATKA KOJU TREBA ZAPALIT</button>
     <audio ref="myAudio1">
       <source src="@/assets/karlo1.mp3" type="audio/ogg" />
       Your browser does not support the audio element.
@@ -15,13 +15,22 @@
   </div>
 </template>
 <script>
-import {getAuth} from "@/firebase"
+import { getAuth } from "@/firebase";
 export default {
   data() {
     return {
+      prazanNiz: [],
+      niz1: [{ id: "jabuka" }, { id: "kruska" }, { id: "sljiva" }],
+      niz2: ["jabuka", "kruska", "mahuna"],
+      niz3: [],
       count: 0.0,
       intervalId: null,
     };
+  },
+  created() {
+    console.log(this.niz2)
+    this.niz3 = this.niz1.filter((car) => this.niz2.includes(car.id));
+    console.log(this.niz3);
   },
   methods: {
     startStoperica() {
