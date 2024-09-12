@@ -532,11 +532,13 @@ export default {
                   this.deleteUtrka();
                 }
               }
-              setTimeout(() => {
-                this.$router.replace({
-                  name: "home",
-                });
-              }, 5000);
+              if (this.adminUtrkaBool) {
+                setTimeout(() => {
+                  this.$router.replace({
+                    name: "home",
+                  });
+                }, 5000);
+              }
             }, 15000);
             const audioElement2 = this.$refs.myAudio2;
             const audioElement = this.$refs.myAudio1;
@@ -619,10 +621,8 @@ export default {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         const car = doc.data();
-        car.id=doc.id
-        this.selectedCars.push(
-         car
-        );
+        car.id = doc.id;
+        this.selectedCars.push(car);
       });
     },
   },
